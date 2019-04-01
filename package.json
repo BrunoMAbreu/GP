@@ -1,0 +1,25 @@
+{
+  "name": "gestao_de_projectos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/FranciscoFrade/gp1819.git"
+  },
+  "author": "bruno abreu, francisco santos, hugo carreira, nuno gouveia",
+  "license": "ISC",
+  "homepage": "https://gitlab.com/FranciscoFrade/gp1819/",
+  "dependencies": {
+    "connect-mongo": "^2.0.3",
+    "eslint": "^5.16.0",
+    "express": "^4.16.4",
+    "express-basic-auth": "^1.1.6",
+    "express-session": "^1.15.6",
+    "mongodb": "^3.2.2",
+    "mongoose": "^5.4.20"
+  }
+}
