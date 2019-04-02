@@ -1,0 +1,1 @@
+console.log("SUBSTITUIR pela app")
