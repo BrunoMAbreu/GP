@@ -39,7 +39,7 @@ build_webserver:
   services:
   - docker:dind
   script:
-  - npm install --silent
+  # - npm install --silent
   # - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
   # - echo "${CASE_CONTAINER_IMAGE_WEBSERVER}"
   # - echo "${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}"
