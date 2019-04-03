@@ -53,7 +53,7 @@ deploy_k8s:
   only: [master]  #build and push images only for master branch commits
   image: google/cloud-sdk:latest
   script:
-  - npm install --silent
+  # - npm install --silent
     # - kubectl config set-cluster default-cluster --server=${KUBE_URL}
     # - kubectl config set-context default-system --cluster=default-cluster --namespace ${KUBE_NAMESPACE}
     # - kubectl config use-context default-system
