@@ -20,3 +20,4 @@ node_modules/
 jspm_packages/
 
 .git
+.gitlab-ci.yml
