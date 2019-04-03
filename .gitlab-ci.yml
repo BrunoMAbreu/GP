@@ -4,7 +4,6 @@ variables:
   KUBE_NAMESPACE: "default"
 
 before_script:
-- npm install #Hugo
 - LOWERCASE_CONTAINER_IMAGE_WEBSERVER=$(echo "${CONTAINER_IMAGE_WEBSERVER}" | tr '[:upper:]' '[:lower:]')
 - LOWERCASE_CONTAINER_IMAGE_WEBSERVER_LATEST=$(echo "${CONTAINER_IMAGE_WEBSERVER_LATEST}" | tr '[:upper:]' '[:lower:]')
 
@@ -18,8 +17,8 @@ services:
 
 stages: #declare the stages to task
 - test
-#- build
-#- deploy
+- build
+- deploy
 
 test:
   stage: test
@@ -35,11 +34,12 @@ test:
 
 build_webserver:
   stage: build # build image only after test passed
+  only: [master]  #build and push images only for master branch commits; HUGO
   image: docker:git # use simply git docker image
   services:
   - docker:dind
   script:
-  - npm install --silent
+  - npm install --silent #Hugo
   # - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
   # - echo "${CASE_CONTAINER_IMAGE_WEBSERVER}"
   # - echo "${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}"
@@ -53,7 +53,7 @@ deploy_k8s:
   only: [master]  #build and push images only for master branch commits
   image: google/cloud-sdk:latest
   script:
-  # - npm install --silent
+  - npm install --silent #Hugo
     # - kubectl config set-cluster default-cluster --server=${KUBE_URL}
     # - kubectl config set-context default-system --cluster=default-cluster --namespace ${KUBE_NAMESPACE}
     # - kubectl config use-context default-system
