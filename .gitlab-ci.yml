@@ -35,10 +35,11 @@ test:
 
 build_webserver:
   stage: build # build image only after test passed
-  # image: docker:git # use simply git docker image
-  # services:
-  # - docker:dind
-  # script:
+  image: docker:git # use simply git docker image
+  services:
+  - docker:dind
+  script:
+    - npm install --silent
   # - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
   # - echo "${CASE_CONTAINER_IMAGE_WEBSERVER}"
   # - echo "${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}"
@@ -52,6 +53,7 @@ deploy_k8s:
   only: [master]  #build and push images only for master branch commits
   image: google/cloud-sdk:latest
   script:
+    - npm install --silent
     # - kubectl config set-cluster default-cluster --server=${KUBE_URL}
     # - kubectl config set-context default-system --cluster=default-cluster --namespace ${KUBE_NAMESPACE}
     # - kubectl config use-context default-system
