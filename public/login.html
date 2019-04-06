@@ -13,9 +13,7 @@
     <link rel="stylesheet" href="./css/site.min.css">
     <link rel="stylesheet" href="./css/text.css">
     <link rel="stylesheet" href="./css/tooltip.css">
-    <script>
-        
-    </script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
 </head>
 
 <body id="loginPage">
@@ -35,17 +33,17 @@
     <div id="login">
         <h1>Iniciar sessão</h1>
         
-        <form action="/api/processLogin" method="post">
+        <form id="loginForm">
             <div>
                 <label for="email">E-mail</label>
-                <input type="text" name="email" required>
+                <input id="emailInput" type="text" name="email" required>
             </div>
             <div>
                 <label for="password">Palavra-passe</label>
                 <input type="password" name="password" required>
             </div>
             <div id="submit">
-                <input type="submit" value="Iniciar Sessão">
+                <button type="button" onclick="login()">Iniciar Sessão</button>
             </div>
         </form>
     </div>

@@ -2,6 +2,8 @@ let fs = require('fs');
 
 let dbCurrent = getUsersFromDB();
 
+
+//////////////////////////////
 const auth = {
     validateUser: function (email, password) {
         getUsersFromDB();
@@ -25,5 +27,6 @@ function getUsersFromDB() {
     const data = fs.readFileSync(__dirname + '/db/db_temp.json');
     return JSON.parse(data);
 }
+
 
 module.exports = auth;

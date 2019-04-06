@@ -1,0 +1,5 @@
+
+{
+    "dbName": "quintaDoMiao",
+    "url": "mongodb://localhost:27017/"
+}

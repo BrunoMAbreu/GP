@@ -1,43 +1,25 @@
-let express = require('express');
-let router = express.Router();
-//let basicAuth = require('express-basic-auth');
+const express = require('express');
+const router = express.Router();
+
+// !!!!!!
+const app = require("../../app.js").app;
+//let app = express(); //////////////////////////
 let auth = require(__dirname + "./../model/auth")
 
-
-/*
-app.use(session({
-    secret: 'gp',
-    resave: true,
-    saveUninitialized: false
-}));
-*/
-
-
-
-
-//import auth from "../model/auth"
-//var app = express();
-
-
-// Auth #3
-/*
-app.use('/login.html', basicAuth({
-    authorizer: auth.myAuthorizer,
-    unauthorizedResponse: auth.getUnauthorizedResponse */
-
-//users: { 'MES': 'sii_17_18' },
-/*users: getUsersFromDB(),
-challenge: true,
-realm: 'Ym Terces',
-unauthorizedResponse: getUnauthorizedResponse*/
-
-//}));
-
+// Temp - alterar para limitar import ao estritamente necessário 
+//const users = require('../model/db/users');
+//console.log(users.CollectionName); // teste
 
 
 router.post('/processLogin', function (req, res) {
-
-    if (!auth.validateUser(req.body.email, req.body.password)) {
+    
+    //console.log(req.body.email);
+    //console.log(req.body.password);
+    console.log(app.locals.teste);
+    //console.log(dbConnection);
+    
+    // alterar validateUser...
+    if (auth.validateUser(req.body.email, req.body.password)) {
         res.redirect(__dirname + './../../public/index.html');
         //res.json('{ success: false }');
 
@@ -45,8 +27,8 @@ router.post('/processLogin', function (req, res) {
         //res.status(401).send('login.html');
 
         //window.alert('ERRO');
-    }
-
+    } 
+    res.send('false');
     /*
         let response = {
             email: req.body.email,
@@ -55,6 +37,8 @@ router.post('/processLogin', function (req, res) {
     */
 
     //res.send(JSON.stringify(response));
+
+    //res.send(JSON.stringify('false'));
 
 });
 

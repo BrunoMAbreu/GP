@@ -39,26 +39,33 @@ build_webserver:
   services:
   - docker:dind
   script:
-  - npm install --silent #Hugo
-  # - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
-  # - echo "${CASE_CONTAINER_IMAGE_WEBSERVER}"
-  # - echo "${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}"
-  # - docker build  --file Dockerfile -t ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER} .
-  # - docker tag ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER} ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER_LATEST}
-  # - docker push ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}
-  # - docker push ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER_LATEST}
+  #- npm install --silent #Hugo
+  - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
+  - echo "${CASE_CONTAINER_IMAGE_WEBSERVER}"
+  - echo "${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}"
+  - docker build  --file Dockerfile -t ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER} .
+  - docker tag ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER} ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER_LATEST}
+  - docker push ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}
+  - docker push ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER_LATEST}
 
 deploy_k8s:
   stage: deploy
   only: [master]  #build and push images only for master branch commits
   image: google/cloud-sdk:latest
   script:
-  - npm install --silent #Hugo
-    # - kubectl config set-cluster default-cluster --server=${KUBE_URL}
-    # - kubectl config set-context default-system --cluster=default-cluster --namespace ${KUBE_NAMESPACE}
-    # - kubectl config use-context default-system
-    # - kubectl cluster-info
-    # - sed -i "s#__IMAGETAG__#${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}#g" kubernetes/node-ws.yaml
+  #- npm install --silent #Hugo
+    - echo "${KUBE_CERTIFICATE}" > kube_ca.pem
+    - kubectl config set-cluster default-cluster --server=${KUBE_URL} --certificate-authority="$(pwd)/kube_ca.pem"
+    - kubectl config set-credentials default-admin --token=${KUBE_TOKEN}
+    - kubectl config set-context default-system --cluster=default-cluster --user=default-admin --namespace ${KUBE_NAMESPACE}
+    - kubectl config use-context default-system
+    - kubectl cluster-info
+    - sed -i "s#__IMAGETAG__#${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}#g" kubernetes/node-ws.yaml
+    #- sed -i "s#__IMAGETAG__#${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}#g" kubernetes/server.yaml !!!alterado
+    - kubectl apply -f kubernetes/node-ws.yaml # kubernetes/server.yaml !!!alterado
+    - kubectl rollout status -n "$KUBE_NAMESPACE" -w "deployment/web-server-deployment"
+
+    #- sed -i "s#__IMAGETAG__#${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}#g" kubernetes/node-ws.yaml
     # - sed -i "s#__IMAGESECRET__#${CI_BUILD_REF}#g" kubernetes/node-ws.yaml
     # - kubectl apply -f kubernetes/node-ws.yaml
     # - kubectl rollout status -n "$KUBE_NAMESPACE" -w "deployment/web-server-deployment"
