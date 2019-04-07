@@ -13,7 +13,7 @@ services:
 - docker:dind #Start the docker daemon
 
 stages: #declare the stages to task
-#- test
+- test
 - build
 - deploy
 
@@ -36,7 +36,7 @@ build_webserver:
   services:
   - docker:dind
   script:
-  #- npm install --silent #Hugo
+#  - npm install --silent #Hugo
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   - docker build  --file Dockerfile -t ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER} .
   - docker push ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}
