@@ -17,7 +17,7 @@ app.use('/api', routes);
 
 let db;
 let dbClient;
-
+//
 MongoClient.connect(mongoDBConfig.url, { useNewUrlParser: true, autoReconnect: true }).then(client => {
     db = client.db(mongoDBConfig.dbName);
     dbClient = client;
