@@ -1,0 +1,93 @@
+﻿.login_form {
+    margin: 20px 0px;
+}
+
+.group {
+    border-top: 50px;
+    position: relative;
+    margin-bottom: 45px;
+}
+
+.input-form {
+    font-size: 18px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: 500px;
+    border: none;
+    border-bottom: 1px solid #757575;
+    background-color: #F2F2F2;
+}
+
+    .input-form:focus {
+        outline: none;
+    }
+
+.block {
+    display: inline-block;
+}
+
+/* BOTTOM BARS ================================= */
+.bar {
+    position: relative;
+    display: block;
+    width: 500px;
+}
+
+    .bar:before, .bar:after {
+        content: '';
+        height: 2px;
+        width: 0;
+        bottom: 1px;
+        position: absolute;
+        background: #02a79c;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+    }
+
+    .bar:before {
+        left: 50%;
+    }
+
+    .bar:after {
+        right: 50%;
+    }
+
+/* active state */
+.input-form:focus ~ .bar:before, .input-form:focus ~ .bar:after {
+    width: 50%;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+    from {
+        background: #506163;
+    }
+
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+
+@-moz-keyframes inputHighlighter {
+    from {
+        background: #506163;
+    }
+
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+
+@keyframes inputHighlighter {
+    from {
+        background: #5264AE;
+    }
+
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
