@@ -10,6 +10,6 @@ COPY . /usr/src/app
 # Install Dependencies
 RUN npm install
 
-EXPOSE 8081
+EXPOSE 8080
 #CMD node server.js
 CMD node app.js

@@ -27,7 +27,7 @@ MongoClient.connect(mongoDBConfig.url, { useNewUrlParser: true, autoReconnect: t
 // const collection = req.app.locals.collection; ------> para ler
 app.locals.teste = 'teste1' // apagar
 app.locals.dbConnection = db;
-let server = app.listen(8081, function () {
+let server = app.listen(8080, function () {
     const host = server.address().address === "::"
         ? "localhost"
         : server.address().address;
