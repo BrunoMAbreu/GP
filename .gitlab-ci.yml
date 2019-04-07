@@ -13,7 +13,7 @@ services:
 - docker:dind #Start the docker daemon
 
 stages: #declare the stages to task
-- test
+#- test
 - build
 - deploy
 
@@ -31,7 +31,7 @@ test:
 
 build_webserver:
   stage: build # build image only after test passed
-  only: [master]  #build and push images only for master branch commits; HUGO
+  #only: [master]  #build and push images only for master branch commits; HUGO
   image: docker:git # use simply git docker image
   services:
   - docker:dind
