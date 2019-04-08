@@ -10,12 +10,15 @@ let auth = require(__dirname + "./../model/auth")
 //const users = require('../model/db/users');
 //console.log(users.CollectionName); // teste
 
-
 router.post('/processLogin', function (req, res) {
     
     //console.log(req.body.email);
     //console.log(req.body.password);
-    console.log(app.locals.teste);
+    
+    console.log(2);
+    //console.log(app.locals.teste);
+    
+    
     //console.log(dbConnection);
     
     // alterar validateUser...

@@ -37,6 +37,8 @@ build_webserver:
   - docker:dind
   script:
 #  - npm install --silent #Hugo
+  - echo "$CI_REGISTRY_USER" #Hugo
+  - echo "$CI_REGISTRY_PASSWORD" #Hugo
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   - docker build  --file Dockerfile -t ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER} .
   - docker push ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}
