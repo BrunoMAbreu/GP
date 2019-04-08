@@ -18,16 +18,19 @@ app.use('/api', routes);
 let db;
 let dbClient;
 
+
 MongoClient.connect(mongoDBConfig.url, { useNewUrlParser: true, autoReconnect: true }).then(client => {
     db = client.db(mongoDBConfig.dbName);
     dbClient = client;
+
+    console.log(1);
     //collection = db.collection('my-collection');
 }).catch(error => console.error(error));
 
 // const collection = req.app.locals.collection; ------> para ler
 app.locals.teste = 'teste1' // apagar
 app.locals.dbConnection = db;
-let server = app.listen(8082, function () {
+let server = app.listen(8080, function () {
     const host = server.address().address === "::"
         ? "localhost"
         : server.address().address;

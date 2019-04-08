@@ -31,11 +31,12 @@ test:
 
 build_webserver:
   stage: build # build image only after test passed
-  #only: [master]  #build and push images only for master branch commits; Hugo
+  only: [master]  #build and push images only for master branch commits; HUGO
   image: docker:git # use simply git docker image
   services:
   - docker:dind
   script:
+  #- npm install --silent #Hugo
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   - docker build  --file Dockerfile -t ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER} .
   - docker push ${LOWERCASE_CONTAINER_IMAGE_WEBSERVER}
@@ -43,7 +44,7 @@ build_webserver:
 
 deploy_k8s:
   stage: deploy
-  #only: [master]  #build and push images only for master branch commits  #Hugo#
+  only: [master]  #build and push images only for master branch commits
   image: google/cloud-sdk:latest
   script:
    - echo "${KUBE_CERTIFICATE}" > kube_ca.pem
