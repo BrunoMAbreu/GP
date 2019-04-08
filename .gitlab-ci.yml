@@ -43,7 +43,7 @@ build_webserver:
 
 deploy_k8s:
   stage: deploy
-  #only: [master]  #build and push images only for master branch commits  #Hugo
+  #only: [master]  #build and push images only for master branch commits  #Hugo#
   image: google/cloud-sdk:latest
   script:
    - echo "${KUBE_CERTIFICATE}" > kube_ca.pem
