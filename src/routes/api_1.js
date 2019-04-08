@@ -6,7 +6,7 @@ let auth = require(__dirname + "./../model/auth")
 var app = express();
 
 
-// Auth #3 //
+// Auth #3 
 /*
 app.use('/login.html', basicAuth({
     authorizer: auth.myAuthorizer,
