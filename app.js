@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const routes = require('./src/routes/api.js');
 const MongoClient = require('mongodb').MongoClient;
 //const ObjectId = require('mongodb').ObjectId;
-const mongoDBConfig = require("./src/model/db/mongoConfig.json");
+const mongoDBConfig = require("./src/model/db/mongoConfig.js");
 let app = express();
 app.use(bodyParser.urlencoded({
     extended: true
@@ -14,6 +14,13 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 app.use('/api', routes);
+
+//kubernetes
+//index
+app.get('/healthz', function (req, res) {
+    res.send('ok');
+});
+
 
 let db;
 let dbClient;
