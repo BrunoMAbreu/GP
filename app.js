@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const routes = require('./src/routes/api.js');
 const MongoClient = require('mongodb').MongoClient;
 //const ObjectId = require('mongodb').ObjectId;
-const mongoDBConfig = require("./src/model/db/mongoConfig.json");
+const mongoDBConfig = require("./src/model/db/mongoConfig.js");
 let app = express();
 app.use(bodyParser.urlencoded({
     extended: true
