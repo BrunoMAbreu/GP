@@ -15,6 +15,13 @@ app.use(express.static('public'));
 
 app.use('/api', routes);
 
+//kubernetes
+//index
+app.get('/healthz', function (req, res) {
+    res.send('ok');
+});
+
+
 let db;
 let dbClient;
 
