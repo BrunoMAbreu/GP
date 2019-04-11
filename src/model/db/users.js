@@ -19,7 +19,7 @@ class Users{
                 name: name,
                 email: email,
                 password: password,
-                userType: birthDate ///// formatar correctamente na classe
+                userType: birthDate //// formatar correctamente na classe
             };
             const collection = Connection.collection(CollectionName);
             collection.insertOne(user, (err, result) => {
