@@ -14,7 +14,11 @@
   "license": "ISC",
   "homepage": "https://gitlab.com/FranciscoFrade/gp1819/",
   "dependencies": {
+    "connect-mongo": "^2.0.3",
     "express": "^4.16.4",
+    "express-basic-auth": "^1.1.6",
+    "express-session": "^1.16.1",
+    "mongodb": "^3.2.2",
     "mongoose": "^5.5.1"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "user.json",
     "title": "User",
     "description": "Someone who can register and log into site",
     "type": "object",
@@ -30,7 +31,9 @@
                 "worker"
             ]
         },
-        "birthDate": {},
+        "birthDate": {
+            "$ref": "date.json"
+        },
         "isLogged": {
             "type": "boolean",
             "default": true
@@ -43,6 +46,7 @@
         "password",
         "phone",
         "profile",
-        "birthDate"
+        "birthDate",
+        "isLogged"
     ]
 }

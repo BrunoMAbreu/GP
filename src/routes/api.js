@@ -15,7 +15,7 @@ router.post('/processLogin', function (req, res) {
     //console.log(req.body.email);
     //console.log(req.body.password);
     
-    console.log(2);
+
     //console.log(app.locals.teste);
     
     
