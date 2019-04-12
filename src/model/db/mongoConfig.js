@@ -1,8 +1,8 @@
 //const MongoClient = require('mongodb').MongoClient;
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
-const fs = require("fs");
-const userSchema = new Schema(require("./schemas/user.js"));
+//const fs = require("fs");
+//const userSchema = new Schema(require("./schemas/user.js"), { collection: 'users' });
 
 
 
@@ -11,13 +11,15 @@ let mongoDBConfig = {
     url: process.env.MONGO_URL || "mongodb://localhost:27017/",
     connection: null,
     collections: [{
-        name: "users"
+        name: "users",
+        model: null
     }]
 }
 
+
 let connectMongoDB = function () {
     const mongoDB = mongoDBConfig.url + mongoDBConfig.name;
-    Mongoose.connect(mongoDB, { useNewUrlParser: true });
+    Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
     mongoDBConfig.connection = Mongoose.connection;
     mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
     mongoDBConfig.connection.once('open', function () {
@@ -29,19 +31,48 @@ let connectMongoDB = function () {
 
 
 let createUserCollection = function () {
-    const UserModel = Mongoose.model('User', userSchema);
+    const collectionName = "users";
+    const userSchema = new Schema(require("./schemas/user.js"), { collection: collectionName });
+    mongoDBConfig.collections.forEach(element => {
+        if (element.name === collectionName) {
+            element.model = Mongoose.model('userModel', userSchema);
+        }
+    })
+
+    /*
+    for(let i=0; i<mongoDBConfig.collections.length; i++){
+        if(mongoDBConfig.collections[i].name === "users"){
+            const userSchema = new Schema(require("./schemas/user.js"), { collection: 'users' });
+            mongoDBConfig.collections[i].model = Mongoose.model('userModel', userSchema);
+            break;
+        }
+    }
+    */
+    //mongoDBConfig.collections[0].model = Mongoose.model('userModel', userSchema, {collection: "users"});
 
     // PARA TESTAR -- APAGAR
-    const user = new UserModel({
-        id: 2, name: 'ana', email: "ana@gmail.com", password: "asdadasdas",
-        phone: "123456789", profile: "voluntary", birthDate: new Date(), registerDate: new Date()
-    });
-    user.save().then(() => console.log('user saved'));
+    //const user1 = new UserModel({
 
+    //let userModel = mongoDBConfig.collections[0].model;
+
+    const u1 = {
+        id: 3, name: 'ana', email: "ana@gmail.com", password: "asdadasdas",
+        phone: "123456789", profile: "voluntary", birthDate: new Date(), registerDate: new Date()
+    };
+
+    const user1 = mongoDBConfig.collections[0].model.create(u1, function (err, small) {
+        if (err) return handleError(err);
+        // saved!
+    });
+    user1.save().then(() => console.log('user saved'));
+    insertUser();
 }
 
 let insertUser = function () {
+    let userModel = mongoDBConfig.collections[0].model;
 
+    const lastID = mongoDBConfig.connections[0].users.findOne({ $query: {}, $orderby: { id: -1 } });
+    console.log(lastID);
 }
 
 
