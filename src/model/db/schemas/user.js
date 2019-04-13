@@ -18,7 +18,8 @@ module.exports = {
     },
     password: {
         type: "string",
-        minLength: 8
+        minLength: 8,
+        required: true
     },
     phone: {
         type: "string",
@@ -28,7 +29,7 @@ module.exports = {
     profile: {
         type: "string",
         enum: [
-            "voluntary",
+            "volunteer",
             "worker"
         ],
         required: true
@@ -39,7 +40,8 @@ module.exports = {
     },
     registerDate: {
         type: "date",
-        required: true
+        required: true,
+        default: new Date()
     },
     isLogged: {
         type: "boolean",

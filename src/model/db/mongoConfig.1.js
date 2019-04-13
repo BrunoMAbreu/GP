@@ -1,6 +1,6 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt');
 
 const usersCollectionName = "users";
 
@@ -12,9 +12,7 @@ let mongoDBConfig = {
     connection: null,
     collections: [{
         name: usersCollectionName,
-        schema: null,
-        model: null,
-        saltRounds: 12
+        model: null
     }]
 }
 
@@ -31,14 +29,15 @@ let connectMongoDB = function () {
         console.log("Connection to mongodb established");
 
         // PAra testar; APAGAR
-        insertUser("mescla", "mescla4@gmail.com", "abcedef2", "1234654651", "worker", new Date());
-        /*console.log("true: " + validateUser("mescla@gmail.com", "abcedef"));
+        //insertUser("mescla", "mescla@gmail.com", "abcedef", "1234654651", "worker", new Date());
+        console.log("true: " + validateUser("mescla@gmail.com", "abcedef"));
         console.log("false: " + validateUser("mescla@gmail2.com", "abcedef"));
-        console.log("false: " + validateUser("mescla@gmail.com", "abcedefg"));*/
+        console.log("false: " + validateUser("mescla@gmail.com", "abcedefg"));
 
     });
     createUserCollection();
 };
+
 
 
 /**
@@ -48,20 +47,6 @@ let createUserCollection = function () {
     const userSchema = new Schema(require("./schemas/user.js"), { collection: usersCollectionName });
     mongoDBConfig.collections.forEach(element => {
         if (element.name === usersCollectionName) {
-            element.schema = userSchema;
-            element.schema.pre('save', function (next) {
-                let user = this;
-                if (!user.isModified('password')) {
-                    return next();
-                }
-                bcrypt.genSalt(element.saltRounds, function (err, salt) {
-                    bcrypt.hash(user.password, salt, null, function (err, hash) {
-                        user.password = hash;
-                        next();
-                    });
-                });
-            });
-            element.schema.methods.validatePassword = validatePassword;
             element.model = Mongoose.model('userModel', userSchema);
         }
     })
@@ -87,7 +72,7 @@ let insertUser = function (name, email, password, phone, profile, birthDate) {
             id: ++result.id,
             name: name,
             email: email,
-            password: password,//encryptPassword(password),
+            password: encryptPassword(password),
             phone: phone,
             profile: profile,
             birthDate: birthDate
@@ -118,16 +103,29 @@ let getCollectionIndex = function (collectionName) {
 
 
 /**
+ * Encrypts password string
+ * @param {*} password User Password
+ * @returns hashed password
+ */
+let encryptPassword = function (password) {
+    const saltRounds = 12;
+    return bcrypt.hashSync(password, saltRounds);
+}
+
+
+/**
  * Validates password
  * @param {*} password Input string
- * @param {*} cb Callback function
+ * @param {*} hash Stored hash of the password
+ * @returns true if the password is correct, false otherwise
  */
-let validatePassword = function (password, cb) {
-    bcrypt.compareSync(password, this.password, function (err, isMatch) {
-        cb(err, isMatch);
-    });
-};
+let validatePassword = function (password, hash) {
+    return bcrypt.compareSync(password, hash);
+}
 
+let isValidCallback =  function(isMatch){
+    return 
+}
 
 /**
  * Validates user

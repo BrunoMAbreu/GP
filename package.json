@@ -14,6 +14,7 @@
   "license": "ISC",
   "homepage": "https://gitlab.com/FranciscoFrade/gp1819/",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "express": "^4.16.4",
     "mongoose": "^5.5.1"
   },
