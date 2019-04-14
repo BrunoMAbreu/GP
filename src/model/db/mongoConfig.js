@@ -105,7 +105,7 @@ let insertUser = function (name, email, password, phone, profile, birthDate) {
     }
     mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
         const newUser = {
-            id: ++result.id,
+            id: ((result === null) ? 1 : ++result.id),
             name: name,
             email: email,
             password: password,//encryptPassword(password),
