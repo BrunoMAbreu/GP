@@ -17,7 +17,7 @@ function login() {
             console.log("xhr.responseURL: " + xhr.responseURL);
             //if (xhr.responseText == "redirect") {
                 //redirecting to main page from here.
-                window.location.replace(xhr.responseURL);
+                //window.location.replace(xhr.responseURL);
               //}
 
             /*

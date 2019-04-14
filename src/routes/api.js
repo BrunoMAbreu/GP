@@ -65,10 +65,10 @@ router.post('/processLogin', function (req, res) {
 
 });
 
-// GET /logout
+// GET /teste
 router.get('/test', function (req, res, next) {
     console.log("test");
-    res.redirect(__dirname + "./../../public/index.html");
+    res.redirect(__dirname + "./../../public/teste.html");
 });
 
 
