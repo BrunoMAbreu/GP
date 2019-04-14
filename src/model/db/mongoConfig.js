@@ -30,8 +30,8 @@ let connectMongoDB = function () {
     mongoDBConfig.connection.once('open', function () {
         console.log("Connection to mongodb established");
 
-        // PAra testar; APAGAR
-        //insertUser("a", "a", "a", "1234654651", "worker", new Date());
+        // PAra testar; APAGAR -------------------------------
+        insertUser("a", "a", "a", "1234654651", "worker", new Date());
         /*console.log("true: " + validateUser("mescla@gmail.com", "abcedef"));
         console.log("false: " + validateUser("mescla@gmail2.com", "abcedef"));
         console.log("false: " + validateUser("mescla@gmail.com", "abcedefg"));*/
