@@ -12,6 +12,14 @@ function login() {
             if(xhr.responseText === "false"){
                 alert("Login inválido");
             }
+
+            console.log("xhr.responseText: " + xhr.responseText);
+            console.log("xhr.responseURL: " + xhr.responseURL);
+            //if (xhr.responseText == "redirect") {
+                //redirecting to main page from here.
+                window.location.replace(xhr.responseURL);
+              //}
+
             /*
             else if (xhr.status === 200){
                 console.log("aaaaaa");
