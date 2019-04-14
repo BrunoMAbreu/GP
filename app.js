@@ -3,12 +3,29 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const routes = require('./src/routes/api.js');
+const session = require('express-session');
 let app = express();
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+//app.set('trust proxy', 1) // trust first proxy
+
+app.use(session({
+    secret: 'mybrainhurts',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        path: '/',
+        httpOnly: false,
+        secure: true
+    }
+}))
+
 app.use(express.static('public'));
+
+const connectMongoDB = require("./src/model/db/mongoConfig.js").connectMongoDB;
+connectMongoDB();
 
 app.use('/api', routes);
 

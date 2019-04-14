@@ -31,7 +31,7 @@ let connectMongoDB = function () {
         console.log("Connection to mongodb established");
 
         // PAra testar; APAGAR
-        insertUser("mescla", "mescla4@gmail.com", "abcedef2", "1234654651", "worker", new Date());
+        //insertUser("mescla", "mescla4@gmail.com", "abcedef2", "1234654651", "worker", new Date());
         /*console.log("true: " + validateUser("mescla@gmail.com", "abcedef"));
         console.log("false: " + validateUser("mescla@gmail2.com", "abcedef"));
         console.log("false: " + validateUser("mescla@gmail.com", "abcedefg"));*/
@@ -61,7 +61,28 @@ let createUserCollection = function () {
                     });
                 });
             });
-            element.schema.methods.validatePassword = validatePassword;
+            //element.schema.methods.validatePassword = validatePassword;
+
+            // Authentication
+            element.schema.methods.authenticateUser = function (email, password, callback) {
+                element.model.findOne({ email: email }).exec(function (err, user) {
+                    if (err) {
+                        return callback(err);
+                    } else if (!user) {
+                        let err = new Error('User not found.');
+                        err.status = 401;
+                        return callback(err);
+                    }
+                    bcrypt.compare(password, user.password, function (err, result) {
+                        if (result === true) {
+                            return callback(null, user);
+                        } else {
+                            return callback();
+                        }
+                    })
+                });
+            }
+            // Model creation
             element.model = Mongoose.model('userModel', userSchema);
         }
     })
@@ -123,7 +144,7 @@ let getCollectionIndex = function (collectionName) {
  * @param {*} cb Callback function
  */
 let validatePassword = function (password, cb) {
-    bcrypt.compareSync(password, this.password, function (err, isMatch) {
+    bcrypt.compare(password, this.password, function (err, isMatch) {
         cb(err, isMatch);
     });
 };
@@ -135,6 +156,7 @@ let validatePassword = function (password, cb) {
  * @param {*} password Login password
  * @returns false if email doesn't exist or password is wrong, true otherwise
  */
+/*
 let validateUser = function (email, password) {
     let index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
@@ -152,6 +174,7 @@ let validateUser = function (email, password) {
     //console.log(user);
     return isValid;
 }
+*/
 
 
 
@@ -169,7 +192,7 @@ process.on('SIGINT', () => {
 });
 
 
-connectMongoDB();////////////// INVOCAR em APP.js na raiz
+//connectMongoDB();////////////// INVOCAR em APP.js na raiz
 
 module.exports.connectMongoDB = connectMongoDB;
 module.exports.mongoDBConfig = mongoDBConfig;

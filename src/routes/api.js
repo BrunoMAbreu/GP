@@ -1,37 +1,91 @@
 const express = require('express');
 const router = express.Router();
-
+const mongoConfig = require("../model/db/mongoConfig").mongoDBConfig;
+//const path = require('path');
+const url = require('url'); 
 // !!!!!!
-const app = require("../../app.js").app;
+//const app = require("../../app.js").app;
 //let app = express(); //////////////////////////
-let auth = require(__dirname + "./../model/auth")
+//let auth = require(__dirname + "./../model/auth")
 
 // Temp - alterar para limitar import ao estritamente necessário 
 //const users = require('../model/db/users');
 //console.log(users.CollectionName); // teste
 
 router.post('/processLogin', function (req, res) {
-    
+
+    /*var Animal = mongoConfig.collections[0].model('Animal', animalSchema);
+    var dog = new Animal({ type: 'dog' });*/
+  /*
+    dog.findSimilarTypes(function(err, dogs) {
+      console.log(dogs); // woof
+    });*/
+    const user = new mongoConfig.collections[0].model();
+    user.authenticateUser(req.body.email, req.body.password, function(err, user){
+        if(err){
+            res.send('false');
+            res.end();
+        } else {
+/*
+            url.format({
+                protocol: 'http',
+                hostname: req.headers.host,
+                pathname: '/public',
+                query: {
+                  page: 1,
+                  format: 'json'
+                }
+              });   */
+              //req.session.user_id = 0;
+              const urlPath = "http://" + req.headers.host + "/index.html";
+              //console.log("urlPath: " + urlPath);
+
+            //console.log(user._id);
+
+            req.session.user_id = user._id;
+            //res.redirect('/protected_page');
+
+
+            // res.redirect(urlPath); // ALTERAR e VERIFICAR cookies
+            res.redirect("/");
+            //res.end();
+        }
+        
+        
+    });
+    /*
+    mongoConfig.collections[0].model.authenticateUser(req.body.email, req.body.password, function(){
+        console.log("GREAT SUCCESS");
+    });*/
+    //console.log(userModel);
+    /*userModel.authenticateUser(req.body.email, req.body.password, function(){
+        console.log("GREAT SUCCESS");
+    });*/
+    //console.log(mongoConfig.collections[0].model);
+
     //console.log(req.body.email);
     //console.log(req.body.password);
-    
+
 
     //console.log(app.locals.teste);
-    
-    
+
+
     //console.log(dbConnection);
-    
+
     // alterar validateUser...
-    if (auth.validateUser(req.body.email, req.body.password)) {
+   /* if (auth.validateUser(req.body.email, req.body.password)) {
         res.redirect(__dirname + './../../public/index.html');
-        //res.json('{ success: false }');
+        
+    } */
+
+//res.json('{ success: false }');
 
 
         //res.status(401).send('login.html');
 
         //window.alert('ERRO');
-    } 
-    res.send('false');
+
+    //res.send('false');
     /*
         let response = {
             email: req.body.email,
@@ -45,6 +99,19 @@ router.post('/processLogin', function (req, res) {
 
 });
 
+// GET /logout
+router.get('/logout', function (req, res, next) {
+    if (req.session) {
+        // delete session object
+        req.session.destroy(function (err) {
+            if (err) {
+                return next(err);
+            } else {
+                return res.redirect('/');
+            }
+        });
+    }
+});
 
 module.exports = router;
 
