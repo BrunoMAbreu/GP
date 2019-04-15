@@ -88,7 +88,6 @@ let createUserCollection = function () {
     })
 }
 
-
 /**
  * Inserts new user into mongoDB
  * @param {*} name User name
