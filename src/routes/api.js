@@ -1,15 +1,43 @@
 const express = require('express');
 const router = express.Router();
 const mongoConfig = require("../model/db/mongoConfig").mongoDBConfig;
+const auth = require("../controller/authController.js");
 
-// !!!!!!
-//const app = require("../../app.js").app;
-//let app = express(); //////////////////////////
-//let auth = require(__dirname + "./../model/auth")
 
-// Temp - alterar para limitar import ao estritamente necessário 
-//const users = require('../model/db/users');
-//console.log(users.CollectionName); // teste
+
+// restrict index for logged in user only
+router.get('/', auth.home);
+
+// route to register page
+router.get('/register', auth.register);
+
+// route for register action
+router.post('/register', auth.doRegister);
+
+// route to login page
+router.get('/login', auth.login);
+
+// route for login action
+router.post('/login', auth.doLogin);
+
+// route for logout action
+router.get('/logout', auth.logout);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.post('/processLogin', function (req, res) {
 
@@ -73,6 +101,7 @@ router.get('/test', function (req, res, next) {
 
 
 // GET /logout
+/*
 router.get('/logout', function (req, res, next) {
     if (req.session) {
         // delete session object
@@ -84,7 +113,7 @@ router.get('/logout', function (req, res, next) {
             }
         });
     }
-});
+});*/
 
 router.get('*', function (req, res) {
     res.send('Erro, URL inválido.');

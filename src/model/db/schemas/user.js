@@ -1,5 +1,5 @@
 module.exports = {
-    id: {
+    user_id: {
         type: "number",
         min: 1,
         unique: true,

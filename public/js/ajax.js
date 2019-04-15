@@ -4,7 +4,7 @@ function login() {
     const formElement = document.getElementById("loginForm");
     const data = "email=" + formElement.email.value + "&password=" + formElement.password.value;
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/processLogin", true);
+    xhr.open("POST", "/api/login", true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.responseType = "text";
     xhr.onreadystatechange = function () { 

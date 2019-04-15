@@ -1,9 +1,9 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const usersCollectionName = "users";
-
 
 // Object to be exported
 let mongoDBConfig = {
@@ -22,7 +22,7 @@ let mongoDBConfig = {
 /**
  * Connects to mongoDB; stores the connection in mongoDBConfig.connection
  */
-let connectMongoDB = function () {
+let connectMongoDB = function (cb) {
     const mongoDB = mongoDBConfig.url + mongoDBConfig.name;
     Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
     mongoDBConfig.connection = Mongoose.connection;
@@ -36,6 +36,8 @@ let connectMongoDB = function () {
         console.log("false: " + validateUser("mescla@gmail2.com", "abcedef"));
         console.log("false: " + validateUser("mescla@gmail.com", "abcedefg"));*/
 
+        //while(mongoDBConfig.collections)
+        cb();
     });
     createUserCollection();
 };
@@ -49,6 +51,7 @@ let createUserCollection = function () {
     mongoDBConfig.collections.forEach(element => {
         if (element.name === usersCollectionName) {
             element.schema = userSchema;
+            element.schema.plugin(passportLocalMongoose);
             element.schema.pre('save', function (next) {
                 let user = this;
                 if (!user.isModified('password')) {
@@ -61,31 +64,53 @@ let createUserCollection = function () {
                     });
                 });
             });
-            //element.schema.methods.validatePassword = validatePassword;
+            element.schema.methods.authenticate = function (email, password, done) {
 
-            // Authentication
-            element.schema.methods.authenticateUser = function (email, password, callback) {
-                element.model.findOne({ email: email }).exec(function (err, user) {
-                    if (err) {
-                        return callback(err);
-                    } else if (!user) {
-                        let err = new Error('User not found.');
-                        err.status = 401;
-                        return callback(err);
+                console.log("0000000000");
+
+                User.findOne({ email: email }, function (err, user) {
+
+                    console.log("aaaaaaaa");
+
+
+                    if (err) { return done(err); }
+                    if (!user) {
+                        return done(null, false, { message: 'Email incorrecto.' });
                     }
-                    bcrypt.compare(password, user.password, function (err, result) {
-                        if (result === true) {
-                            return callback(null, user);
-                        } else {
-                            return callback();
-                        }
-                    })
+                    if (!validatePassword(password, user)) {
+                        return done(null, false, { message: 'Password incorrecta.' });
+                    }
+                    return done(null, user);
                 });
-            }
-            // Model creation
+            };
             element.model = Mongoose.model('userModel', userSchema);
         }
+        //element.schema.methods.validatePassword = validatePassword;
+
+        // Authentication
+        /*
+        element.schema.methods.authenticateUser = function (email, password, callback) {
+            element.model.findOne({ email: email }).exec(function (err, user) {
+                if (err) {
+                    return callback(err);
+                } else if (!user) {
+                    let err = new Error('User not found.');
+                    err.status = 401;
+                    return callback(err);
+                }
+                bcrypt.compare(password, user.password, function (err, result) {
+                    if (result === true) {
+                        return callback(null, user);
+                    } else {
+                        return callback();
+                    }
+                })
+            });
+        }*/
+        // Model creation
+
     })
+
 }
 
 /**
@@ -104,7 +129,7 @@ let insertUser = function (name, email, password, phone, profile, birthDate) {
     }
     mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
         const newUser = {
-            id: ((result === null) ? 1 : ++result.id),
+            user_id: ((result === null) ? 1 : ++result.user_id),
             name: name,
             email: email,
             password: password, //encryptPassword(password),
@@ -142,9 +167,18 @@ let getCollectionIndex = function (collectionName) {
  * @param {*} password Input string
  * @param {*} cb Callback function
  */
+/*
 let validatePassword = function (password, cb) {
     bcrypt.compare(password, this.password, function (err, isMatch) {
         cb(err, isMatch);
+    });
+};
+*/
+let validatePassword = function (password, user) {
+    console.log("validatePassword: " + password + " \ " + user);
+
+    bcrypt.compare(password, user.password, function (err, isMatch) {
+        return (isMatch) ? true : false;
     });
 };
 
@@ -191,7 +225,7 @@ process.on('SIGINT', () => {
 });
 
 
-//connectMongoDB();////////////// INVOCAR em APP.js na raiz
+
 
 module.exports.connectMongoDB = connectMongoDB;
 module.exports.mongoDBConfig = mongoDBConfig;
