@@ -22,7 +22,7 @@ const auth = {
     }
 }
 
-// SUBSTITUIR JSON por MONGO
+//  SUBSTITUIR JSON por MONGO
 function getUsersFromDB() {
     const data = fs.readFileSync(__dirname + '/db/db_temp.json');
     return JSON.parse(data);
