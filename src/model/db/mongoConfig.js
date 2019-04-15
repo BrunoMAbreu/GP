@@ -107,7 +107,7 @@ let insertUser = function (name, email, password, phone, profile, birthDate) {
             id: ((result === null) ? 1 : ++result.id),
             name: name,
             email: email,
-            password: password,//encryptPassword(password),
+            password: password, //encryptPassword(password),
             phone: phone,
             profile: profile,
             birthDate: birthDate
