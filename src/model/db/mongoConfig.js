@@ -1,56 +1,243 @@
-const MongoClient = require('mongodb').MongoClient;
-//const ObjectId = require('mongodb').ObjectId;
-//const mongoDBConfig = require("./src/model/db/mongoConfig.js");
+const Mongoose = require('mongoose');
+const Schema = Mongoose.Schema;
+const bcrypt = require('bcrypt-nodejs');
+const passportLocalMongoose = require('passport-local-mongoose');
 
+const usersCollectionName = "users";
 
+// Object to be exported
 let mongoDBConfig = {
-    "name": "quintaDoMiao",
-    "url": process.env.MONGO_URL || "mongodb://localhost:27017/",
-    "connection": null,
-    "collections": []
+    name: "quintaDoMiao",
+    url: process.env.MONGO_URL || "mongodb://localhost:27017/",
+    connection: null,
+    collections: [{
+        name: usersCollectionName,
+        schema: null,
+        model: null,
+        saltRounds: 12
+    }]
+}
+/*
+let mongoDBFunctions = {
+    getUserCollectionIndex: getUserCollectionIndex
+}*/
+
+/**
+ * Connects to mongoDB; stores the connection in mongoDBConfig.connection
+ */
+let connectMongoDB = function (cb) {
+    const mongoDB = mongoDBConfig.url + mongoDBConfig.name;
+    Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
+    mongoDBConfig.connection = Mongoose.connection;
+    mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
+    mongoDBConfig.connection.once('open', function () {
+        console.log("Connection to mongodb established");
+
+        // PAra testar; APAGAR -------------------------------
+        insertUser("a", "a", "a", "1234654651", "worker", new Date());
+        /*console.log("true: " + validateUser("mescla@gmail.com", "abcedef"));
+        console.log("false: " + validateUser("mescla@gmail2.com", "abcedef"));
+        console.log("false: " + validateUser("mescla@gmail.com", "abcedefg"));*/
+
+        //while(mongoDBConfig.collections)
+        cb();
+    });
+    createUserCollection();
+};
+
+
+/**
+ * Creates mongoDB collection "User"
+ */
+let createUserCollection = function () {
+    const userSchema = new Schema(require("./schemas/user.js"), { collection: usersCollectionName });
+    mongoDBConfig.collections.forEach(element => {
+        if (element.name === usersCollectionName) {
+            element.schema = userSchema;
+            element.schema.plugin(passportLocalMongoose);
+            /*
+            element.schema.pre('save', function (next) {
+                let user = this;
+                if (!user.isModified('password')) {
+                    return next();
+                }
+                bcrypt.genSalt(element.saltRounds, function (err, salt) {
+                    bcrypt.hash(user.password, salt, null, function (err, hash) {
+                        user.password = hash;
+                        next();
+                    });
+                });
+            }); */
+
+            element.schema.statics.validatePassword = validatePassword;
+            element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
+            element.schema.statics.getUserByEmail = getUserByEmail;
+            element.model = Mongoose.model('userModel', userSchema);
+        }
+        //element.schema.methods.validatePassword = validatePassword;
+
+        // Authentication
+        /*
+        element.schema.methods.authenticateUser = function (email, password, callback) {
+            element.model.findOne({ email: email }).exec(function (err, user) {
+                if (err) {
+                    return callback(err);
+                } else if (!user) {
+                    let err = new Error('User not found.');
+                    err.status = 401;
+                    return callback(err);
+                }
+                bcrypt.compare(password, user.password, function (err, result) {
+                    if (result === true) {
+                        return callback(null, user);
+                    } else {
+                        return callback();
+                    }
+                })
+            });
+        }*/
+        // Model creation
+
+    })
+
+}
+
+let getUserByEmail = function (email, callback) {
+    const index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.findOne({ email: email }).exec((err, result) => {
+        if (err) console.log(err);
+        callback(err, result);
+    });
 }
 
 
-let connectMongoDB = function () {
+/**
+ * Inserts new user into mongoDB
+ * @param {*} name User name
+ * @param {*} email User email
+ * @param {*} password User password
+ * @param {*} phone User phone number
+ * @param {*} profile User profile (ie, worker or volunteer)
+ * @param {*} birthDate User birth date
+ */
+let insertUser = function (name, email, password, phone, profile, birthDate) {
+    let index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
+    }
+    mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
+        const newUser = {
+            user_id: ((result === null) ? 1 : ++result.user_id),
+            name: name,
+            email: email,
+            password: password, //encryptPassword(password),
+            phone: phone,
+            profile: profile,
+            birthDate: birthDate
+        }
 
-    // "== null" is correct, not "=== null"
-    if (mongoDBConfig.connection == null) {
-        MongoClient.connect(mongoDBConfig.url, { useNewUrlParser: true, autoReconnect: true }).then(client => {
-            let db = client.db(mongoDBConfig.name);
-            mongoDBConfig.collections.push({
-                "name": "Users",
-                "collection": db.collection("Users")
-            });
-            mongoDBConfig.connection= client;
+        // Insert
+        mongoDBConfig.collections[0].model.create(newUser, (err, res) => {
+            if (err) return console.error("error: " + err);
+        });
 
-        
+    });
+}
+
+/**
+ * Returns index of the collection in mongoDBConfig.collections[] 
+ * @param {*} collectionName 
+ */
+let getCollectionIndex = function (collectionName) {
+    let index = -1;
+    for (let i = 0; i < mongoDBConfig.collections.length; i++) {
+        if (mongoDBConfig.collections[i].name === collectionName) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+}
 
 
-            //console.log(mongoDBConfig.connection);
+/**
+ * Returns index of the collection in mongoDBConfig.collections[] 
+ * @param {*} collectionName 
+ */
+let getUserCollectionIndex = function () {
+    let index = -1;
+    for (let i = 0; i < mongoDBConfig.collections.length; i++) {
+        if (mongoDBConfig.collections[i].name === usersCollectionName) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+}
 
-            //console.log(mongoDBConfig.collections[0].name);
-            //collection = db.collection('my-collection');
+/**
+ * Validates password
+ * @param {*} password Input string
+ * @param {*} cb Callback function
+ */
+/*
+let validatePassword = function (password, cb) {
+    bcrypt.compare(password, this.password, function (err, isMatch) {
+        cb(err, isMatch);
+    });
+};
+*/
+let validatePassword = function (password, StoredHashedPassword) {
+    return (bcrypt.compareSync(password, StoredHashedPassword));
+};
 
-            //closeDBConnection();
-        }).catch(error => console.error(error));
 
-
+/**
+ * Validates user
+ * @param {*} email Login email
+ * @param {*} password Login password
+ * @returns false if email doesn't exist or password is wrong, true otherwise
+ */
+/*
+let validateUser = function (email, password) {
+    let index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
     }
 
+    const isValid = mongoDBConfig.collections[index].model.findOne({ email: email }, { password: true, _id: false }, (err, obj) => {
+        if (err) {
+            console.error(err);
+        }
+        return (obj === undefined || obj === null) ? false : validatePassword(password, obj.password);
+    });
 
 
+    //console.log(user);
+    return isValid;
 }
-
-connectMongoDB();
-
+*/
 
 
 
-// Listen for the signal interruption (ctrl-c); Close the MongoDB connection
+
+
+
+
+
+
+// Listens for the signal interruption (ctrl-c); Closes the MongoDB connection
 process.on('SIGINT', () => {
-    mongoDBConfig.connection.close();
+    //mongoDBConfig.connection.close();
+    Mongoose.disconnect();
     process.exit();
 });
+
+
+
 
 module.exports.connectMongoDB = connectMongoDB;
 module.exports.mongoDBConfig = mongoDBConfig;
