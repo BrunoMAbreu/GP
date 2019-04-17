@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const mongoConfig = require("../model/db/mongoConfig").mongoDBConfig;
-const auth = require("../controller/authController.js");
 
 
-
+//const auth = require("../controller/authController.js");
+/*
 // restrict index for logged in user only
 router.get('/', auth.home);
 
@@ -22,34 +22,47 @@ router.post('/login', auth.doLogin);
 
 // route for logout action
 router.get('/logout', auth.logout);
+*/
+
+module.exports = function (app, passport) {
+    app.post('/login', passport.authenticate('local-login', {
+         successRedirect: '/',
+        //successRedirect : '/profile', // redirect to the secure profile section
+        failureRedirect: '/login', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
+    }),
+        function (req, res) {
+
+            console.log("hello");
+
+            if (req.body.remember) {
+                req.session.cookie.maxAge = 1000 * 60 * 3;
+            } else {
+                req.session.cookie.expires = false;
+            }
+            res.redirect('/');
+        });
+
+
+}
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+/*
 router.post('/processLogin', function (req, res) {
 
     const user = new mongoConfig.collections[0].model();
-    user.authenticateUser(req.body.email, req.body.password, function(err, user){
-        if(err){
+    user.authenticateUser(req.body.email, req.body.password, function (err, user) {
+        if (err) {
             res.send('false');
             res.end();
         } else {
-              //req.session.user_id = 0;
-              const urlPath = "http://" + req.headers.host + "/index.html";
-              //console.log("urlPath: " + urlPath);
+            //req.session.user_id = 0;
+            const urlPath = "http://" + req.headers.host + "/index.html";
+            //console.log("urlPath: " + urlPath);
 
             //console.log(user._id);
 
@@ -58,14 +71,14 @@ router.post('/processLogin', function (req, res) {
 
 
             // res.redirect(urlPath); // ALTERAR e VERIFICAR cookies
-            
+
             /////
             res.redirect("test");
             //res.end();
         }
-        
-        
-    });
+
+
+    }); */
     /*
     mongoConfig.collections[0].model.authenticateUser(req.body.email, req.body.password, function(){
         console.log("GREAT SUCCESS");
@@ -86,19 +99,20 @@ router.post('/processLogin', function (req, res) {
     //console.log(dbConnection);
 
     // alterar validateUser...
-   /* if (auth.validateUser(req.body.email, req.body.password)) {
-        res.redirect(__dirname + './../../public/index.html');
-        
-    } */
+    /* if (auth.validateUser(req.body.email, req.body.password)) {
+         res.redirect(__dirname + './../../public/index.html');
+         
+     } */
 
-});
+//});
 
 // GET /teste
+/*
 router.get('/test', function (req, res, next) {
     console.log("test");
     res.redirect(__dirname + "./../../public/teste.html");
 });
-
+*/
 
 // GET /logout
 /*
@@ -114,9 +128,10 @@ router.get('/logout', function (req, res, next) {
         });
     }
 });*/
-
+/*
 router.get('*', function (req, res) {
     res.send('Erro, URL inválido.');
 });
 
 module.exports = router;
+*/

@@ -17,7 +17,10 @@ let mongoDBConfig = {
         saltRounds: 12
     }]
 }
-
+/*
+let mongoDBFunctions = {
+    getUserCollectionIndex: getUserCollectionIndex
+}*/
 
 /**
  * Connects to mongoDB; stores the connection in mongoDBConfig.connection
@@ -52,6 +55,7 @@ let createUserCollection = function () {
         if (element.name === usersCollectionName) {
             element.schema = userSchema;
             element.schema.plugin(passportLocalMongoose);
+            /*
             element.schema.pre('save', function (next) {
                 let user = this;
                 if (!user.isModified('password')) {
@@ -63,26 +67,11 @@ let createUserCollection = function () {
                         next();
                     });
                 });
-            });
-            element.schema.methods.authenticate = function (email, password, done) {
+            }); */
 
-                console.log("0000000000");
-
-                User.findOne({ email: email }, function (err, user) {
-
-                    console.log("aaaaaaaa");
-
-
-                    if (err) { return done(err); }
-                    if (!user) {
-                        return done(null, false, { message: 'Email incorrecto.' });
-                    }
-                    if (!validatePassword(password, user)) {
-                        return done(null, false, { message: 'Password incorrecta.' });
-                    }
-                    return done(null, user);
-                });
-            };
+            element.schema.statics.validatePassword = validatePassword;
+            element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
+            element.schema.statics.getUserByEmail = getUserByEmail;
             element.model = Mongoose.model('userModel', userSchema);
         }
         //element.schema.methods.validatePassword = validatePassword;
@@ -112,6 +101,18 @@ let createUserCollection = function () {
     })
 
 }
+
+let getUserByEmail = function (email, callback) {
+    const index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.findOne({ email: email }).exec((err, result) => {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
+
 
 /**
  * Inserts new user into mongoDB
@@ -153,7 +154,7 @@ let insertUser = function (name, email, password, phone, profile, birthDate) {
 let getCollectionIndex = function (collectionName) {
     let index = -1;
     for (let i = 0; i < mongoDBConfig.collections.length; i++) {
-        if (mongoDBConfig.collections[i].name === usersCollectionName) {
+        if (mongoDBConfig.collections[i].name === collectionName) {
             index = i;
             break;
         }
@@ -161,6 +162,21 @@ let getCollectionIndex = function (collectionName) {
     return index;
 }
 
+
+/**
+ * Returns index of the collection in mongoDBConfig.collections[] 
+ * @param {*} collectionName 
+ */
+let getUserCollectionIndex = function () {
+    let index = -1;
+    for (let i = 0; i < mongoDBConfig.collections.length; i++) {
+        if (mongoDBConfig.collections[i].name === usersCollectionName) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+}
 
 /**
  * Validates password
@@ -174,12 +190,8 @@ let validatePassword = function (password, cb) {
     });
 };
 */
-let validatePassword = function (password, user) {
-    console.log("validatePassword: " + password + " \ " + user);
-
-    bcrypt.compare(password, user.password, function (err, isMatch) {
-        return (isMatch) ? true : false;
-    });
+let validatePassword = function (password, StoredHashedPassword) {
+    return (bcrypt.compareSync(password, StoredHashedPassword));
 };
 
 
