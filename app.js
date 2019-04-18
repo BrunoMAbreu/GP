@@ -22,7 +22,7 @@ connectMongoDB(() => {
                 });
             }
         )); */
-
+/*
     passport.use(
         'local-signup',
         new LocalStrategy({
@@ -57,7 +57,7 @@ connectMongoDB(() => {
                     }
                 });
             })
-    );
+    );*/
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
 });

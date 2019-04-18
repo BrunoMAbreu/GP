@@ -35,11 +35,8 @@ let connectMongoDB = function (cb) {
 
         // PAra testar; APAGAR -------------------------------
         insertUser("a", "a", "a", "1234654651", "worker", new Date());
-        /*console.log("true: " + validateUser("mescla@gmail.com", "abcedef"));
-        console.log("false: " + validateUser("mescla@gmail2.com", "abcedef"));
-        console.log("false: " + validateUser("mescla@gmail.com", "abcedefg"));*/
 
-        //while(mongoDBConfig.collections)
+
         cb();
     });
     createUserCollection();
@@ -55,7 +52,6 @@ let createUserCollection = function () {
         if (element.name === usersCollectionName) {
             element.schema = userSchema;
             element.schema.plugin(passportLocalMongoose);
-            /*
             element.schema.pre('save', function (next) {
                 let user = this;
                 if (!user.isModified('password')) {
@@ -67,41 +63,25 @@ let createUserCollection = function () {
                         next();
                     });
                 });
-            }); */
-
+            });
             element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
             element.schema.statics.getUserByEmail = getUserByEmail;
             element.model = Mongoose.model('userModel', userSchema);
         }
-        //element.schema.methods.validatePassword = validatePassword;
-
-        // Authentication
-        /*
-        element.schema.methods.authenticateUser = function (email, password, callback) {
-            element.model.findOne({ email: email }).exec(function (err, user) {
-                if (err) {
-                    return callback(err);
-                } else if (!user) {
-                    let err = new Error('User not found.');
-                    err.status = 401;
-                    return callback(err);
-                }
-                bcrypt.compare(password, user.password, function (err, result) {
-                    if (result === true) {
-                        return callback(null, user);
-                    } else {
-                        return callback();
-                    }
-                })
-            });
-        }*/
+        
         // Model creation
 
     })
 
 }
 
+
+/**
+ * 
+ * @param {*} email 
+ * @param {*} callback 
+ */
 let getUserByEmail = function (email, callback) {
     const index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
@@ -179,53 +159,13 @@ let getUserCollectionIndex = function () {
 }
 
 /**
- * Validates password
- * @param {*} password Input string
- * @param {*} cb Callback function
+ * Compares and validates password
+ * @param {*} password user input
+ * @param {*} StoredHashedPassword password in database
  */
-/*
-let validatePassword = function (password, cb) {
-    bcrypt.compare(password, this.password, function (err, isMatch) {
-        cb(err, isMatch);
-    });
-};
-*/
 let validatePassword = function (password, StoredHashedPassword) {
     return (bcrypt.compareSync(password, StoredHashedPassword));
 };
-
-
-/**
- * Validates user
- * @param {*} email Login email
- * @param {*} password Login password
- * @returns false if email doesn't exist or password is wrong, true otherwise
- */
-/*
-let validateUser = function (email, password) {
-    let index = getCollectionIndex(usersCollectionName);
-    if (index === -1) {
-        console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
-    }
-
-    const isValid = mongoDBConfig.collections[index].model.findOne({ email: email }, { password: true, _id: false }, (err, obj) => {
-        if (err) {
-            console.error(err);
-        }
-        return (obj === undefined || obj === null) ? false : validatePassword(password, obj.password);
-    });
-
-
-    //console.log(user);
-    return isValid;
-}
-*/
-
-
-
-
-
-
 
 
 
