@@ -148,8 +148,8 @@ let deleteUser = function (id) {
     }
     mongoDBConfig.collections[index].model.deleteOne({_id: id}, function(err, data){
         if (err) console.log(err);
-        console.log(data) // substituir Output por outro tipo de validação?
-                          // eg, if(data.deletedCount ===1)...
+        console.log(data) //  substituir Output por outro tipo de validação?
+                          //  eg, if(data.deletedCount ===1)...
     });
 }
 
