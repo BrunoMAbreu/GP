@@ -6,7 +6,7 @@ connectMongoDB(() => {
     const User = mongoDBConfig.collections[0].model;
     require('./src/model/passport')(passport);
     passport.use(new LocalStrategy(User.authenticate()));
-
+    
     /*
         passport.use(new LocalStrategy(
             function (email, password, done) {

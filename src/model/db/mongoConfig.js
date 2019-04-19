@@ -36,7 +36,6 @@ let connectMongoDB = function (cb) {
         // PAra testar; APAGAR -------------------------------
         insertUser("a", "a", "a", "1234654651", "worker", new Date());
 
-
         cb();
     });
     createUserCollection();
@@ -67,20 +66,21 @@ let createUserCollection = function () {
             element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
             element.schema.statics.getUserByEmail = getUserByEmail;
+            element.schema.statics.getUserById = getUserById;
             element.model = Mongoose.model('userModel', userSchema);
         }
-        
+
         // Model creation
 
     })
 
 }
 
-
 /**
- * 
- * @param {*} email 
- * @param {*} callback 
+ * READ: returns user with given email address
+ * @param {*} email user email
+ * @param {*} callback
+ * @returns user object
  */
 let getUserByEmail = function (email, callback) {
     const index = getCollectionIndex(usersCollectionName);
@@ -92,6 +92,24 @@ let getUserByEmail = function (email, callback) {
         callback(err, result);
     });
 }
+
+
+/**
+ * READ: returns user with given id
+ * @param {*} _id mongo document _id (ObjectID: hexadecimal as a string)
+ * @returns user object
+ */
+let getUserById = function (id, callback) {
+    const index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.findById(id, function (err, result) {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
+
 
 
 /**
