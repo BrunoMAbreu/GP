@@ -62,6 +62,16 @@ module.exports = function (passport) {
                     return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
                 }
                 // all is well, return successful user
+                
+
+                const newUser = {
+                    _id: "5cb9f678c254ae4e701d8d88",
+                    name: "c"
+                }
+                //User.deleteUser("5cb9e6c623034322d0afe004");
+                User.updateUser(newUser);
+
+
                 return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
             });
         })

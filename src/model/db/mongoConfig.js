@@ -67,6 +67,7 @@ let createUserCollection = function () {
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
             element.schema.statics.getUserByEmail = getUserByEmail;
             element.schema.statics.getUserById = getUserById;
+            element.schema.statics.updateUser = updateUser;
             element.schema.statics.deleteUser = deleteUser;
             element.model = Mongoose.model('userModel', userSchema);
         }
@@ -126,7 +127,7 @@ let getUserByEmail = function (email, callback) {
 
 /**
  * READ: returns user with given id
- * @param {*} _id mongo document _id (ObjectID: hexadecimal as a string)
+ * @param {*} id mongo document _id (ObjectID: hexadecimal as a string)
  * @returns user object
  */
 let getUserById = function (id, callback) {
@@ -141,15 +142,38 @@ let getUserById = function (id, callback) {
 }
 
 
+/**
+ * UPDATE:updates user data
+ * @param {*} newUserData Object with proprieties to be changed (_id required and immutable). eg, {_id:"...", name:"Ana"}
+ */
+let updateUser = function(newUserData){
+    const index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.findOneAndUpdate({_id: newUserData._id}, newUserData, function (err, data) {
+        if (err) console.log(err);
+        console.log(data) //  substituir Output por outro tipo de validação?
+        //  eg, if(data.deletedCount ===1)...
+    });
+}
+
+
+
+
+/**
+ * DELETE: deletes user with given id
+ * @param {*} id mongo document _id (ObjectID: hexadecimal as a string)
+ */
 let deleteUser = function (id) {
     const index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.deleteOne({_id: id}, function(err, data){
+    mongoDBConfig.collections[index].model.findByIdAndDelete({ _id: id }, function (err, data) {
         if (err) console.log(err);
         console.log(data) //  substituir Output por outro tipo de validação?
-                          //  eg, if(data.deletedCount ===1)...
+        //  eg, if(data.deletedCount ===1)...
     });
 }
 
