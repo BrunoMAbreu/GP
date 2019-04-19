@@ -67,14 +67,44 @@ let createUserCollection = function () {
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
             element.schema.statics.getUserByEmail = getUserByEmail;
             element.schema.statics.getUserById = getUserById;
+            element.schema.statics.deleteUser = deleteUser;
             element.model = Mongoose.model('userModel', userSchema);
         }
-
-        // Model creation
-
     })
-
 }
+
+
+/**
+ * CREATE: Inserts new user into mongoDB
+ * @param {*} name User name
+ * @param {*} email User email
+ * @param {*} password User password
+ * @param {*} phone User phone number
+ * @param {*} profile User profile (ie, worker or volunteer)
+ * @param {*} birthDate User birth date
+ */
+let insertUser = function (name, email, password, phone, profile, birthDate) {
+    let index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
+    }
+    mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
+        const newUser = {
+            user_id: ((result === null) ? 1 : ++result.user_id),
+            name: name,
+            email: email,
+            password: password, //encryptPassword(password),
+            phone: phone,
+            profile: profile,
+            birthDate: birthDate
+        }
+        // Insert
+        mongoDBConfig.collections[0].model.create(newUser, (err, res) => {
+            if (err) return console.error("error: " + err);
+        });
+    });
+}
+
 
 /**
  * READ: returns user with given email address
@@ -111,39 +141,24 @@ let getUserById = function (id, callback) {
 }
 
 
-
-/**
- * Inserts new user into mongoDB
- * @param {*} name User name
- * @param {*} email User email
- * @param {*} password User password
- * @param {*} phone User phone number
- * @param {*} profile User profile (ie, worker or volunteer)
- * @param {*} birthDate User birth date
- */
-let insertUser = function (name, email, password, phone, profile, birthDate) {
-    let index = getCollectionIndex(usersCollectionName);
+let deleteUser = function (id) {
+    const index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
-        console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
+        return -1;
     }
-    mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
-        const newUser = {
-            user_id: ((result === null) ? 1 : ++result.user_id),
-            name: name,
-            email: email,
-            password: password, //encryptPassword(password),
-            phone: phone,
-            profile: profile,
-            birthDate: birthDate
-        }
-
-        // Insert
-        mongoDBConfig.collections[0].model.create(newUser, (err, res) => {
-            if (err) return console.error("error: " + err);
-        });
-
+    mongoDBConfig.collections[index].model.deleteOne({_id: id}, function(err, data){
+        if (err) console.log(err);
+        console.log(data) // substituir Output por outro tipo de validação?
+                          // eg, if(data.deletedCount ===1)...
     });
 }
+
+
+
+
+
+
+
 
 /**
  * Returns index of the collection in mongoDBConfig.collections[] 
