@@ -26,15 +26,16 @@ router.get('/logout', auth.logout);
 
 module.exports = function (app, passport) {
     app.post('/login', passport.authenticate('local-login', {
-         successRedirect: '/',
+        successRedirect: '/',
+        successFlash: true,
         //successRedirect : '/profile', // redirect to the secure profile section
         failureRedirect: '/login', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
     }),
+        // Não executa o callback:
         function (req, res) {
-
+            console.log(req.user); // http://www.passportjs.org/docs/authenticate/
             console.log("hello");
-
             if (req.body.remember) {
                 req.session.cookie.maxAge = 1000 * 60 * 3;
             } else {
@@ -42,8 +43,6 @@ module.exports = function (app, passport) {
             }
             res.redirect('/');
         });
-
-
 }
 
 
