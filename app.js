@@ -67,15 +67,12 @@ const routes = require("./src/routes/api.js");
 const session = require("express-session");
 var cookieParser = require('cookie-parser');
 const path = require("path");
-//const MongoStore = require("connect-mongo")(session);
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 
-//const User = require('../models/users');
+
 let app = express();
-
-
-
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -91,14 +88,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-
-
-////////////////////////////////
-app.use(express.static(path.join(__dirname, "public")));
-//app.use(express.static('public'));
-
-//kubernetes
-//index
+//kubernetes index
 app.get('/healthz', function (req, res) {
     res.send('ok');
 });

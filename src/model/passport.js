@@ -22,7 +22,7 @@ module.exports = function (passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+        done(null, user._id);
     });
 
     // used to deserialize the user
@@ -55,11 +55,11 @@ module.exports = function (passport) {
                     return done(err);
                 }
                 if (result === -1) {
-                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                    return done(null, false, req.flash('loginMessage', 'Utilizador não registado.')); // req.flash is the way to set flashdata using connect-flash
                 }
                 // if the user is found but the password is wrong
                 if (!User.validatePassword(password, result.password)) {
-                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+                    return done(null, false, req.flash('loginMessage', 'Password inválida.')); // create the loginMessage and save it to session as flashdata
                 }
                 // all is well, return successful user
                 
