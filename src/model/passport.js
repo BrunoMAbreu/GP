@@ -1,3 +1,5 @@
+'use strict';
+
 // config/passport.js
 
 // load all the things we need
@@ -27,6 +29,11 @@ module.exports = function (passport) {
 
     // used to deserialize the user
     passport.deserializeUser(function (id, done) {
+        
+        // APAGAR
+        console.log("passport.deserializeUser: " + id);
+
+
         const User = mongoDBConfig.collections[0].model;
         //const UserCollectionIndex = User.getUserCollectionIndex();
         User.findById(id, function (err, user) {

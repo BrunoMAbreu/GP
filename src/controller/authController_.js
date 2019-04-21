@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require("mongoose");
 const passport = require("passport");
 const User = require("../model/db/mongoConfig").mongoDBConfig.collections[0].model;
