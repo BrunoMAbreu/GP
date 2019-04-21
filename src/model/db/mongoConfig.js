@@ -155,7 +155,8 @@ let updateUser = function(newUserData){
     }
     mongoDBConfig.collections[index].model.findOneAndUpdate({_id: newUserData._id}, newUserData, function (err, data) {
         if (err) console.log(err);
-        console.log(data) //  substituir Output por outro tipo de validação?
+        
+        console.log("let updateUser: " + data) //  substituir Output por outro tipo de validação?
         //  eg, if(data.deletedCount ===1)...
     });
 }

@@ -70,13 +70,13 @@ module.exports = function (passport) {
                 }
                 // all is well, return successful user
                 
-
+                /* Testes
                 const newUser = {
                     _id: "5cb9f678c254ae4e701d8d88",
                     name: "c"
                 }
                 //User.deleteUser("5cb9e6c623034322d0afe004");
-                User.updateUser(newUser);
+                User.updateUser(newUser);*/
 
 
                 return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));

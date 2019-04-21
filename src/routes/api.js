@@ -36,7 +36,7 @@ module.exports = function (app, passport) {
     }),
         // Não executa o callback:
         function (req, res) {
-            console.log(req.user); // http://www.passportjs.org/docs/authenticate/
+            //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
             console.log("hello");
             if (req.body.remember) {
                 req.session.cookie.maxAge = 1000 * 60 * 3;
@@ -45,6 +45,20 @@ module.exports = function (app, passport) {
             }
             res.redirect('/');
         });
+
+    // Access the session as req.session
+    app.get('/', function(req, res, next) {
+    if (req.session.views) {
+      req.session.views++
+      res.setHeader('Content-Type', 'text/html')
+      res.write('<p>views: ' + req.session.views + '</p>')
+      res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>')
+      res.end()
+    } else {
+      req.session.views = 1
+      res.end('welcome to the session demo. refresh!')
+    }
+  })
 }
 
 

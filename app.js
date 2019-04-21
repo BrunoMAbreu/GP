@@ -74,11 +74,11 @@ const flash = require('connect-flash');
 
 let app = express();
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(session({
     secret: 'mybrainhurts',
     resave: false,
