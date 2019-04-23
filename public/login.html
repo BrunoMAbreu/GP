@@ -21,7 +21,9 @@
         <img src="./images/logo.png" width="100" alt="Logo" />
         <img src="./images/nome.png" height="100" alt="Nome" />
     </div>
-    <div><a class="menu_login" href="/login.html">Iniciar Sessão</a></div>
+    <div>
+        <a class="menu_login" href="/register.html">Registar</a>
+    </div>
     <div>
         <ul class="menu_bar">
             <li class="menu_element"><a href="index.html">Início</a></li>
@@ -30,22 +32,29 @@
             <li class="menu_element"><a href="">Sobre nós</a></li>
         </ul>
     </div>
-    <div id="login">
-        <h1>Iniciar sessão</h1>
-        
-        <form id="loginForm" action="/login" method="POST">
-            <div>
-                <label for="email">E-mail</label>
-                <input id="emailInput" type="text" name="email" required>
-            </div>
-            <div>
-                <label for="password">Palavra-passe</label>
-                <input type="password" name="password" required>
-            </div>
-            <div id="submit">
-                <button type="submit">Iniciar Sessão</button>
-            </div>
-        </form>
+    <div>
+        <div id="register">
+            <h1>Iniciar sessão</h1>
+            <form id="loginForm" action="/login" method="POST">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input class="input-form" id="emailInput" type="email" name="email" required>
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Palavra-passe</label>
+                    <input class="input-form" type="password" name="password" required>
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                    <span class="text-danger"></span>
+                </div>
+                <div id="submit" class="form-group">
+                    <button type="submit" class="confirmationButton">Iniciar Sessão</button>
+                </div>
+            </form>
+        </div>
     </div>
 
 

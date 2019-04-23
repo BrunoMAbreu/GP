@@ -1,4 +1,3 @@
-'use strict';
 const connectMongoDB = require("./src/model/db/mongoConfig.js").connectMongoDB;
 const mongoDBConfig = require("./src/model/db/mongoConfig.js").mongoDBConfig;
 const passport = require("passport");
@@ -67,20 +66,17 @@ const routes = require("./src/routes/api.js");
 const session = require("express-session");
 var cookieParser = require('cookie-parser');
 const path = require("path");
-//const MongoStore = require("connect-mongo")(session);
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 
-//const User = require('../models/users');
+
 let app = express();
-
-
-
-app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(session({
     secret: 'mybrainhurts',
     resave: false,
@@ -91,14 +87,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-
-
-////////////////////////////////
-app.use(express.static(path.join(__dirname, "public")));
-//app.use(express.static('public'));
-
-//kubernetes
-//index
+//kubernetes index
 app.get('/healthz', function (req, res) {
     res.send('ok');
 });

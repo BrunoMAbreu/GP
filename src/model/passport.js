@@ -22,11 +22,16 @@ module.exports = function (passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+        done(null, user._id);
     });
 
     // used to deserialize the user
     passport.deserializeUser(function (id, done) {
+        
+        // APAGAR
+        console.log("passport.deserializeUser: " + id);
+
+
         const User = mongoDBConfig.collections[0].model;
         //const UserCollectionIndex = User.getUserCollectionIndex();
         User.findById(id, function (err, user) {
@@ -55,21 +60,21 @@ module.exports = function (passport) {
                     return done(err);
                 }
                 if (result === -1) {
-                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                    return done(null, false, req.flash('loginMessage', 'Utilizador não registado.')); // req.flash is the way to set flashdata using connect-flash
                 }
                 // if the user is found but the password is wrong
                 if (!User.validatePassword(password, result.password)) {
-                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+                    return done(null, false, req.flash('loginMessage', 'Password inválida.')); // create the loginMessage and save it to session as flashdata
                 }
                 // all is well, return successful user
                 
-
+                /* Testes
                 const newUser = {
                     _id: "5cb9f678c254ae4e701d8d88",
                     name: "c"
                 }
                 //User.deleteUser("5cb9e6c623034322d0afe004");
-                User.updateUser(newUser);
+                User.updateUser(newUser);*/
 
 
                 return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));

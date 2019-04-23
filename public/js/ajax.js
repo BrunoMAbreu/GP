@@ -1,4 +1,4 @@
-
+'use strict';
 
 function login() {
     const formElement = document.getElementById("loginForm");

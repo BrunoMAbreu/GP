@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const router = express.Router();
 const mongoConfig = require("../model/db/mongoConfig").mongoDBConfig;
@@ -32,17 +34,32 @@ module.exports = function (app, passport) {
         failureRedirect: '/login', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
     }),
-        // Não executa o callback:
+        //  Não executa o callback:
         function (req, res) {
-            console.log(req.user); // http://www.passportjs.org/docs/authenticate/
+            //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
             console.log("hello");
-            if (req.body.remember) {
+            /*if (req.body.remember) {
                 req.session.cookie.maxAge = 1000 * 60 * 3;
             } else {
                 req.session.cookie.expires = false;
             }
-            res.redirect('/');
-        });
+            res.redirect('/');*/
+        }
+    );
+
+    // Access the session as req.session
+    app.get('/', function(req, res, next) {
+    if (req.session.views) {
+      req.session.views++
+      res.setHeader('Content-Type', 'text/html')
+      res.write('<p>views: ' + req.session.views + '</p>')
+      res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>')
+      res.end()
+    } else {
+      req.session.views = 1
+      res.end('welcome to the session demo. refresh!')
+    }
+  })
 }
 
 
