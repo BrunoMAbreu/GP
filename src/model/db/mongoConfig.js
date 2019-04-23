@@ -1,5 +1,3 @@
-'use strict';
-
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
@@ -53,18 +51,18 @@ let createUserCollection = function () {
         if (element.name === usersCollectionName) {
             element.schema = userSchema;
             element.schema.plugin(passportLocalMongoose);
-            element.schema.pre('save', function (next) {
+             element.schema.pre('save', function (next) {
                 let user = this;
                 if (!user.isModified('password')) {
                     return next();
                 }
-                bcrypt.genSalt(element.saltRounds, function (err, salt) {
+               bcrypt.genSalt(element.saltRounds, function (err, salt) {
                     bcrypt.hash(user.password, salt, null, function (err, hash) {
                         user.password = hash;
                         next();
-                    });
-                });
-            });
+                    });    
+                });       
+            });     
             element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
             element.schema.statics.getUserByEmail = getUserByEmail;

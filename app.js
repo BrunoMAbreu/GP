@@ -1,5 +1,3 @@
-'use strict';
-
 const connectMongoDB = require("./src/model/db/mongoConfig.js").connectMongoDB;
 const mongoDBConfig = require("./src/model/db/mongoConfig.js").mongoDBConfig;
 const passport = require("passport");

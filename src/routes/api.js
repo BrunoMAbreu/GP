@@ -34,17 +34,18 @@ module.exports = function (app, passport) {
         failureRedirect: '/login', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
     }),
-        // Não executa o callback:
+        //  Não executa o callback:
         function (req, res) {
             //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
             console.log("hello");
-            if (req.body.remember) {
+            /*if (req.body.remember) {
                 req.session.cookie.maxAge = 1000 * 60 * 3;
             } else {
                 req.session.cookie.expires = false;
             }
-            res.redirect('/');
-        });
+            res.redirect('/');*/
+        }
+    );
 
     // Access the session as req.session
     app.get('/', function(req, res, next) {

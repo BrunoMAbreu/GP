@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
     user_id: {
         type: "number",
