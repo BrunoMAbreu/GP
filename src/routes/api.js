@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoConfig = require("../model/db/mongoConfig").mongoDBConfig;
+const path = require("path");
 
 
 //const auth = require("../controller/authController.js");
@@ -100,20 +101,21 @@ module.exports = function (app, passport) {
 
 	
 
-	// process the signup form
+    // process the signup form
+    /*
 	app.post('/signup', passport.authenticate('local-signup', {
 		successRedirect : '/profile', // redirect to the secure profile section
 		failureRedirect : '/signup', // redirect back to the signup page if there is an error
 		failureFlash : true // allow flash messages
     }));
-    
+    */
 
 
     
 
     // Must be last route
     app.get('*', function(req, res){
-        res.status(404).redirect("../../404.html");
+        res.status(404).sendFile(path.join(__dirname, "..", "..", "public", "404.html"));
     });
 }
 
