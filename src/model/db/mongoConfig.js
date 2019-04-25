@@ -26,6 +26,9 @@ let mongoDBFunctions = {
  * Connects to mongoDB; stores the connection in mongoDBConfig.connection
  */
 let connectMongoDB = function (cb) {
+
+    console.log(mongoDBConfig.url)
+
     const mongoDB = mongoDBConfig.url + mongoDBConfig.name;
     Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
     mongoDBConfig.connection = Mongoose.connection;
