@@ -27,14 +27,16 @@ let mongoDBFunctions = {
  */
 let connectMongoDB = function (cb) {
     const mongoDB = mongoDBConfig.url + mongoDBConfig.name;
-    Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
+    Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, autoIndex: true });
     mongoDBConfig.connection = Mongoose.connection;
     mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
     mongoDBConfig.connection.once('open', function () {
         console.log("Connection to mongodb established");
 
         // PAra testar; APAGAR -------------------------------
-        insertUser("a", "a", "a", "1234654651", "worker", new Date());
+        insertUser("a", "a@a", "a", "1234654651", "worker", new Date(), function (res) {
+            //console.log("__res: ", res)
+        });
 
         cb();
     });
@@ -51,20 +53,21 @@ let createUserCollection = function () {
         if (element.name === usersCollectionName) {
             element.schema = userSchema;
             element.schema.plugin(passportLocalMongoose);
-             element.schema.pre('save', function (next) {
+            element.schema.pre('save', function (next) {
                 let user = this;
                 if (!user.isModified('password')) {
                     return next();
                 }
-               bcrypt.genSalt(element.saltRounds, function (err, salt) {
+                bcrypt.genSalt(element.saltRounds, function (err, salt) {
                     bcrypt.hash(user.password, salt, null, function (err, hash) {
                         user.password = hash;
                         next();
-                    });    
-                });       
-            });     
+                    });
+                });
+            });
             element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
+            element.schema.statics.insertUser = insertUser;
             element.schema.statics.getUserByEmail = getUserByEmail;
             element.schema.statics.getUserById = getUserById;
             element.schema.statics.updateUser = updateUser;
@@ -84,7 +87,7 @@ let createUserCollection = function () {
  * @param {*} profile User profile (ie, worker or volunteer)
  * @param {*} birthDate User birth date
  */
-let insertUser = function (name, email, password, phone, profile, birthDate) {
+let insertUser = function (name, email, password, phone, profile, birthDate, callback) {
     let index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
@@ -92,16 +95,17 @@ let insertUser = function (name, email, password, phone, profile, birthDate) {
     mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
         const newUser = {
             user_id: ((result === null) ? 1 : ++result.user_id),
-            name: name,
+            username: name,
             email: email,
-            password: password, //encryptPassword(password),
+            password: password,
             phone: phone,
-            profile: profile,
+            profile: profile.toLowerCase(),
             birthDate: birthDate
         }
         // Insert
-        mongoDBConfig.collections[0].model.create(newUser, (err, res) => {
+        mongoDBConfig.collections[0].model.create(newUser, function (err, res) {
             if (err) return console.error("error: " + err);
+            callback(res);
         });
     });
 }
@@ -146,14 +150,14 @@ let getUserById = function (id, callback) {
  * UPDATE:updates user data
  * @param {*} newUserData Object with proprieties to be changed (_id required and immutable). eg, {_id:"...", name:"Ana"}
  */
-let updateUser = function(newUserData){
+let updateUser = function (newUserData) {
     const index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findOneAndUpdate({_id: newUserData._id}, newUserData, function (err, data) {
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, function (err, data) {
         if (err) console.log(err);
-        
+
         console.log("let updateUser: " + data) //  substituir Output por outro tipo de validação?
         //  eg, if(data.deletedCount ===1)...
     });

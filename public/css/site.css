@@ -257,33 +257,34 @@ footer {
     }
 }
 
-#login {
+#login, #register {
     margin: 0 auto;
     width: 500px;
 }
 
-#login h1 {
+#login h1, #register h1 {
     text-align: center;
     padding-top: 40px;
     padding-bottom: 20px
 }
 
-#login div {
+#login div, #register div {
     margin: 20px 0 15px 0;
     width: 100%;
 }
 
-#login label {
+#login label, #register label {
+    color: rgb(0, 92, 86);
     display: inline-block;
-    margin: 0;
-    width: 110px;
-    text-align: right
+    margin: 2em 0 0 0;
+    width: 200px;
+    text-align: left;
+    font-weight: bold;
 }
 
-#login input[type="text"], #login input[type="password"] {
+.input-form {
     height: 30px;
     margin: 0;
-    width: calc(390px - 5px);
     background: transparent;
     border: none;
     border-bottom: 1px solid #000000;
@@ -295,8 +296,8 @@ footer {
     padding-top: 20px;
 }
 
-#login input[type="submit"], #login button {
-    color: black;
+#login input[type="submit"], #login button, #register input[type="submit"], #register button {
+    color: white;
     margin: 0 auto;
     height: 40px;
     width: 160px;
