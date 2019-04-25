@@ -3,9 +3,10 @@ module.exports = {
         type: "number",
         min: 1,
         unique: true,
-        required: true
+        required: true,
+        index: true
     },
-    name: {
+    username: {
         type: "string",
         trim: true,
         required: true
@@ -14,7 +15,8 @@ module.exports = {
         type: "string",
         trim: true,
         unique: true,
-        required: true
+        required: true,
+        index: true
     },
     password: {
         type: "string",
@@ -28,6 +30,7 @@ module.exports = {
     },
     profile: {
         type: "string",
+        trim: true,
         enum: [
             "volunteer",
             "worker"

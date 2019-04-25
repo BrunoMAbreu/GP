@@ -26,18 +26,17 @@ let mongoDBFunctions = {
  * Connects to mongoDB; stores the connection in mongoDBConfig.connection
  */
 let connectMongoDB = function (cb) {
-
-    console.log(mongoDBConfig.url)
-
     const mongoDB = mongoDBConfig.url + mongoDBConfig.name;
-    Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
+    Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, autoIndex: true });
     mongoDBConfig.connection = Mongoose.connection;
     mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
     mongoDBConfig.connection.once('open', function () {
         console.log("Connection to mongodb established");
 
         // PAra testar; APAGAR -------------------------------
-        insertUser("a", "a", "a", "1234654651", "worker", new Date());
+        insertUser("a", "a", "a", "1234654651", "worker", new Date(), function (res) {
+            //console.log("__res: ", res)
+        });
 
         cb();
     });
@@ -54,18 +53,18 @@ let createUserCollection = function () {
         if (element.name === usersCollectionName) {
             element.schema = userSchema;
             element.schema.plugin(passportLocalMongoose);
-             element.schema.pre('save', function (next) {
+            element.schema.pre('save', function (next) {
                 let user = this;
                 if (!user.isModified('password')) {
                     return next();
                 }
-               bcrypt.genSalt(element.saltRounds, function (err, salt) {
+                bcrypt.genSalt(element.saltRounds, function (err, salt) {
                     bcrypt.hash(user.password, salt, null, function (err, hash) {
                         user.password = hash;
                         next();
-                    });    
-                });       
-            });     
+                    });
+                });
+            });
             element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
             element.schema.statics.insertUser = insertUser;
@@ -74,6 +73,8 @@ let createUserCollection = function () {
             element.schema.statics.updateUser = updateUser;
             element.schema.statics.deleteUser = deleteUser;
             element.model = Mongoose.model('userModel', userSchema);
+            //element.model.collection.dropIndex("username_1");
+            console.log(element.schema.indexes());
         }
     })
 }
@@ -96,15 +97,21 @@ let insertUser = function (name, email, password, phone, profile, birthDate, cal
     mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
         const newUser = {
             user_id: ((result === null) ? 1 : ++result.user_id),
-            name: name,
+            username: name,
             email: email,
-            password: password, //encryptPassword(password),
+            password: password,
             phone: phone,
-            profile: profile,
+            profile: profile.toLowerCase(),
             birthDate: birthDate
         }
+
+        console.log("newUser: ", newUser)
+
         // Insert
-        mongoDBConfig.collections[0].model.create(newUser, (err, res) => {
+        mongoDBConfig.collections[0].model.create(newUser, function (err, res) {
+
+            console.log("__res: ", res)
+
             if (err) return console.error("error: " + err);
             callback(res);
         });
@@ -125,6 +132,9 @@ let getUserByEmail = function (email, callback) {
     }
     mongoDBConfig.collections[index].model.findOne({ email: email }).exec((err, result) => {
         if (err) console.log(err);
+        console.log("email: " + email)
+        console.log("result: " + result)
+
         callback(err, result);
     });
 }
@@ -151,14 +161,14 @@ let getUserById = function (id, callback) {
  * UPDATE:updates user data
  * @param {*} newUserData Object with proprieties to be changed (_id required and immutable). eg, {_id:"...", name:"Ana"}
  */
-let updateUser = function(newUserData){
+let updateUser = function (newUserData) {
     const index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findOneAndUpdate({_id: newUserData._id}, newUserData, function (err, data) {
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, function (err, data) {
         if (err) console.log(err);
-        
+
         console.log("let updateUser: " + data) //  substituir Output por outro tipo de validação?
         //  eg, if(data.deletedCount ===1)...
     });

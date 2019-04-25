@@ -28,32 +28,42 @@ module.exports = function (passport) {
         'local-register',
         new LocalStrategy({
             // by default, local strategy uses username and password, we will override with email
-            usernameField : 'email',
-            passwordField : 'password',
-            passReqToCallback : true // allows us to pass back the entire request to the callback
+            usernameField: 'email',
+            passwordField: 'password',
+            passReqToCallback: true // allows us to pass back the entire request to the callback
         },
-        function(req, email, password, userName, profile, phoneNumber, birthDate, done) {
-            // find a user whose email is the same as the forms email
-            // we are checking to see if the user trying to login already exists
-            const User = mongoDBConfig.collections[0].model;
-            User.getUserByEmail(email, function (err, result) {
-                if (err) {
-                    return done(err);
-                }
-                if (result !== -1) {
-                    return done(null, false, req.flash('registerMessage', 'Utilizador já está registado.'));
-                }
-                // if the user doesn't already exist in the db
-                User.insertUser(userName, email, password, phoneNumber, profile, birthDate, function(result){
+            function (req, email, password, done) {
+                // find a user whose email is the same as the forms email
+                // we are checking to see if the user trying to login already exists
+                const User = mongoDBConfig.collections[0].model;
+                User.getUserByEmail(email, function (err, result) {
+                    if (err) {
+                        console.log(0000000000)
+                        return done(err);
+                    }
+                    if (result === -1) {
+                        console.log(33333333333)
+                        return done(null, false, req.flash('registerMessage', 'Colecção não existe.'));
+                    }
+                    if (result === null) {
+                        console.log(1111111111)
+                        //(name, email, password, phone, profile, birthDate, callback)
+                        // if the user doesn't already exist in the db
+                        User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.profile, req.body.birthDate, function (result) {
+                            console.log(22222222222)
+                            console.log("passport.use('local-register'" + result);
 
-                    console.log("passport.use('local-register'" + result);
+                            return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
+                        })
 
-                    return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
-                })
-            });
-        })
+                    }
+
+
+
+                });
+            })
     );
-    
+
     // =========================================================================
     // LOCAL LOGIN =============================================================
     // =========================================================================
@@ -81,7 +91,7 @@ module.exports = function (passport) {
                     return done(null, false, req.flash('loginMessage', 'Password inválida.')); // create the loginMessage and save it to session as flashdata
                 }
                 // all is well, return successful user
-                
+
                 /* Testes
                 const newUser = {
                     _id: "5cb9f678c254ae4e701d8d88",
