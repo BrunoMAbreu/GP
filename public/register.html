@@ -22,11 +22,11 @@
         <img src="./images/nome.png" height="100" alt="Nome" />
     </div>
     <div>
-        <a class="menu_login" href="/login.html">Iniciar Sessão</a>
+        <a class="menu_login" href="/login">Iniciar Sessão</a>
     </div>
     <div>
         <ul class="menu_bar">
-            <li class="menu_element"><a href="index.html">Início</a></li>
+            <li class="menu_element"><a href="/index">Início</a></li>
             <li class="menu_element"><a href="">Animais</a></li>
             <li class="menu_element"><a href="">Voluntariado</a></li>
             <li class="menu_element"><a href="">Sobre nós</a></li>
@@ -34,56 +34,66 @@
     </div>
     <div id="register">
         <h1>Registar</h1>
-        
-            <form method="post">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input class="input-form" type="email" />
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <span class="text-danger"></span>
-                </div>
 
-                <div class="form-group">
-                    <label>Número de telemóvel</label>
-                    <input class="input-form" />
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <span class="text-danger"></span>
-                </div>
+        <form method="post" action="/register">
+            <div class="form-group">
+                <label>Email</label>
+                <input class="input-form" type="email" name="email" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <span class="text-danger"></span>
+            </div>
 
-                <div class="form-group">
-                    <label>Nome</label>
-                    <input class="input-form" type="text" />
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label>Data de Nascimento</label>
-                    <input class="input-form"  type="date" />
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input class="input-form"  type="text" />
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label>Confirmar Password</label>
-                    <input class="input-form"  type="text" />
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="confirmationButton">Registar</button>
-                </div>
-            </form>
+            <div class="form-group">
+                <label>Número de telemóvel</label>
+                <input class="input-form" name="phoneNumber" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Nome</label>
+                <input class="input-form" type="text" name="userName" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Data de Nascimento</label>
+                <input class="input-form" type="date" name="birthDate" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Perfil</label>
+                <select class="input-form" name="profile" required>
+                    <option value="volunteer" selected>Voluntário</option>
+                    <option value="worker">Trabalhador</option>
+                </select>
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input class="input-form" type="text" name="password" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Confirmar Password</label>
+                <input class="input-form" type="text" name="confirmedPassword" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="confirmationButton">Registar</button>
+            </div>
+        </form>
     </div>
 
 

@@ -65,6 +65,7 @@ let createUserCollection = function () {
             });     
             element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
+            element.schema.statics.insertUser = insertUser;
             element.schema.statics.getUserByEmail = getUserByEmail;
             element.schema.statics.getUserById = getUserById;
             element.schema.statics.updateUser = updateUser;
@@ -84,7 +85,7 @@ let createUserCollection = function () {
  * @param {*} profile User profile (ie, worker or volunteer)
  * @param {*} birthDate User birth date
  */
-let insertUser = function (name, email, password, phone, profile, birthDate) {
+let insertUser = function (name, email, password, phone, profile, birthDate, callback) {
     let index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
@@ -102,6 +103,7 @@ let insertUser = function (name, email, password, phone, profile, birthDate) {
         // Insert
         mongoDBConfig.collections[0].model.create(newUser, (err, res) => {
             if (err) return console.error("error: " + err);
+            callback(res);
         });
     });
 }

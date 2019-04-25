@@ -1,17 +1,9 @@
-// config/passport.js
-
-// load all the things we need
 const LocalStrategy = require('passport-local').Strategy;
 const mongoDBConfig = require("./db/mongoConfig.js").mongoDBConfig;
-// load up the user model
-//var mysql = require('mysql');
 const bcrypt = require('bcrypt-nodejs');
-//const dbconfig = require('./database');
 const connection = mongoDBConfig.connection;
-//const connection = mysql.createConnection(dbconfig.connection);
 
-//connection.query('USE ' + dbconfig.database);
-// expose this function to our app using module.exports
+
 module.exports = function (passport) {
 
     // =========================================================================
@@ -24,22 +16,44 @@ module.exports = function (passport) {
     passport.serializeUser(function (user, done) {
         done(null, user._id);
     });
-
     // used to deserialize the user
     passport.deserializeUser(function (id, done) {
-        
-        // APAGAR
-        console.log("passport.deserializeUser: " + id);
-
-
         const User = mongoDBConfig.collections[0].model;
-        //const UserCollectionIndex = User.getUserCollectionIndex();
         User.findById(id, function (err, user) {
             done(err, user);
         });
     });
 
+    passport.use(
+        'local-register',
+        new LocalStrategy({
+            // by default, local strategy uses username and password, we will override with email
+            usernameField : 'email',
+            passwordField : 'password',
+            passReqToCallback : true // allows us to pass back the entire request to the callback
+        },
+        function(req, email, password, userName, profile, phoneNumber, birthDate, done) {
+            // find a user whose email is the same as the forms email
+            // we are checking to see if the user trying to login already exists
+            const User = mongoDBConfig.collections[0].model;
+            User.getUserByEmail(email, function (err, result) {
+                if (err) {
+                    return done(err);
+                }
+                if (result !== -1) {
+                    return done(null, false, req.flash('registerMessage', 'Utilizador já está registado.'));
+                }
+                // if the user doesn't already exist in the db
+                User.insertUser(userName, email, password, phoneNumber, profile, birthDate, function(result){
 
+                    console.log("passport.use('local-register'" + result);
+
+                    return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
+                })
+            });
+        })
+    );
+    
     // =========================================================================
     // LOCAL LOGIN =============================================================
     // =========================================================================

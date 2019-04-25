@@ -26,6 +26,21 @@ router.post('/login', auth.doLogin);
 router.get('/logout', auth.logout);
 */
 module.exports = function (app, passport) {
+    
+    app.get('/', function(req, res) {
+		res.redirect("../../index.html");
+    });
+    app.get('/index', function(req, res) {
+        console.log(req.session);
+		res.redirect("../../index.html");
+	});
+    app.get('/login', function(req, res) {
+		res.redirect("../../login.html");
+	});
+    app.get('/register', function(req, res) {
+		res.redirect("../../register.html");
+	});
+    // Login
     app.post('/login', passport.authenticate('local-login', {
         successRedirect: '/',
         successFlash: true,
@@ -45,8 +60,30 @@ module.exports = function (app, passport) {
             res.redirect('/');*/
         }
     );
+    // User Register
+    app.post('/register', passport.authenticate('local-register', {
+        successRedirect: '/',
+        successFlash: true,
+        //successRedirect : '/profile', // redirect to the secure profile section
+        failureRedirect: '/register', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
+    }),
+        //  Não executa o callback:
+        function (req, res) {
+            //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
+            console.log("hello");
+            /*if (req.body.remember) {
+                req.session.cookie.maxAge = 1000 * 60 * 3;
+            } else {
+                req.session.cookie.expires = false;
+            }
+            res.redirect('/');*/
+        }
+    );
+
 
     // Access the session as req.session
+    /*
     app.get('/', function(req, res, next) {
         if (req.session.views) {
             req.session.views++
@@ -58,12 +95,26 @@ module.exports = function (app, passport) {
             req.session.views = 1
             res.end('welcome to the session demo. refresh!')
         }
-    })
+    })*/
 
-  // Must be last route
-  app.get('*', function(req, res){
-        res.redirect(404, "/404.html");
-  });
+
+	
+
+	// process the signup form
+	app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect : '/profile', // redirect to the secure profile section
+		failureRedirect : '/signup', // redirect back to the signup page if there is an error
+		failureFlash : true // allow flash messages
+    }));
+    
+
+
+    
+
+    // Must be last route
+    app.get('*', function(req, res){
+        res.status(404).redirect("../../404.html");
+    });
 }
 
 
