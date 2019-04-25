@@ -34,7 +34,7 @@ let connectMongoDB = function (cb) {
         console.log("Connection to mongodb established");
 
         // PAra testar; APAGAR -------------------------------
-        insertUser("a", "a", "a", "1234654651", "worker", new Date(), function (res) {
+        insertUser("a", "a@a", "a", "1234654651", "worker", new Date(), function (res) {
             //console.log("__res: ", res)
         });
 
@@ -73,8 +73,6 @@ let createUserCollection = function () {
             element.schema.statics.updateUser = updateUser;
             element.schema.statics.deleteUser = deleteUser;
             element.model = Mongoose.model('userModel', userSchema);
-            //element.model.collection.dropIndex("username_1");
-            console.log(element.schema.indexes());
         }
     })
 }
@@ -104,14 +102,8 @@ let insertUser = function (name, email, password, phone, profile, birthDate, cal
             profile: profile.toLowerCase(),
             birthDate: birthDate
         }
-
-        console.log("newUser: ", newUser)
-
         // Insert
         mongoDBConfig.collections[0].model.create(newUser, function (err, res) {
-
-            console.log("__res: ", res)
-
             if (err) return console.error("error: " + err);
             callback(res);
         });
@@ -132,9 +124,6 @@ let getUserByEmail = function (email, callback) {
     }
     mongoDBConfig.collections[index].model.findOne({ email: email }).exec((err, result) => {
         if (err) console.log(err);
-        console.log("email: " + email)
-        console.log("result: " + result)
-
         callback(err, result);
     });
 }

@@ -38,21 +38,15 @@ module.exports = function (passport) {
                 const User = mongoDBConfig.collections[0].model;
                 User.getUserByEmail(email, function (err, result) {
                     if (err) {
-                        console.log(0000000000)
                         return done(err);
                     }
                     if (result === -1) {
-                        console.log(33333333333)
                         return done(null, false, req.flash('registerMessage', 'Colecção não existe.'));
                     }
                     if (result === null) {
-                        console.log(1111111111)
                         //(name, email, password, phone, profile, birthDate, callback)
                         // if the user doesn't already exist in the db
                         User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.profile, req.body.birthDate, function (result) {
-                            console.log(22222222222)
-                            console.log("passport.use('local-register'" + result);
-
                             return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
                         })
 
