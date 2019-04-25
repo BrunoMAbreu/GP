@@ -13,7 +13,7 @@ describe("HTTP server", function () {
         //testSampleClass.init('mydb', done);
         setTimeout(function () {
             done();
-        }, 500);
+        }, 700);
     });
     it('Main page status 200: OK', function (done) {
         chai
