@@ -14,12 +14,14 @@ module.exports = function (passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
-        done(null, user._id);
+        const sessionUser = { _id: user._id, userid: user.user_id ,username: user.username, email: user.email, phone: user.phone, profile: user.profile };
+        done(null, sessionUser);
+        //done(null, user._id); //versão anterior
     });
     // used to deserialize the user
-    passport.deserializeUser(function (id, done) {
+    passport.deserializeUser(function (sessionUser, done) {
         const User = mongoDBConfig.collections[0].model;
-        User.findById(id, function (err, user) {
+        User.findById(sessionUser._id, function (err, user) {
             done(err, user);
         });
     });
@@ -47,6 +49,9 @@ module.exports = function (passport) {
                         //(name, email, password, phone, profile, birthDate, callback)
                         // if the user doesn't already exist in the db
                         User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.profile, req.body.birthDate, function (result) {
+                            
+                            console.log("passport.use('local-register' >> req.session: ", req.session);
+                            
                             return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
                         })
 
@@ -72,12 +77,15 @@ module.exports = function (passport) {
             passwordField: 'password',
             passReqToCallback: true // allows us to pass back the entire request to the callback
         }, function (req, email, password, done) { // callback with email and password from our form
+
+            //console.log("111 passport.use('local-login' >> req.session: ", req.session);
+
             const User = mongoDBConfig.collections[0].model;
             User.getUserByEmail(email, function (err, result) {
                 if (err) {
                     return done(err);
                 }
-                if (result === -1) {
+                if (result === null || result === -1) {
                     return done(null, false, req.flash('loginMessage', 'Utilizador não registado.')); // req.flash is the way to set flashdata using connect-flash
                 }
                 // if the user is found but the password is wrong
@@ -94,7 +102,7 @@ module.exports = function (passport) {
                 //User.deleteUser("5cb9e6c623034322d0afe004");
                 User.updateUser(newUser);*/
 
-
+                console.log("222 passport.use('local-login' >> req.session: ", req.session);
                 return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
             });
         })

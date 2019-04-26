@@ -33,7 +33,8 @@ module.exports = {
         trim: true,
         enum: [
             "volunteer",
-            "worker"
+            "worker",
+            "administrator"
         ],
         required: true
     },
