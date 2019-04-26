@@ -51,6 +51,9 @@ module.exports = function (app, passport) {
     }),
         //  Não executa o callback:
         function (req, res) {
+
+            console.log("/login callback res: ", res);
+
             //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
             console.log("hello");
             /*if (req.body.remember) {
@@ -97,18 +100,6 @@ module.exports = function (app, passport) {
             res.end('welcome to the session demo. refresh!')
         }
     })*/
-
-
-	
-
-    // process the signup form
-    /*
-	app.post('/signup', passport.authenticate('local-signup', {
-		successRedirect : '/profile', // redirect to the secure profile section
-		failureRedirect : '/signup', // redirect back to the signup page if there is an error
-		failureFlash : true // allow flash messages
-    }));
-    */
 
 
     
@@ -208,3 +199,14 @@ router.get('*', function (req, res) {
 
 module.exports = router;
 */
+
+// route middleware to make sure
+function isLoggedIn(req, res, next) {
+
+	// if user is authenticated in the session, carry on
+	if (req.isAuthenticated())
+		return next();
+
+	// if they aren't redirect them to the home page
+	res.redirect('/');
+}

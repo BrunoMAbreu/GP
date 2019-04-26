@@ -1,0 +1,16 @@
+'use strict';
+console.log("running 00_entry.point.js");
+
+require("../app.js");
+
+describe("", function () {
+    this.timeout(5000);
+    before(function (done) {
+        setTimeout(function () {
+            done();
+        }, 2000);
+    });
+    it('', function (done) {
+        done();
+    });
+});

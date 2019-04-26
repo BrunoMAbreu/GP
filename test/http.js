@@ -9,12 +9,6 @@ const should = chai.should();
 const url = "http://localhost:8080";
 
 describe("HTTP server", function () {
-    beforeEach(function (done) {
-        //testSampleClass.init('mydb', done);
-        setTimeout(function () {
-            done();
-        }, 500);
-    });
     it('Main page status 200: OK', function (done) {
         chai
             .request(url)
@@ -67,27 +61,25 @@ describe("HTTP server", function () {
                 }
             });
     });
-    describe('POST /login', function() {
-        it('it should POST a user login', function (done) {
-            // Must use email + password of existing user in db
-            const user = {
-                email: "a",
-                password: "a"
-            }
-            chai
-                .request(url)
-                .post('/login')
-                .send(user)
-                .end(function (error, response, body) {
-                    if (error) {
-                        done(error);
-                    } else {
-                        chai.expect(response.statusCode).to.equal(200);
-                        done();
-                    }
-                });
-        });
+    it('It should fail gracefully, with a redirect', function (done) {
+        const user = {
+            email: "wrong",
+            password: "wrong"
+        }
+        chai
+            .request(url)
+            .post('/login')
+            .send(user)
+            .end(function (error, response, body) {
+                if (error) {
+                    done(error);
+                } else {
+                    chai.expect(response.statusCode).to.equal(200);
+                    done();
+                }
+            });
     });
+
 
 });
 
