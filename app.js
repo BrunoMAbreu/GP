@@ -8,6 +8,9 @@ const cookieParser = require('cookie-parser');
 const path = require("path");
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
+const exphbs = require('express-handlebars');
+const helpers = require("./src/view/helpers/helpers.js");
+
 
 connectMongoDB(() => {
     const User = mongoDBConfig.collections[0].model;
@@ -72,9 +75,40 @@ connectMongoDB(() => {
     module.exports.connectMongoDB = connectMongoDB;
 });
 
-
-
+// HTTP Server
 let app = express();
+
+// Templates Engine
+
+const hbs = exphbs.create({
+    extname: 'handlebars',
+    defaultLayout: 'main',
+    layoutsDir: __dirname + '/src/view/layouts/',
+    // Specify helpers which are only registered on this instance.
+    /*helpers: {
+        isUserLogged: helpers.isUserLogged
+    }*/
+});
+
+
+app.set('views', path.join(__dirname, '/src/view/'));
+app.engine('handlebars', hbs.engine)
+//app.engine('handlebars', exphbs)
+/*app.engine('handlebars', exphbs({
+    extname: 'handlebars',
+    defaultLayout: 'main',
+    layoutsDir: __dirname + '/src/view/layouts/',
+    helpers: {
+        isUserLogged: function () {
+            console.log(12312312313212);
+            return true; //app.locals.email;
+        }
+    }
+}));*/
+
+app.set('view engine', 'handlebars');
+
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({
     extended: true
@@ -89,12 +123,6 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-//kubernetes index
-app.get('/healthz', function (req, res) {
-    res.send('ok');
-});
 
 
 // routes ======================================================================

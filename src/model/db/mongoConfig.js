@@ -41,7 +41,7 @@ let connectMongoDB = function (cb) {
         });*/
 
         // PAra testar; APAGAR -------------------------------
-        insertUser("a", "a@a", "a", "1234654651", "worker", new Date(), function (res) {
+        insertUser("Anabela Carrapateira", "a@a", "a", "1234654651", "Administrator", new Date(), function (res) {
             //console.log("__res: ", res)
         });
 

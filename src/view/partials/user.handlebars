@@ -1,0 +1,14 @@
+<div>
+
+    {{#if isUserLogged.isLogged}}
+    <div style="text-align: right; margin-right: 3em">
+        <h4>{{isUserLogged.profile}}</h4>
+        <h4>{{isUserLogged.username}}</h4>
+    </div>
+    {{else}}
+
+    <a class="menu_login" href="/register">Registar</a>
+    <a class="menu_login" href="/login">Iniciar Sessão</a>
+
+    {{/if}}
+</div>

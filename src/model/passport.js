@@ -102,7 +102,7 @@ module.exports = function (passport) {
                 //User.deleteUser("5cb9e6c623034322d0afe004");
                 User.updateUser(newUser);*/
 
-                console.log("222 passport.use('local-login' >> req.session: ", req.session);
+                //console.log("222 passport.use('local-login' >> req.session: ", req.session);
                 return done(null, result, req.flash('loginMessage', 'Bem vindo!.'));
             });
         })
