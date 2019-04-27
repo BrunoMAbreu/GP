@@ -35,13 +35,13 @@ module.exports = function (app, passport) {
 
     /////////// Handlebar
     app.get('/', function (req, res) {
-        res.render('home', {description: "Home page"});
+        res.render('home', { description: "Home page", isUserLogged: isUserLogged(req, res) });
     });
     app.get('/login', function (req, res) {
-        res.render('login', {description: "Login"});
+        res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res) });
     });
     app.get('/register', function (req, res) {
-        res.render('register', {description: "Register"});
+        res.render('register', { description: "Register", isUserLogged: isUserLogged(req, res) });
     });
 
     // Login
@@ -114,6 +114,24 @@ module.exports = function (app, passport) {
             description: "404 - Page not found"
         });
     });
+
+
+    function isUserLogged(req, res) {
+
+        //console.log(" req.user: ",  req.user)
+
+        if(req.user){
+            //console.log("app.locals.passport.user.name: ", app.locals.passport.user.name)
+            return {
+                isLogged: true,
+                username: req.user.username,
+                profile: req.user.profile
+            }
+        }
+
+        //console.log("app.locals.passport.email: ", app.locals.passport.user)
+        return { isLogged: false}
+    }
 }
 
 
@@ -216,3 +234,4 @@ function isLoggedIn(req, res, next) {
     // if they aren't redirect them to the home page
     res.redirect('/');
 }
+
