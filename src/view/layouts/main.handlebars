@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Quinta do Mião</title>
@@ -13,14 +14,16 @@
     <link rel="stylesheet" type="text/css" href="./css/tooltip.css">
     <!--<script type="text/javascript" src="./js/ajax.js"></script>-->
 </head>
+
 <body>
     <div>
-       
-
-        <div>
-            <a class="menu_login" href="/register">Registar</a>
-            <a class="menu_login" href="/login">Iniciar Sessão</a>
+        <div id="logo">
+            <img src="./images/Logo.png" width="100" alt="Logo" />
+            <img src="./images/nome.png" height="100" alt="Nome" />
         </div>
+
+        {{> user}}
+
     </div>
     <div>
         <ul class="menu_bar">
@@ -49,4 +52,5 @@
         </footer>
     </div>
 </body>
+
 </html>
