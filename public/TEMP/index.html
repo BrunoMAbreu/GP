@@ -1,0 +1,87 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Quinta do Mião</title>
+    <meta name="description" content="Home page">
+    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="./css/carousel.css">
+    <link rel="stylesheet" href="./css/input.css">
+    <link rel="stylesheet" href="./css/site.css">
+    <link rel="stylesheet" href="./css/site.min.css">
+    <link rel="stylesheet" href="./css/text.css">
+    <link rel="stylesheet" href="./css/tooltip.css">
+        <!--<script type="text/javascript" src="./js/ajax.js"></script>-->
+</head>
+
+<body>
+    <div>
+        <div id="logo">
+            <img src="./images/Logo.png" width="100" alt="Logo" />
+            <img src="./images/nome.png" height="100" alt="Nome" />
+        </div>
+        <div>
+            <a class="menu_login" href="/register">Registar</a>
+            <a class="menu_login" href="/login">Iniciar Sessão</a>
+        </div>
+    </div>
+    <div>
+        <ul class="menu_bar">
+            <li class="menu_element" id="selected">Início</li>
+            <li class="menu_element"><a href="/a">Animais</a></li>
+            <li class="menu_element"><a href="">Voluntariado</a></li>
+            <li class="menu_element"><a href="">Operações</a></li>
+            <li class="menu_element"><a href="">Sobre nós</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <div class="carousel">
+            <input type="radio" id="carousel-1" name="carousel[]" checked>
+            <input type="radio" id="carousel-2" name="carousel[]">
+            <input type="radio" id="carousel-3" name="carousel[]">
+            <input type="radio" id="carousel-4" name="carousel[]">
+            <input type="radio" id="carousel-5" name="carousel[]">
+            <ul class="carousel__items">
+                <li class="carousel__item">
+                    <img alt="Voluntariado" src="./images/voluteering.PNG">
+                </li>
+                <li class="carousel__item">
+                    <img alt="Adote ou Apadrinhe" src="./images/catAndDog.jpg">
+                </li>
+                <li class="carousel__item">
+                    <img alt="Sobre Nós" src="./images/about.png">
+                </li>
+            </ul>
+            <div class="carousel__prev">
+                <label for="carousel-1"></label>
+                <label for="carousel-2"></label>
+                <label for="carousel-3"></label>
+            </div>
+            <div class="carousel__next">
+                <label for="carousel-1"></label>
+                <label for="carousel-2"></label>
+                <label for="carousel-3"></label>
+            </div>
+            <div class="carousel__nav">
+                <label for="carousel-1"></label>
+                <label for="carousel-2"></label>
+                <label for="carousel-3"></label>
+            </div>
+        </div>
+    </div>
+    <div>
+        <footer id="contactos">
+            <ul>
+                <li>Contactos</li>
+                <li><span>Telefone:</span> 212 806 700</li>
+                <li><span>Email:</span> qmiao@email.com</li>
+                <li><span>Fax:</span> 212 806 701</li>
+            </ul>
+        </footer>
+    </div>
+
+</body>
+
+</html>

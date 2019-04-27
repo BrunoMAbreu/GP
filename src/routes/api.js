@@ -27,20 +27,23 @@ router.post('/login', auth.doLogin);
 router.get('/logout', auth.logout);
 */
 module.exports = function (app, passport) {
-    
-    app.get('/', function(req, res) {
-		res.redirect("../../index.html");
+
+    //kubernetes index
+    app.get('/healthz', function (req, res) {
+        res.send('ok');
     });
-    app.get('/index', function(req, res) {
-        console.log(req.session);
-		res.redirect("../../index.html");
-	});
-    app.get('/login', function(req, res) {
-		res.redirect("../../login.html");
-	});
-    app.get('/register', function(req, res) {
-		res.redirect("../../register.html");
-	});
+
+    /////////// Handlebar
+    app.get('/', function (req, res) {
+        res.render('home', {description: "Home page"});
+    });
+    app.get('/login', function (req, res) {
+        res.render('login', {description: "Login"});
+    });
+    app.get('/register', function (req, res) {
+        res.render('register', {description: "Register"});
+    });
+
     // Login
     app.post('/login', passport.authenticate('local-login', {
         successRedirect: '/',
@@ -102,11 +105,14 @@ module.exports = function (app, passport) {
     })*/
 
 
-    
+
 
     // Must be last route
-    app.get('*', function(req, res){
-        res.status(404).sendFile(path.join(__dirname, "..", "..", "public", "404.html"));
+    app.get('*', function (req, res) {
+        res.status(404).render('404', {
+            layout: false,
+            description: "404 - Page not found"
+        });
     });
 }
 
@@ -143,30 +149,30 @@ router.post('/processLogin', function (req, res) {
 
 
     }); */
-    /*
-    mongoConfig.collections[0].model.authenticateUser(req.body.email, req.body.password, function(){
-        console.log("GREAT SUCCESS");
-    });*/
-    //console.log(userModel);
-    /*userModel.authenticateUser(req.body.email, req.body.password, function(){
-        console.log("GREAT SUCCESS");
-    });*/
-    //console.log(mongoConfig.collections[0].model);
+/*
+mongoConfig.collections[0].model.authenticateUser(req.body.email, req.body.password, function(){
+    console.log("GREAT SUCCESS");
+});*/
+//console.log(userModel);
+/*userModel.authenticateUser(req.body.email, req.body.password, function(){
+    console.log("GREAT SUCCESS");
+});*/
+//console.log(mongoConfig.collections[0].model);
 
-    //console.log(req.body.email);
-    //console.log(req.body.password);
-
-
-    //console.log(app.locals.teste);
+//console.log(req.body.email);
+//console.log(req.body.password);
 
 
-    //console.log(dbConnection);
+//console.log(app.locals.teste);
 
-    // alterar validateUser...
-    /* if (auth.validateUser(req.body.email, req.body.password)) {
-         res.redirect(__dirname + './../../public/index.html');
-         
-     } */
+
+//console.log(dbConnection);
+
+// alterar validateUser...
+/* if (auth.validateUser(req.body.email, req.body.password)) {
+     res.redirect(__dirname + './../../public/index.html');
+     
+ } */
 
 //});
 
@@ -203,10 +209,10 @@ module.exports = router;
 // route middleware to make sure
 function isLoggedIn(req, res, next) {
 
-	// if user is authenticated in the session, carry on
-	if (req.isAuthenticated())
-		return next();
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+        return next();
 
-	// if they aren't redirect them to the home page
-	res.redirect('/');
+    // if they aren't redirect them to the home page
+    res.redirect('/');
 }

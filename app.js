@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const path = require("path");
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
+const exphbs = require('express-handlebars');
 
 connectMongoDB(() => {
     const User = mongoDBConfig.collections[0].model;
@@ -72,9 +73,20 @@ connectMongoDB(() => {
     module.exports.connectMongoDB = connectMongoDB;
 });
 
-
-
+// HTTP Server
 let app = express();
+
+// Templates Engine
+app.set('views', path.join(__dirname, '/src/view/'));
+app.engine('handlebars', exphbs({
+    extname: 'handlebars',
+    defaultLayout: 'main',
+    layoutsDir: __dirname + '/src/view/layouts/',
+    partialsDir: __dirname + 'src/view/partials/'
+}));
+app.set('view engine', 'handlebars');
+
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({
     extended: true
@@ -89,12 +101,6 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-//kubernetes index
-app.get('/healthz', function (req, res) {
-    res.send('ok');
-});
 
 
 // routes ======================================================================
