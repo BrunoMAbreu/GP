@@ -2,8 +2,13 @@
 
     {{#if isUserLogged.isLogged}}
     <div style="text-align: right; margin-right: 3em">
-        <h4>{{isUserLogged.profile}}</h4>
-        <h4>{{isUserLogged.username}}</h4>
+
+        <h5 style="margin-bottom: -1em !important">{{isUserLogged.profile}}</h5>
+        <h3>{{isUserLogged.username}}</h3>
+
+        <form action="/logout">
+            <input type="submit" value="Logout" />
+        </form>
     </div>
     {{else}}
 

@@ -40,6 +40,10 @@ module.exports = function (app, passport) {
     app.get('/login', function (req, res) {
         res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res) });
     });
+    app.get('/logout', function(req, res){
+        req.logout();
+        res.redirect('/');
+      });
     app.get('/register', function (req, res) {
         res.render('register', { description: "Register", isUserLogged: isUserLogged(req, res) });
     });
@@ -67,6 +71,7 @@ module.exports = function (app, passport) {
             res.redirect('/');*/
         }
     );
+    
     // User Register
     app.post('/register', passport.authenticate('local-register', {
         successRedirect: '/',
@@ -122,10 +127,12 @@ module.exports = function (app, passport) {
 
         if(req.user){
             //console.log("app.locals.passport.user.name: ", app.locals.passport.user.name)
+
+            const userType = req.user.profile[0].toUpperCase() + req.user.profile.slice(1);
             return {
                 isLogged: true,
                 username: req.user.username,
-                profile: req.user.profile
+                profile: userType
             }
         }
 
