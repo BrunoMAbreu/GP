@@ -1,8 +1,8 @@
 <div id="login">
     <h1>Iniciar sessão</h1>
-    {{#if flashMessage.show}}
-        <div class="warning-message"><p>{{flashMessage.msg}}</p></div>
-    {{/if}}
+
+    {{> flashMsgWarning}}
+    
     <form id="loginForm" action="/login" method="POST">
         <div class="form-group">
             <label for="email">E-mail</label>
