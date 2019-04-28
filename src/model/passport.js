@@ -1,7 +1,5 @@
 const LocalStrategy = require('passport-local').Strategy;
 const mongoDBConfig = require("./db/mongoConfig.js").mongoDBConfig;
-const bcrypt = require('bcrypt-nodejs');
-const connection = mongoDBConfig.connection;
 
 
 module.exports = function (passport) {
@@ -10,7 +8,6 @@ module.exports = function (passport) {
     passport.serializeUser(function (user, done) {
         const sessionUser = { _id: user._id, userid: user.user_id ,username: user.username, email: user.email, phone: user.phone, profile: user.profile };
         done(null, sessionUser);
-        //done(null, user._id); //versão anterior
     });
     // used to deserialize the user
     passport.deserializeUser(function (sessionUser, done) {
@@ -37,23 +34,15 @@ module.exports = function (passport) {
                     if (err) {
                         return done(err);
                     } else if (result === -1) {
-                        return done(null, false, req.flash('registerMessage', 'Lamentamos, mas houve um problema com o site. Por favor, tente mais tarde.'));
+                        return done(null, false, req.flash('registerMessage', 'Lamentamos mas houve um problema com o site. Por favor, tente mais tarde.'));
                     } else if (result !== null){
                         return done(null, false, req.flash('registerMessage', 'Este endereço email já está registado.'));
                     } else {
-                        //(name, email, password, phone, profile, birthDate, callback)
                         // if the user doesn't already exist in the db
-                        User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.profile, req.body.birthDate, function (result) {
-                            
-                            //console.log("passport.use('local-register' >> req.session: ", req.session);
-                            
+                        User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.profile, req.body.birthDate, function (result) {                           
                             return done(null, result);
                         })
-
                     }
-
-
-
                 });
             })
     );
@@ -80,16 +69,6 @@ module.exports = function (passport) {
                     return done(null, false, req.flash('loginMessage', 'Password inválida.')); // create the loginMessage and save it to session as flashdata
                 }
                 // all is well, return successful user
-
-                /* Testes
-                const newUser = {
-                    _id: "5cb9f678c254ae4e701d8d88",
-                    name: "c"
-                }
-                //User.deleteUser("5cb9e6c623034322d0afe004");
-                User.updateUser(newUser);*/
-
-                //console.log("222 passport.use('local-login' >> req.session: ", req.session);
                 return done(null, result);
             });
         })
