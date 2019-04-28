@@ -1,5 +1,9 @@
 'use strict';
 
+Object.prototype.insertAfter = function (newNode) {
+    this.parentNode.insertBefore(newNode, this.nextSibling);
+}
+
 let registerForm = {
     submitButton: null,
     buttonColor: null,
@@ -9,12 +13,21 @@ let registerForm = {
 window.addEventListener("load", setRegisterForm);
 
 function setRegisterForm() {
+
     const metaTagsArray = document.getElementsByTagName('meta');
     for (let item of metaTagsArray) {
         if (item.content === "Register") {
             registerForm.submitButton = document.getElementById("submit").getElementsByTagName("BUTTON")[0];
             registerForm.buttonColor = registerForm.submitButton.style.backgroundColor;
             registerForm.passwordElement = document.getElementById("input_pw");
+
+            let imageEyePw1 = document.createElement("IMG");
+            imageEyePw1.style = "position: relative; top: -22px; right:-504px; text-align: right; height: 18px; width: 18px";
+            imageEyePw1.src = "./images/eye_cl.png";
+            let imageEyePw2 = imageEyePw1.cloneNode(true);
+            document.getElementById("span_pw").insertAfter(imageEyePw1);
+            document.getElementById("span_conf_pw").insertAfter(imageEyePw2);
+
             registerForm.confirmedPasswordElement = document.getElementById("input_conf_pw");
             registerForm.confirmedPasswordElement.onblur = pwComparison;
             registerForm.passwordElement.onblur = pwComparison;
