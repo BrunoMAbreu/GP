@@ -51,6 +51,15 @@ body {
     margin: 25px 30px;
 }
 
+.warning-message {
+    background-color: #ccc;
+    color: white !important;
+    border-radius: 4px;
+    padding: 0.5em;
+    text-align: center;
+}
+
+
 /*Wrapping element
 Set some basic padding to keep content from hitting the edges*/
 

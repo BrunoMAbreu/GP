@@ -38,14 +38,23 @@ module.exports = function (app, passport) {
         res.render('home', { description: "Home page", isUserLogged: isUserLogged(req, res) });
     });
     app.get('/login', function (req, res) {
-        res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res) });
+
+        let flashMessage = {show: false, msg: req.flash('loginMessage')[0]}
+        if (flashMessage.msg){
+            flashMessage.show = true;
+        }
+        res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage });
     });
     app.get('/logout', function(req, res){
         req.logout();
         res.redirect('/');
       });
     app.get('/register', function (req, res) {
-        res.render('register', { description: "Register", isUserLogged: isUserLogged(req, res) });
+        let flashMessage = {show: false, msg: req.flash('registerMessage')[0]}
+        if (flashMessage.msg){
+            flashMessage.show = true;
+        }
+        res.render('register', { description: "Register", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage });
     });
 
     // Login
