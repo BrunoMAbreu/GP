@@ -35,10 +35,10 @@ let connectMongoDB = function (cb) {
 
 
         // Isto APAGA a colecção "user"; Só para testes!!!!!
-        
+        /*
         Mongoose.connection.collections['users'].drop(function (err) {
             console.log('collection dropped');
-        });
+        });*/
 
         // PAra testar; APAGAR -------------------------------
         insertUser("Anabela Carrapateira", "a@a", "a", "1234654651", "Administrador", new Date(), function (res) {
