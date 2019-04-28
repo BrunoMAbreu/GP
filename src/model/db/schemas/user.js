@@ -32,9 +32,9 @@ module.exports = {
         type: "string",
         trim: true,
         enum: [
-            "volunteer",
-            "worker",
-            "administrator"
+            "voluntário",
+            "funcionário",
+            "administrador"
         ],
         required: true
     },
