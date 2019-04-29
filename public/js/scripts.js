@@ -8,7 +8,9 @@ let registerForm = {
     submitButton: null,
     buttonColor: null,
     passwordElement: null,
-    confirmedPasswordElement: null
+    confirmedPasswordElement: null,
+    pwShow: false,
+    confPwShow: false
 }
 window.addEventListener("load", setRegisterForm);
 
@@ -27,6 +29,30 @@ function setRegisterForm() {
             let imageEyePw2 = imageEyePw1.cloneNode(true);
             document.getElementById("span_pw").insertAfter(imageEyePw1);
             document.getElementById("span_conf_pw").insertAfter(imageEyePw2);
+
+            imageEyePw1.onclick = function(){
+                if(registerForm.pwShow){
+                    registerForm.pwShow = false;
+                    imageEyePw1.src = "./images/eye_cl.png";
+                    registerForm.passwordElement.type = "password";
+                } else {
+                    registerForm.pwShow = true;
+                    imageEyePw1.src = "./images/eye_op.png";
+                    registerForm.passwordElement.type = "text";
+                }
+            }
+
+            imageEyePw2.onclick = function(){
+                if(registerForm.confPwShow){
+                    registerForm.confPwShow = false;
+                    imageEyePw2.src = "./images/eye_cl.png";
+                    registerForm.confirmedPasswordElement.type = "password";
+                } else {
+                    registerForm.confPwShow = true;
+                    imageEyePw2.src = "./images/eye_op.png";
+                    registerForm.confirmedPasswordElement.type = "text";
+                }
+            }
 
             registerForm.confirmedPasswordElement = document.getElementById("input_conf_pw");
             registerForm.confirmedPasswordElement.onblur = pwComparison;
@@ -52,6 +78,9 @@ const pwComparison = function () {
         }
     }
 }
+
+
+
 
 
 /*
