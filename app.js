@@ -55,7 +55,6 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 // routes
 require('./src/routes/api.js')(app, passport); // load our routes and pass in our app and fully configured passport
 //app.use('/api', routes);

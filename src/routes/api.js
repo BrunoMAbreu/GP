@@ -89,8 +89,9 @@ module.exports = function (app, passport) {
         }
     );
 
-
-
+    
+    var animalAPI = require('./animalRoutes.js');
+    app.use('/animal', animalAPI);
 
     // Must be last route
     app.get('*', function (req, res) {

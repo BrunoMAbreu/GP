@@ -49,7 +49,7 @@ let connectMongoDB = function (cb) {
     });
     createUserCollection();
 };
-
+require('../animal.model');
 
 /**
  * Creates mongoDB collection "User"
