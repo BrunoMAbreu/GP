@@ -1,32 +1,19 @@
 'use strict';
 
-const express = require('express');
-const router = express.Router();
-const mongoConfig = require("../model/db/mongoConfig").mongoDBConfig;
-const path = require("path");
 
-
-//const auth = require("../controller/authController.js");
-/*
-// restrict index for logged in user only
-router.get('/', auth.home);
-
-// route to register page
-router.get('/register', auth.register);
-
-// route for register action
-router.post('/register', auth.doRegister);
-
-// route to login page
-router.get('/login', auth.login);
-
-// route for login action
-router.post('/login', auth.doLogin);
-
-// route for logout action
-router.get('/logout', auth.logout);
-*/
 module.exports = function (app, passport) {
+
+    // Submenu of "Operações"
+    const op_submenu = [
+        { href: "/voluntarios_sub", name: "Voluntários", type: ["Administrador", "Funcionário"] },
+        { href: "/funcionarios_sub", name: "Funcionários", type: ["Administrador"] },
+        { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
+        { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
+        { href: "/animais_sub", name: "Animais", type: ["Administrador", "Funcionário", "Voluntário"] },
+        { href: "/adopcoes_sub", name: "Adopções", type: ["Administrador", "Funcionário"] },
+        { href: "/apadrinhamentos_sub", name: "Apadrinhamentos", type: ["Administrador", "Funcionário"] },
+        { href: "/entradaESaidaAnimais_sub", name: "Entrada e Saída de Animais", type: ["Administrador", "Funcionário"] }
+    ]
 
     //kubernetes index
     app.get('/healthz', function (req, res) {
@@ -35,26 +22,26 @@ module.exports = function (app, passport) {
 
     /////////// Handlebar
     app.get('/', function (req, res) {
-        res.render('home', { description: "Home page", isUserLogged: isUserLogged(req, res) });
+        res.render('home', { description: "Home page", isUserLogged: isUserLogged(req, res), op_submenu: setOpSubmenu(req, res) });
     });
     app.get('/login', function (req, res) {
 
-        let flashMessage = {show: false, msg: req.flash('loginMessage')[0]}
-        if (flashMessage.msg){
+        let flashMessage = { show: false, msg: req.flash('loginMessage')[0] }
+        if (flashMessage.msg) {
             flashMessage.show = true;
         }
-        res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage });
+        res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res) });
     });
-    app.get('/logout', function(req, res){
+    app.get('/logout', function (req, res) {
         req.logout();
         res.redirect('/');
-      });
+    });
     app.get('/register', function (req, res) {
-        let flashMessage = {show: false, msg: req.flash('registerMessage')[0]}
-        if (flashMessage.msg){
+        let flashMessage = { show: false, msg: req.flash('registerMessage')[0] }
+        if (flashMessage.msg) {
             flashMessage.show = true;
         }
-        res.render('register', { description: "Register", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage });
+        res.render('register', { description: "Register", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res) });
     });
 
     // Login
@@ -80,7 +67,7 @@ module.exports = function (app, passport) {
             res.redirect('/');*/
         }
     );
-    
+
     // User Register
     app.post('/register', passport.authenticate('local-register', {
         successRedirect: '/',
@@ -103,22 +90,6 @@ module.exports = function (app, passport) {
     );
 
 
-    // Access the session as req.session
-    /*
-    app.get('/', function(req, res, next) {
-        if (req.session.views) {
-            req.session.views++
-            res.setHeader('Content-Type', 'text/html')
-            res.write('<p>views: ' + req.session.views + '</p>')
-            res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>')
-            res.end()
-        } else {
-            req.session.views = 1
-            res.end('welcome to the session demo. refresh!')
-        }
-    })*/
-
-
 
 
     // Must be last route
@@ -129,14 +100,8 @@ module.exports = function (app, passport) {
         });
     });
 
-
     function isUserLogged(req, res) {
-
-        //console.log(" req.user: ",  req.user)
-
-        if(req.user){
-            //console.log("app.locals.passport.user.name: ", app.locals.passport.user.name)
-
+        if (req.user) {
             const userType = req.user.profile[0].toUpperCase() + req.user.profile.slice(1);
             return {
                 isLogged: true,
@@ -144,103 +109,53 @@ module.exports = function (app, passport) {
                 profile: userType
             }
         }
+        return { isLogged: false }
+    }
 
-        //console.log("app.locals.passport.email: ", app.locals.passport.user)
-        return { isLogged: false}
+    /**
+     * Sets submenu items of "Operações"
+     * @param {*} req HTTP request
+     * @param {*} res HTTP response
+     * @returns array of objects
+     */
+    function setOpSubmenu(req, res) {
+        // If not logged in, return empty array
+        if(req.session.passport === undefined || req.session.passport.user === undefined){
+            return [];
+        }
+        const userType = req.session.passport.user.profile;
+        switch (userType) {
+            case "administrador":
+                return op_submenu;
+            case "funcionário":
+                return removeObjectFromArray(op_submenu, "Funcionário");
+            case "voluntário":
+                return removeObjectFromArray(op_submenu, "Voluntário");
+            default:
+                break;
+        }
     }
 }
 
+/**
+ * Iterates the array and removes object elements that do not have a given property
+ * @param {*} originalArray 
+ * @param {*} propertyToRemain 
+ * @returns new array
+ */
+let removeObjectFromArray = function (originalArray, propertyToRemain) {
+    //Deep Copy
+    let newArray = JSON.parse(JSON.stringify(originalArray));
 
-
-
-
-
-/*
-router.post('/processLogin', function (req, res) {
-
-    const user = new mongoConfig.collections[0].model();
-    user.authenticateUser(req.body.email, req.body.password, function (err, user) {
-        if (err) {
-            res.send('false');
-            res.end();
-        } else {
-            //req.session.user_id = 0;
-            const urlPath = "http://" + req.headers.host + "/index.html";
-            //console.log("urlPath: " + urlPath);
-
-            //console.log(user._id);
-
-            req.session.user_id = user._id;
-            //res.redirect('/protected_page');
-
-
-            // res.redirect(urlPath); // ALTERAR e VERIFICAR cookies
-
-            /////
-            res.redirect("test");
-            //res.end();
+    for (let i = newArray.length - 1; i >= 0; i--) {
+        if (newArray[i].type.indexOf(propertyToRemain) === -1) {
+            newArray.splice(i, 1);
         }
-
-
-    }); */
-/*
-mongoConfig.collections[0].model.authenticateUser(req.body.email, req.body.password, function(){
-    console.log("GREAT SUCCESS");
-});*/
-//console.log(userModel);
-/*userModel.authenticateUser(req.body.email, req.body.password, function(){
-    console.log("GREAT SUCCESS");
-});*/
-//console.log(mongoConfig.collections[0].model);
-
-//console.log(req.body.email);
-//console.log(req.body.password);
-
-
-//console.log(app.locals.teste);
-
-
-//console.log(dbConnection);
-
-// alterar validateUser...
-/* if (auth.validateUser(req.body.email, req.body.password)) {
-     res.redirect(__dirname + './../../public/index.html');
-     
- } */
-
-//});
-
-// GET /teste
-/*
-router.get('/test', function (req, res, next) {
-    console.log("test");
-    res.redirect(__dirname + "./../../public/teste.html");
-});
-*/
-
-// GET /logout
-/*
-router.get('/logout', function (req, res, next) {
-    if (req.session) {
-        // delete session object
-        req.session.destroy(function (err) {
-            if (err) {
-                return next(err);
-            } else {
-                return res.redirect('/');
-            }
-        });
     }
-});*/
-/*
-router.get('*', function (req, res) {
-    res.send('Erro, URL inválido.');
-});
+    return newArray;
+}
 
-module.exports = router;
-*/
-
-// route middleware to make sure
+// route middleware to make sure... DESNECESSÁRIO?
 function isLoggedIn(req, res, next) {
 
     // if user is authenticated in the session, carry on
