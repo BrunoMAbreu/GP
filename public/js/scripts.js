@@ -4,6 +4,11 @@ Object.prototype.insertAfter = function (newNode) {
     this.parentNode.insertBefore(newNode, this.nextSibling);
 }
 
+let loginForm = {
+    passwordElement: null,
+    pwShow: false
+}
+
 let registerForm = {
     submitButton: null,
     buttonColor: null,
@@ -12,12 +17,36 @@ let registerForm = {
     pwShow: false,
     confPwShow: false
 }
-window.addEventListener("load", setRegisterForm);
+window.addEventListener("load", setForm);
 
-function setRegisterForm() {
+function setForm() {
 
     const metaTagsArray = document.getElementsByTagName('meta');
     for (let item of metaTagsArray) {
+
+        // Login Page
+        if (item.content === "Login") {
+            loginForm.passwordElement = document.getElementById("input_pw");
+            
+            let imageEyePw = document.createElement("IMG");
+            imageEyePw.style = "position: relative; top: -22px; right:-504px; text-align: right; height: 18px; width: 18px";
+            imageEyePw.src = "./images/eye_cl.png";
+            document.getElementById("span_pw").insertAfter(imageEyePw);
+
+            imageEyePw.onclick = function(){
+                if(loginForm.pwShow){
+                    loginForm.pwShow = false;
+                    imageEyePw.src = "./images/eye_cl.png";
+                    loginForm.passwordElement.type = "password";
+                } else {
+                    loginForm.pwShow = true;
+                    imageEyePw.src = "./images/eye_op.png";
+                    loginForm.passwordElement.type = "text";
+                }
+            }
+        }
+
+        // Register Page
         if (item.content === "Register") {
             registerForm.submitButton = document.getElementById("submit").getElementsByTagName("BUTTON")[0];
             registerForm.buttonColor = registerForm.submitButton.style.backgroundColor;
@@ -41,7 +70,6 @@ function setRegisterForm() {
                     registerForm.passwordElement.type = "text";
                 }
             }
-
             imageEyePw2.onclick = function(){
                 if(registerForm.confPwShow){
                     registerForm.confPwShow = false;
@@ -53,13 +81,15 @@ function setRegisterForm() {
                     registerForm.confirmedPasswordElement.type = "text";
                 }
             }
-
             registerForm.confirmedPasswordElement = document.getElementById("input_conf_pw");
             registerForm.confirmedPasswordElement.onblur = pwComparison;
             registerForm.passwordElement.onblur = pwComparison;
         }
     }
 }
+
+
+
 
 // Checks if password and password confirmation are identical
 const pwComparison = function () {
