@@ -18,23 +18,30 @@ let registerForm = {
     confPwShow: false
 }
 window.addEventListener("load", setForm);
+window.onclick = function (e) {
+    if (!e.target.matches('#dropbtn')) {
+        const myDropdown = document.getElementById("dropDownMenu");
+        if (myDropdown.classList.contains('show')) {
+            myDropdown.classList.remove('show');
+        }
+    }
+}
 
 function setForm() {
-
     const metaTagsArray = document.getElementsByTagName('meta');
     for (let item of metaTagsArray) {
 
         // Login Page
         if (item.content === "Login") {
             loginForm.passwordElement = document.getElementById("input_pw");
-            
+
             let imageEyePw = document.createElement("IMG");
             imageEyePw.style = "position: relative; top: -22px; right:-504px; text-align: right; height: 18px; width: 18px";
             imageEyePw.src = "./images/eye_cl.png";
             document.getElementById("span_pw").insertAfter(imageEyePw);
 
-            imageEyePw.onclick = function(){
-                if(loginForm.pwShow){
+            imageEyePw.onclick = function () {
+                if (loginForm.pwShow) {
                     loginForm.pwShow = false;
                     imageEyePw.src = "./images/eye_cl.png";
                     loginForm.passwordElement.type = "password";
@@ -59,8 +66,8 @@ function setForm() {
             document.getElementById("span_pw").insertAfter(imageEyePw1);
             document.getElementById("span_conf_pw").insertAfter(imageEyePw2);
 
-            imageEyePw1.onclick = function(){
-                if(registerForm.pwShow){
+            imageEyePw1.onclick = function () {
+                if (registerForm.pwShow) {
                     registerForm.pwShow = false;
                     imageEyePw1.src = "./images/eye_cl.png";
                     registerForm.passwordElement.type = "password";
@@ -70,8 +77,8 @@ function setForm() {
                     registerForm.passwordElement.type = "text";
                 }
             }
-            imageEyePw2.onclick = function(){
-                if(registerForm.confPwShow){
+            imageEyePw2.onclick = function () {
+                if (registerForm.confPwShow) {
                     registerForm.confPwShow = false;
                     imageEyePw2.src = "./images/eye_cl.png";
                     registerForm.confirmedPasswordElement.type = "password";
@@ -87,9 +94,6 @@ function setForm() {
         }
     }
 }
-
-
-
 
 // Checks if password and password confirmation are identical
 const pwComparison = function () {
@@ -109,7 +113,9 @@ const pwComparison = function () {
     }
 }
 
-
+function subMenuOperations() {
+    document.getElementById("dropDownMenu").classList.toggle("show");
+}
 
 
 
