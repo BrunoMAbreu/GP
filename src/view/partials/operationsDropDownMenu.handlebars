@@ -1,8 +1,9 @@
 <div class="menu_element">
     <li  id="dropbtn" onclick="subMenuOperations()">Operações</li>
     <div class="dropdown-content" id="dropDownMenu">
-        <a href="#">Voluntários</a>
-        <a href="#">Funcionários</a>
-        <a href="#">...</a>
+        
+        {{#each op_submenu}}
+        <a href="{{href}}">{{name}}</a>
+        {{/each}}
     </div>
 </div>

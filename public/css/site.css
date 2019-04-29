@@ -190,10 +190,6 @@ a {
     display: inline-block;
 }
 
-.menu_element li {
-    cursor: pointer;
-}
-
 .menu_element a, .menu_element li {
     display: block;
     font-size: 20px;
@@ -204,9 +200,17 @@ a {
     padding: 8px;
 }
 
+.menu_element li {
+    cursor: pointer;
+}
+
 .menu_element a:hover, .menu_element li:hover {
     background-color: #02877E;
     color: white;
+}
+
+.dropdown-content a {
+    font-size: 16px !important;
 }
 
 #selected {
