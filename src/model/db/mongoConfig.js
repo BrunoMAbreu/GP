@@ -41,7 +41,7 @@ let connectMongoDB = function (cb) {
         });*/
 
         // PAra testar; APAGAR -------------------------------
-        insertUser("Anabela Carrapateira", "a@a", "a", "1234654651", "Administrador", new Date(), function (res) {
+        insertUser("Anabela Carrapateira", "a@a", "a", "1234654651", new Date(), function (res) {
             //console.log("__res: ", res)
         });
 
@@ -94,7 +94,7 @@ let createUserCollection = function () {
  * @param {*} profile User profile (ie, worker or volunteer)
  * @param {*} birthDate User birth date
  */
-let insertUser = function (name, email, password, phone, profile, birthDate, callback) {
+let insertUser = function (name, email, password, phone, birthDate, callback) {
     let index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
@@ -106,7 +106,6 @@ let insertUser = function (name, email, password, phone, profile, birthDate, cal
             email: email,
             password: password,
             phone: phone,
-            profile: profile.toLowerCase(),
             birthDate: birthDate
         }
         // Insert
