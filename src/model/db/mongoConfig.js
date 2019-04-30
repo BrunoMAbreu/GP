@@ -130,6 +130,7 @@ let getUserByEmail = function (email, callback) {
     }
     mongoDBConfig.collections[index].model.findOne({ email: email }).exec((err, result) => {
         if (err) console.log(err);
+
         callback(err, result);
     });
 }
@@ -154,37 +155,35 @@ let getUserById = function (id, callback) {
 
 /**
  * UPDATE:updates user data
- * @param {*} newUserData Object with proprieties to be changed (_id required and immutable). eg, {_id:"...", name:"Ana"}
+ * @param {*} newUserData Object with properties to be changed (_id required and immutable). eg, {_id:"...", username:"Ana"}
  */
-let updateUser = function (newUserData) {
+let updateUser = function (newUserData, callback) {
     const index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, function (err, data) {
-        if (err) console.log(err);
-
-        console.log("let updateUser: " + data) //  substituir Output por outro tipo de validação?
-        //  eg, if(data.deletedCount ===1)...
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, {new: true}, function (err, data) {
+        if (err) console.log(err);      
+        callback(data);
     });
 }
-
-
 
 
 /**
  * DELETE: deletes user with given id
  * @param {*} id mongo document _id (ObjectID: hexadecimal as a string)
  */
-let deleteUser = function (id) {
+let deleteUser = function (id, callback) {
     const index = getCollectionIndex(usersCollectionName);
     if (index === -1) {
         return -1;
     }
     mongoDBConfig.collections[index].model.findByIdAndDelete({ _id: id }, function (err, data) {
         if (err) console.log(err);
-        console.log(data) //  substituir Output por outro tipo de validação?
+        //console.log(data) //  substituir Output por outro tipo de validação?
         //  eg, if(data.deletedCount ===1)...
+
+        callback(data);
     });
 }
 
