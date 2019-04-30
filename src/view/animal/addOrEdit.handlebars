@@ -1,0 +1,73 @@
+<body>
+<div class="textDisplay">
+
+<h1>{{viewTitle}}</h1>
+<form action="/animal" method="POST">
+    <input type="hidden" name="_id" value="{{animal._id}}">
+    <div class="form-group">
+        <label>Nome</label>
+        <input type="text" class="form-control" name="name" placeholder="name" value="{{animal.name}}">
+        <div>
+            {{animal.nameError}}
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Genero</label>
+        <select name="gender" placeholder="gender">
+            {{#ifGenderCond animal.gender}}
+                <option value="Male" selected>Macho</option>
+                <option value="Female">Femea</option>
+            {{else}}
+                <option value="Male">Macho</option>
+                <option value="Female" selected>Femea</option>
+            {{/ifGenderCond}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Vacinado</label>
+        <select name="vaccinated" placeholder="vaccinated">
+            {{#ifBoolCond animal.vaccinated}}
+                <option value="true" selected>Sim</option>
+                <option value="false">Nao</option>
+            {{else}}
+                <option value="true">Sim</option>
+                <option value="false" selected>Nao</option>
+            {{/ifBoolCond}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Cao</label>
+        <select name="dog" placeholder="dog">
+            {{#ifBoolCond animal.dog}}
+                <option value="true" selected>Sim</option>
+                <option value="false">Nao</option>
+            {{else}}
+                <option value="true">Sim</option>
+                <option value="false" selected>Nao</option>
+            {{/ifBoolCond}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Esterilizado</label>
+        <select name="sterilized" placeholder="sterilized">
+            {{#ifBoolCond animal.sterilized}}
+                <option value="true" selected>Sim</option>
+                <option value="false">Nao</option>
+            {{else}}
+                <option value="true">Sim</option>
+                <option value="false" selected>Nao</option>
+            {{/ifBoolCond}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Data de nascimento</label>
+        <input type="date" name="birthday" placeholder="birthday" data-date-format="DD M YY" value={{animalBirthday}}>
+    </div>
+    <div>
+        <button type="submit">Confirmar</button>
+        <a href="/animal/list">Lista</a>
+    </div>
+</form>
+
+</div>
+</body>
