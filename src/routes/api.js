@@ -55,10 +55,10 @@ module.exports = function (app, passport) {
         //  Não executa o callback:
         function (req, res) {
 
-            console.log("/login callback res: ", res);
+            console.log("app.post('/login'")
 
             //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
-            console.log("hello");
+
             /*if (req.body.remember) {
                 req.session.cookie.maxAge = 1000 * 60 * 3;
             } else {
@@ -78,6 +78,9 @@ module.exports = function (app, passport) {
     }),
         //  Não executa o callback:
         function (req, res) {
+
+            console.log("app.post('/register'")
+
             //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
             console.log("hello");
             /*if (req.body.remember) {

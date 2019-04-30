@@ -30,12 +30,9 @@
             <li class="menu_element" id="selected">Início</li>
             <li class="menu_element"><a href="/animals">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
-
-
-{{> operationsDropDownMenu}}
-
-<!--li class="menu_element"><a href="/operations">Operações</a></li-->
-
+            {{#if isUserLogged.username}}
+                {{> operationsDropDownMenu}}
+            {{/if}}
             <li class="menu_element"><a href="/about">Sobre nós</a></li>
         </ul>
     </div>

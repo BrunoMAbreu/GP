@@ -1,9 +1,9 @@
 <div id="register">
     <h1>Registar</h1>
-    
+
     {{> flashMsgWarning}}
 
-    <form id="registerForm"  method="post" action="/register">
+    <form id="registerForm" method="post" action="/register">
         <div class="form-group">
             <label>Nome</label>
             <input class="input-form" type="text" name="userName" required />
@@ -46,19 +46,8 @@
             <span class="bar"></span>
             <span class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label>Perfil</label>
-            <select class="input-form" name="profile" required>
-                <option value="voluntário" selected>Voluntário</option>
-                <option value="funcionário">Funcionário</option>
-                <option value="administrador">Administrador</option>
-            </select>
-            <span class="highlight"></span>
-            <span class="bar"></span>
-            <span class="text-danger"></span>
-        </div>
         <div id="submit" class="form-group">
-            <button type="submit" class="confirmationButton" >Registar</button>
+            <button type="submit" class="confirmationButton">Registar</button>
         </div>
     </form>
 </div>

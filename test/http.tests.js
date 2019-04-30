@@ -25,7 +25,7 @@ describe("HTTP server", function () {
     it('Login page status 200: OK', function (done) {
         chai
             .request(url)
-            .get("/login.html")
+            .get("/login")
             .end(function (error, response, body) {
                 if (error) {
                     done(error);
@@ -38,7 +38,7 @@ describe("HTTP server", function () {
     it('Register page status 200: OK', function (done) {
         chai
             .request(url)
-            .get("/register.html")
+            .get("/register")
             .end(function (error, response, body) {
                 if (error) {
                     done(error);
