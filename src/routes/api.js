@@ -1,12 +1,13 @@
 'use strict';
 
+const mongoDBConfig = require("../model/db/mongoConfig").mongoDBConfig;
 
 module.exports = function (app, passport) {
 
     // Submenu of "Operações"
     const op_submenu = [
         { href: "/voluntarios_sub", name: "Voluntários", type: ["Administrador", "Funcionário"] },
-        { href: "/funcionarios_sub", name: "Funcionários", type: ["Administrador"] },
+        { href: "/workers", name: "Funcionários", type: ["Administrador"] },
         { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
         { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
         { href: "/animais_sub", name: "Animais", type: ["Administrador", "Funcionário", "Voluntário"] },
@@ -41,7 +42,7 @@ module.exports = function (app, passport) {
         if (flashMessage.msg) {
             flashMessage.show = true;
         }
-        res.render('register', { description: "Register", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res) });
+        res.render('register', { description: "Registo", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res) });
     });
 
     // Login
@@ -52,19 +53,9 @@ module.exports = function (app, passport) {
         failureRedirect: '/login', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
     }),
-        //  Não executa o callback:
+        //callback se tiver sucesso:
         function (req, res) {
-
-            console.log("app.post('/login'")
-
-            //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
-
-            /*if (req.body.remember) {
-                req.session.cookie.maxAge = 1000 * 60 * 3;
-            } else {
-                req.session.cookie.expires = false;
-            }
-            res.redirect('/');*/
+            console.log("login teve sucesso") // alterar
         }
     );
 
@@ -76,23 +67,51 @@ module.exports = function (app, passport) {
         failureRedirect: '/register', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
     }),
-        //  Não executa o callback:
+        //callback se tiver sucesso:
         function (req, res) {
-
-            console.log("app.post('/register'")
-
-            //console.log(req.user); // http://www.passportjs.org/docs/authenticate/
-            console.log("hello");
-            /*if (req.body.remember) {
-                req.session.cookie.maxAge = 1000 * 60 * 3;
-            } else {
-                req.session.cookie.expires = false;
-            }
-            res.redirect('/');*/
+            console.log("register teve sucesso") // alterar
         }
     );
 
-    
+    app.get('/workers', function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+        let users = [];
+        User.getUserByProfile("funcionário", function (err, result) {
+            result.forEach(element => {
+                const user = {
+                    user_id: element.user_id,
+                    username: element.username,
+                    email: element.email,
+                    phone: element.phone,
+                    birthDate: element.birthDate.toISOString().slice(0, 10)
+                }
+                users.push(user);
+            });
+            const searchColumnRowspan = 5;
+            while(users.length < searchColumnRowspan){
+                users.push({
+                    user_id: "",
+                    username: "",
+                    email: "",
+                    phone: "",
+                    birthDate: ""
+                });
+            }
+
+            const firstLine = users.shift();
+            res.render('workersList', {
+                description: "Funcionários",
+                isUserLogged: isUserLogged(req, res),
+                op_submenu: setOpSubmenu(req, res),
+                firstLine: firstLine,
+                users: users
+            });
+        })
+    });
+
+
+
+
     var animalAPI = require('./animalRoutes.js');
     app.use('/animal', animalAPI);
 
@@ -124,7 +143,7 @@ module.exports = function (app, passport) {
      */
     function setOpSubmenu(req, res) {
         // If not logged in, return empty array
-        if(req.session.passport === undefined || req.session.passport.user === undefined){
+        if (req.session.passport === undefined || req.session.passport.user === undefined) {
             return [];
         }
         const userType = req.session.passport.user.profile;

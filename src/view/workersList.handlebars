@@ -1,0 +1,40 @@
+<table id="usersListTable">
+    <thead>
+        <tr>
+            <th>Pesquisar por:</th>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Email</th>
+            <th>Data de Nascimento</th>
+            <th colspan="3">Acções</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="5">{{> searchColumn}}</td>
+            <td>
+                {{firstLine.user_id}}
+            </td>
+            <td>
+                {{firstLine.username}}
+            </td>
+            <td>
+                {{firstLine.phone}}
+            </td>
+            <td>
+                {{firstLine.email}}
+            </td>
+            <td>
+                {{firstLine.birthDate}}
+            </td>
+            <td>Visualizar</td>
+            <td>Actualizar</td>
+            <td>Eliminar</td>
+        </tr>
+
+        {{> listRows}}
+
+    </tbody>
+
+</table>

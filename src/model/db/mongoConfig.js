@@ -2,6 +2,7 @@ const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
 const passportLocalMongoose = require('passport-local-mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
 const usersCollectionName = "users";
 
@@ -32,6 +33,8 @@ let connectMongoDB = function (cb) {
     mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
     mongoDBConfig.connection.once('open', function () {
         console.log("Connection to mongodb established");
+        createUserCollection();
+
 
 
         // Isto APAGA a colecção "user"; Só para testes!!!!!
@@ -40,14 +43,46 @@ let connectMongoDB = function (cb) {
             console.log('collection dropped');
         });*/
 
-        // PAra testar; APAGAR -------------------------------
-        insertUser("Anabela Carrapateira", "a@a", "a", "1234654651", new Date(), function (res) {
-            //console.log("__res: ", res)
+        // Para testar; APAGAR -------------------------------
+        let testUserEmailAdmin = "a@a";
+        let testUserProfileAdmin = "administrador";
+        getUserByEmail(testUserEmailAdmin, function (err, result) {
+            if (result) {
+                updateUser({ _id: result._id, profile: testUserProfileAdmin }, function () {
+                })
+            } else {
+                insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (res) {
+                    getUserByEmail(testUserEmailAdmin, function (err, result) {
+                        updateUser({ _id: result._id, profile: testUserProfileAdmin }, function () {
+                        })
+                    })
+                });
+            }
+        })
+        let testUserProfileFunc = "funcionário";
+        insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (res) {
+            getUserByEmail("a@f", function (err, result) {
+                updateUser({ _id: result._id, profile: testUserProfileFunc }, function () {
+                })
+            })
         });
+        insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (res) {
+            getUserByEmail("b@f", function (err, result) {
+                updateUser({ _id: result._id, profile: testUserProfileFunc }, function () {
+                })
+            })
+        });
+        insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (res) {
+            getUserByEmail("c@f", function (err, result) {
+                updateUser({ _id: result._id, profile: testUserProfileFunc }, function () {
+                })
+            })
+        });
+        // FIM: Para testar; APAGAR -------------------------------
 
         cb();
     });
-    createUserCollection();
+    //createUserCollection();
 };
 require('../animal.model');
 
@@ -56,6 +91,9 @@ require('../animal.model');
  */
 let createUserCollection = function () {
     const userSchema = new Schema(require("./schemas/user.js"), { collection: usersCollectionName });
+    autoIncrement.initialize(mongoDBConfig.connection);
+    userSchema.plugin(autoIncrement.plugin, { model: 'userModel', field: 'user_id', startAt: 1 });
+
     mongoDBConfig.collections.forEach(element => {
         if (element.name === usersCollectionName) {
             element.schema = userSchema;
@@ -77,6 +115,8 @@ let createUserCollection = function () {
             element.schema.statics.insertUser = insertUser;
             element.schema.statics.getUserByEmail = getUserByEmail;
             element.schema.statics.getUserById = getUserById;
+            element.schema.statics.getUserByProfile = getUserByProfile;
+            //element.schema.statics.getAllUsers = getAllUsers;
             element.schema.statics.updateUser = updateUser;
             element.schema.statics.deleteUser = deleteUser;
             element.model = Mongoose.model('userModel', userSchema);
@@ -101,7 +141,7 @@ let insertUser = function (name, email, password, phone, birthDate, callback) {
     }
     mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
         const newUser = {
-            user_id: ((result === null) ? 1 : ++result.user_id),
+            //user_id: ((result === null) ? 1 : ++result.user_id),
             username: name,
             email: email,
             password: password,
@@ -154,6 +194,24 @@ let getUserById = function (id, callback) {
 
 
 /**
+ * READ: returns users with given profile
+ * @param {*} profile "administrador", "funcionário", "voluntário"
+ * @param {*} callback
+ * @returns users object array
+ */
+let getUserByProfile = function (profile, callback) {
+    const index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.find({ profile: profile.toLowerCase() }, function (err, result) {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
+
+
+/**
  * UPDATE:updates user data
  * @param {*} newUserData Object with properties to be changed (_id required and immutable). eg, {_id:"...", username:"Ana"}
  */
@@ -162,8 +220,8 @@ let updateUser = function (newUserData, callback) {
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, {new: true}, function (err, data) {
-        if (err) console.log(err);      
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, { new: true }, function (err, data) {
+        if (err) console.log(err);
         callback(data);
     });
 }
