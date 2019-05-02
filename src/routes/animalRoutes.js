@@ -19,7 +19,7 @@ Handlebars.registerHelper('ifGenderCond', function(param, options) {
   });
 
 router.get('/', (req, res) => {
-    res.render("animal/list", {
+    res.render("animal/animals", {
         viewTitle : "Animais do Albergue"
     });
 });
