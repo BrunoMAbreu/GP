@@ -127,18 +127,33 @@ module.exports = function (app, passport) {
         });
     });
 
+    // UPDATE: update user data
+    app.get('/workers/update/:id', function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+ 
+        User.getUser({user_id: req.params.id}, function(err, result){
+
+            console.log("result: ", result)
+
+            res.render('viewUser', {
+                description: "Funcionários",
+                isUserLogged: isUserLogged(req, res),
+                op_submenu: setOpSubmenu(req, res),
+                //firstLine: firstLine,
+                //users: users,
+                //searchColumnRowspan: searchColumnRowspan
+            });
+        });
+
+
+    });
+
     // DELETE: delete user
     app.delete('/workers/delete/:id', function (req, res) {
-        
-        console.log("req.params: ", req.params)
-
-
         const User = mongoDBConfig.collections[0].model;
         User.deleteUser(req.params.id, function(result){
-            console.log("result: ", result)
-            
+            res.redirect('/workers');
         })
-        res.redirect('/workers');
     });
 
 
