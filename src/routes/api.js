@@ -73,12 +73,25 @@ module.exports = function (app, passport) {
         }
     );
 
+    // Users' List
     app.get('/workers', function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         let users = [];
         const route = "workers";
         const profile = "funcionário";
-        User.getUserByProfile(profile, function (err, result) {
+
+        const reqQuery = req.query;
+        let query = {profile: profile};
+        if(Object.getOwnPropertyNames(reqQuery).length !== 0){
+            for (let [key, value] of Object.entries(reqQuery)) {
+                if(value !== ""){
+                    query[key] = (key === "birthDate")
+                        ? {'$gte': value}
+                        : {'$regex': value, '$options': 'i'}
+                }
+            }
+        }
+        User.getUser(query, function(err, result){
             result.forEach(element => {
                 users.push({
                     user_id: element.user_id,
@@ -111,8 +124,32 @@ module.exports = function (app, passport) {
                 users: users,
                 searchColumnRowspan: searchColumnRowspan
             });
-        })
+        });
     });
+
+    // DELETE: delete user
+    app.delete('/workers/delete/:id', function (req, res) {
+        
+        console.log("req.params: ", req.params)
+
+
+        const User = mongoDBConfig.collections[0].model;
+        User.deleteUser(req.params.id, function(result){
+            console.log("result: ", result)
+            
+        })
+        res.redirect('/workers');
+    });
+
+
+
+/*
+    app.post('/workers', function (req, res) {
+        console.log("POST: " + 111111)
+        console.log("req.params: ", req.params)
+        console.log("req.body: ", req.body)
+        console.log("POST: " + 222222)
+    }); */
 
 
     // Administrator adds worker
