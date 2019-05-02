@@ -318,9 +318,12 @@ footer {
 
 #usersListTable td, #usersListTable th {
     margin: 0;
-    padding: 0.6em;
+    height: 1.2em;
 }
 
+#usersListTable th {
+    padding: 0.6em;
+}
 
 /*Layout Responsive - quando ecrã tem menos de 400px de largura*/
 @media screen and (max-width: 400px) {
