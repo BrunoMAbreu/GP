@@ -1,8 +1,8 @@
 const express = require('express');
-var router = express.Router();
-var mongoose = require('mongoose');
-var Animal = mongoose.model('animals');
-var Handlebars = require('handlebars');
+let router = express.Router();
+let mongoose = require('mongoose');
+let Animal = mongoose.model('animals');
+let Handlebars = require('handlebars');
 
 Handlebars.registerHelper('ifBoolCond', function(param, options) {
     if(param === true) {
@@ -10,7 +10,8 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
     }
     return options.inverse(this);
   });
-  Handlebars.registerHelper('ifGenderCond', function(param, options) {
+
+Handlebars.registerHelper('ifGenderCond', function(param, options) {
     if(param === "Male") {
       return options.fn(this);
     }
@@ -18,6 +19,12 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
   });
 
 router.get('/', (req, res) => {
+    res.render("animal/list", {
+        viewTitle : "Animais do Albergue"
+    });
+});
+
+router.get('/addOrEdit', (req, res) => {
     res.render("animal/addOrEdit", {
         viewTitle : "Adicionar Animal"
     });
@@ -45,11 +52,12 @@ router.get('/list', (req, res) => {
     Animal.find((err, docs) => {
         if(!err){
             res.render("animal/list", {
+                viewTitle: "Lista de Animais",
                 list: docs
             });
         }
         else{
-            console.log("Error in retrieving employee list : " + err);
+            console.log("Error in retrieving animal list : " + err);
         }
     });
 });
