@@ -116,7 +116,7 @@ let createUserCollection = function () {
             element.schema.statics.getUserByEmail = getUserByEmail;
             element.schema.statics.getUserById = getUserById;
             element.schema.statics.getUserByProfile = getUserByProfile;
-            //element.schema.statics.getAllUsers = getAllUsers;
+            element.schema.statics.getUser = getUser;
             element.schema.statics.updateUser = updateUser;
             element.schema.statics.deleteUser = deleteUser;
             element.model = Mongoose.model('userModel', userSchema);
@@ -210,6 +210,23 @@ let getUserByProfile = function (profile, callback) {
     });
 }
 
+/**
+ * READ: returns users with given query parameters
+ * @param {*} searchObject 
+ * @param {*} callback
+ * @returns users object array
+ */
+let getUser = function(searchObject, callback){
+    const index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.find(searchObject, function (err, result) {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
+
 
 /**
  * UPDATE:updates user data
@@ -236,11 +253,10 @@ let deleteUser = function (id, callback) {
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findByIdAndDelete({ _id: id }, function (err, data) {
+    mongoDBConfig.collections[index].model.findOneAndRemove({ user_id: id }, function (err, data) {
         if (err) console.log(err);
-        //console.log(data) //  substituir Output por outro tipo de validação?
+        //console.log("data: ", data)
         //  eg, if(data.deletedCount ===1)...
-
         callback(data);
     });
 }

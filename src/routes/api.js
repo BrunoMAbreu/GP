@@ -45,6 +45,34 @@ module.exports = function (app, passport) {
         res.render('register', { description: "Registo", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res) });
     });
 
+    // UPDATE: update user data
+    app.get('/workers/update/:id', function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+        User.getUser({ user_id: req.params.id }, function (err, result) {
+            if (err) console.log(err);
+            console.log("result: ", result)
+
+            const user = result[0];
+            const userData = {
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                birthDate: user.birthDate
+            }
+            console.log("userData: ", userData)
+
+            res.render('updateUser', { description: "Actualizar utilizador", isUserLogged: isUserLogged(req, res), op_submenu: setOpSubmenu(req, res), user: userData });
+         });
+        //firstLine: firstLine,
+        //users: users,
+        //searchColumnRowspan: searchColumnRowspan
+        //});
+        //res.render('');
+        //});
+
+    });
+
+
     // Login
     app.post('/login', passport.authenticate('local-login', {
         successRedirect: '/',
@@ -73,12 +101,25 @@ module.exports = function (app, passport) {
         }
     );
 
+    // Users' List
     app.get('/workers', function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         let users = [];
         const route = "workers";
         const profile = "funcionário";
-        User.getUserByProfile(profile, function (err, result) {
+
+        const reqQuery = req.query;
+        let query = { profile: profile };
+        if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
+            for (let [key, value] of Object.entries(reqQuery)) {
+                if (value !== "") {
+                    query[key] = (key === "birthDate")
+                        ? { '$gte': value }
+                        : { '$regex': value, '$options': 'i' }
+                }
+            }
+        }
+        User.getUser(query, function (err, result) {
             result.forEach(element => {
                 users.push({
                     user_id: element.user_id,
@@ -111,8 +152,28 @@ module.exports = function (app, passport) {
                 users: users,
                 searchColumnRowspan: searchColumnRowspan
             });
+        });
+    });
+
+
+
+    // DELETE: delete user
+    app.delete('/workers/delete/:id', function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+        User.deleteUser(req.params.id, function (result) {
+            res.redirect('/workers');
         })
     });
+
+
+
+    /*
+        app.post('/workers', function (req, res) {
+            console.log("POST: " + 111111)
+            console.log("req.params: ", req.params)
+            console.log("req.body: ", req.body)
+            console.log("POST: " + 222222)
+        }); */
 
 
     // Administrator adds worker

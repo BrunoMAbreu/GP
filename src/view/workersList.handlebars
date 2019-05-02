@@ -1,9 +1,5 @@
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
-    <form method="post" action="/addUser">
-        <input type="hidden" name="option" value="{{description}}" id="options" />
-        <input type="submit" value="Adicionar"/>
-    </form>
 </div>
 <table id="usersListTable">
     <thead>
@@ -36,9 +32,9 @@
                 {{firstLine.birthDate}}
             </td>
             {{#if firstLine.showActions}}
-            <td><a href="/{{firstLine.route}}/details/:{{firstLine.user_id}}">Visualizar</a></td>
-            <td><a href="/{{firstLine.route}}/update/:{{firstLine.user_id}}">Actualizar</a></td>
-            <td><a href="/{{firstLine.route}}/delete/:{{firstLine.user_id}}">Eliminar</a></td>
+            <td><a href="/{{firstLine.route}}/details/{{firstLine.user_id}}">Visualizar</a></td>
+            <td><a href="/{{firstLine.route}}/update/{{firstLine.user_id}}">Actualizar</a></td>
+            <td><a href="" onclick="confirmUserDelete({{firstLine.user_id}})">Eliminar</a></td>
             {{else}}
             <td></td>
             <td></td>

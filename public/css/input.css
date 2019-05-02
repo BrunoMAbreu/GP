@@ -61,6 +61,11 @@
     padding: 0.4em;
 }
 
+#searchSubmitButton {
+    margin-left: 3em;
+    font-size: 13px;
+}
+
 
 /* BOTTOM BARS ================================= */
 .bar {
