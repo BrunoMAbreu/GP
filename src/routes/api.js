@@ -76,38 +76,60 @@ module.exports = function (app, passport) {
     app.get('/workers', function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         let users = [];
-        User.getUserByProfile("funcionário", function (err, result) {
+        const route = "workers";
+        const profile = "funcionário";
+        User.getUserByProfile(profile, function (err, result) {
             result.forEach(element => {
-                const user = {
+                users.push({
                     user_id: element.user_id,
                     username: element.username,
                     email: element.email,
                     phone: element.phone,
-                    birthDate: element.birthDate.toISOString().slice(0, 10)
-                }
-                users.push(user);
+                    birthDate: element.birthDate.toISOString().slice(0, 10),
+                    route: route,
+                    showActions: true
+                });
             });
-            const searchColumnRowspan = 5;
-            while(users.length < searchColumnRowspan){
+            const searchColumnRowspan = 12;
+            while (users.length < searchColumnRowspan) {
                 users.push({
                     user_id: "",
                     username: "",
                     email: "",
                     phone: "",
-                    birthDate: ""
+                    birthDate: "",
+                    route: route,
+                    showActions: false
                 });
             }
-
             const firstLine = users.shift();
             res.render('workersList', {
                 description: "Funcionários",
                 isUserLogged: isUserLogged(req, res),
                 op_submenu: setOpSubmenu(req, res),
                 firstLine: firstLine,
-                users: users
+                users: users,
+                searchColumnRowspan: searchColumnRowspan
             });
         })
     });
+
+
+    // Administrator adds worker
+    app.post('/addUser', function (req, res) {
+        console.log(">>req: ", req)
+        res.render('addUser', {
+            description: "Funcionário - Adicionar",
+            isUserLogged: isUserLogged(req, res),
+            op_submenu: setOpSubmenu(req, res),
+            profile: req.body.worker
+        });
+
+    });
+
+
+
+
 
 
 
