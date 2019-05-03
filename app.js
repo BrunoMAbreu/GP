@@ -32,9 +32,10 @@ const hbs = exphbs.create({
     defaultLayout: 'main',
     layoutsDir: __dirname + '/src/view/layouts/',
     // Specify helpers which are only registered on this instance.
-    /*helpers: {
-        isUserLogged: helpers.isUserLogged
-    }*/
+    //helpers: {
+        //isSelected: helpers.isSelected
+        //isUserLogged: helpers.isUserLogged
+    //}
 });
 app.set('views', path.join(__dirname, '/src/view/'));
 app.engine('handlebars', hbs.engine)

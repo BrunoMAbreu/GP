@@ -134,14 +134,20 @@ function updateUser(id) {
         email: document.getElementById("email").value,
         phone:  document.getElementById("phone").value,
         birthDate: document.getElementById("birthDate").value,
-        profile: document.getElementById("profile").value
+        profile: document.getElementById("updateProfile").value
     }
-    
-    console.log("data: ", data)
-
     let xhr = new XMLHttpRequest();
     xhr.open("PUT", "/users/" + id, true);
     xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if ((this.readyState === 4) && (this.status === 400)) {
+            if(this.responseText === "true"){
+                window.location.replace("/users");
+            } else {
+                alert("Não foi possível guardar as alterações.")
+            }
+        }
+    }
     xhr.send(JSON.stringify(data));
 }
 

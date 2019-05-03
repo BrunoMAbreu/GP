@@ -56,39 +56,76 @@ module.exports = function (app, passport) {
                 username: user.username,
                 email: user.email,
                 phone: user.phone,
-                birthDate: user.birthDate.toISOString().slice(0,10)
+                birthDate: user.birthDate.toISOString().slice(0, 10),
+                profile: user.profile
             }
-            res.render('updateUser', { description: "Actualizar utilizador", isUserLogged: isUserLogged(req, res), op_submenu: setOpSubmenu(req, res), user: userData });
-         });
+            let selected = {
+                administrator: false,
+                worker: false,
+                volunteer: false
+            }
+            switch (userData.profile) {
+                case "administrador":
+                    selected.administrator = true;
+                    break;
+                case "funcionário":
+                    selected.worker = true;
+                    break;
+                case "voluntário":
+                    selected.volunteer = true;
+                    break;
+                default:
+                    break;
+            }
+            res.render('updateUser', {
+                description: "Actualizar utilizador",
+                isUserLogged: isUserLogged(req, res),
+                op_submenu: setOpSubmenu(req, res),
+                user: userData,
+                selected: selected
+            });
+        });
     });
 
-    // TODO
+
     // PUT: Update user data
     app.put('/users/:id', function (req, res) {
         const User = mongoDBConfig.collections[0].model;
+        const newUserData = {
+            username: req.body.username,
+            email: req.body.email,
+            phone: req.body.phone,
+            birthDate: req.body.birthDate,
+            profile: req.body.profile
+        };
 
-        console.log("req.body", req.body)
+        console.log("newUserData: ", newUserData)
 
-        const newUserData = {};
+        User.updateUser(newUserData, function (data) {
 
-        User.updateUser(newUserData, function(){
+            console.log("data: ", data)
 
+            if (data !== null) {
+                res.status(400).send(true);
+            } else {
+                res.status(400).send(false);
+            }
         });
 
 
-/*
-        User.getUser({ user_id: req.params.id }, function (err, result) {
-            if (err) console.log(err);
-            const user = result[0];
-            const userData = {
-                user_id: req.params.id,
-                username: user.username,
-                email: user.email,
-                phone: user.phone,
-                birthDate: user.birthDate.toISOString().slice(0,10)
-            }
-            res.render('updateUser', { description: "Actualizar utilizador", isUserLogged: isUserLogged(req, res), op_submenu: setOpSubmenu(req, res), user: userData });
-         });*/
+        /*
+                User.getUser({ user_id: req.params.id }, function (err, result) {
+                    if (err) console.log(err);
+                    const user = result[0];
+                    const userData = {
+                        user_id: req.params.id,
+                        username: user.username,
+                        email: user.email,
+                        phone: user.phone,
+                        birthDate: user.birthDate.toISOString().slice(0,10)
+                    }
+                    res.render('updateUser', { description: "Actualizar utilizador", isUserLogged: isUserLogged(req, res), op_submenu: setOpSubmenu(req, res), user: userData });
+                 });*/
     });
 
 

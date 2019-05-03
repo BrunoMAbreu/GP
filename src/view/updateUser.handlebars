@@ -24,17 +24,29 @@
         </div>
         <div class="form-group">
             <label>Data de Nascimento</label>
-            <input id="birthDate" class="input-form" type="date" name="birthDate" value="{{user.birthDate}}" required /> <!--value="2000-05-05"-->
+            <input id="birthDate" class="input-form" type="date" name="birthDate" value="{{user.birthDate}}" required />
             <span class="highlight"></span>
             <span class="bar"></span>
             <span class="text-danger"></span>
         </div>
         <div class="form-group">
             <label>Permissões</label>
-            <select id="profile" class="input-form">
-                <option value="administrador">Administrador</option>
+            <select id="updateProfile" class="input-form">
+
+                {{#if selected.administrator}}
+                <option value="administrador" selected="selected">Administrador</option>
                 <option value="funcionário">Funcionário</option>
                 <option value="voluntário">Voluntário</option>
+                {{else if selected.worker}}
+                <option value="administrador">Administrador</option>
+                <option value="funcionário" selected="selected">Funcionário</option>
+                <option value="voluntário">Voluntário</option>
+                {{else}}
+                <option value="administrador">Administrador</option>
+                <option value="funcionário">Funcionário</option>
+                <option value="voluntário" selected="selected">Voluntário</option>
+                {{/if}}
+
             </select>
             <span class="highlight"></span>
             <span class="bar"></span>
