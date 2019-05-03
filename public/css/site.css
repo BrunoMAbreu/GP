@@ -204,9 +204,9 @@ a {
     cursor: pointer;
 }
 
-.menu_element a:hover, .menu_element li:hover {
+.menu_element a:hover, .menu_element li:hover, #menu_element_op {
     background-color: #02877E;
-    color: white;
+    color: white !important;
 }
 
 .dropdown-content a {
