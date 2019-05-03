@@ -59,10 +59,6 @@ app.use(passport.session());
 require('./src/routes/api.js')(app, passport); // load our routes and pass in our app and fully configured passport
 //app.use('/api', routes);
 
-<<<<<<< HEAD
-require('./src/routes/animalRoutes.js');
-=======
->>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
 
 const server = app.listen(8080, function () {
     const host = server.address().address === "::"

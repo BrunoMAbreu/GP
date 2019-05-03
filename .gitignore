@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -21,28 +20,4 @@ node_modules/
 jspm_packages/
 
 .git
-=======
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-.git
->>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
 #.gitlab-ci.yml

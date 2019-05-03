@@ -39,11 +39,7 @@ module.exports = function (passport) {
                         return done(null, false, req.flash('registerMessage', 'Este endereço email já está registado.'));
                     } else {
                         // if the user doesn't already exist in the db
-<<<<<<< HEAD
-                        User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.profile, req.body.birthDate, function (result) {                           
-=======
                         User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.birthDate, function (result) {                           
->>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
                             return done(null, result);
                         })
                     }

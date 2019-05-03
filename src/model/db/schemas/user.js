@@ -36,12 +36,8 @@ module.exports = {
             "funcionário",
             "administrador"
         ],
-<<<<<<< HEAD
-        required: true
-=======
         required: true,
         default: "voluntário"
->>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
     },
     birthDate: {
         type: "date",

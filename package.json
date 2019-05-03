@@ -25,10 +25,7 @@
     "express-session": "^1.16.1",
     "mocha": "^6.1.4",
     "mongoose": "^5.5.4",
-<<<<<<< HEAD
-=======
     "mongoose-auto-increment": "^5.0.1",
->>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^5.0.1"
