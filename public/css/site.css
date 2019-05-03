@@ -267,6 +267,7 @@ footer {
 }
 
 /*Sub-menu Operações*/
+<<<<<<< HEAD
 
 .dropdown_oper {
     /*float: left;*/
@@ -285,12 +286,17 @@ footer {
     margin: 0;
 }
 */
+=======
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
 .dropdown-content {
     display: none;
     position: absolute;
     margin-top: 10px;
     background-color: white;
+<<<<<<< HEAD
     /*min-width: 160px;*/
+=======
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 100;
   }
@@ -308,6 +314,45 @@ footer {
     display: block;
 }
 
+<<<<<<< HEAD
+=======
+/*Lista de utilizadores*/
+#usersListTable {
+    margin-top: 3em;
+    padding: 0;
+    text-align: center;
+    min-width: 100%;
+    border-collapse: collapse;
+    border-bottom: 2px solid black;
+}
+
+#usersListTable thead, #usersListTable tbody {
+    padding:0;
+}
+
+#usersListTable thead {
+    color: white;
+    background-color: #333;
+}
+
+#usersListTable tr {
+    margin: 0;
+}
+
+#usersListTable tr:nth-child(even) {
+    background-color: #aaa;
+}
+
+#usersListTable td, #usersListTable th {
+    margin: 0;
+    height: 1.2em;
+}
+
+#usersListTable th {
+    padding: 0.6em;
+}
+
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
 /*Layout Responsive - quando ecrã tem menos de 400px de largura*/
 @media screen and (max-width: 400px) {
     .menu a {

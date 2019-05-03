@@ -118,6 +118,17 @@ function subMenuOperations() {
 }
 
 
+<<<<<<< HEAD
+=======
+function confirmUserDelete(id) {
+    let response = confirm("Deseja apagar este utilizador?");
+    if (response) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/workers/delete/" + id, true);
+        xhr.send();
+    }
+}
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
 
 /*
 function login() {

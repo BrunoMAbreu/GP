@@ -34,6 +34,42 @@
     display: inline-block;
 }
 
+<<<<<<< HEAD
+=======
+/* search form */
+#searchCell {
+    width: 20em
+}
+
+#searchUsers {
+    
+}
+#searchUsersForm {
+    width: 16em
+}
+
+#searchUsersForm label {
+    display: block;
+    color: #555;
+    margin: 0 0 0.5em 0.5em;
+}
+
+.search-input-form {
+    display: block;
+    margin-left: 3em;
+    border: 1px solid #555;;
+    border-radius: 4px;
+    width: 16em;
+    padding: 0.4em;
+}
+
+#searchSubmitButton {
+    margin-left: 3em;
+    font-size: 13px;
+}
+
+
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
 /* BOTTOM BARS ================================= */
 .bar {
     position: relative;

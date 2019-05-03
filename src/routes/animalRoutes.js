@@ -1,8 +1,15 @@
 const express = require('express');
+<<<<<<< HEAD
 let router = express.Router();
 let mongoose = require('mongoose');
 let Animal = mongoose.model('animals');
 let Handlebars = require('handlebars');
+=======
+var router = express.Router();
+var mongoose = require('mongoose');
+var Animal = mongoose.model('animals');
+var Handlebars = require('handlebars');
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
 
 Handlebars.registerHelper('ifBoolCond', function(param, options) {
     if(param === true) {
@@ -10,8 +17,12 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
     }
     return options.inverse(this);
   });
+<<<<<<< HEAD
 
 Handlebars.registerHelper('ifGenderCond', function(param, options) {
+=======
+  Handlebars.registerHelper('ifGenderCond', function(param, options) {
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
     if(param === "Male") {
       return options.fn(this);
     }
@@ -19,12 +30,15 @@ Handlebars.registerHelper('ifGenderCond', function(param, options) {
   });
 
 router.get('/', (req, res) => {
+<<<<<<< HEAD
     res.render("animal/animals", {
         viewTitle : "Animais do Albergue"
     });
 });
 
 router.get('/addOrEdit', (req, res) => {
+=======
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
     res.render("animal/addOrEdit", {
         viewTitle : "Adicionar Animal"
     });
@@ -52,12 +66,19 @@ router.get('/list', (req, res) => {
     Animal.find((err, docs) => {
         if(!err){
             res.render("animal/list", {
+<<<<<<< HEAD
                 viewTitle: "Lista de Animais",
+=======
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
                 list: docs
             });
         }
         else{
+<<<<<<< HEAD
             console.log("Error in retrieving animal list : " + err);
+=======
+            console.log("Error in retrieving employee list : " + err);
+>>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
         }
     });
 });
