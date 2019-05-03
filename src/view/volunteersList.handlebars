@@ -34,7 +34,7 @@
             {{#if firstLine.showActions}}
             <td><a href="/{{firstLine.route}}/{{firstLine.user_id}}">Visualizar</a></td>
             <td><a href="/{{firstLine.route}}/{{firstLine.user_id}}">Actualizar</a></td>
-            <td><a href="" onclick="confirmWorkerDelete({{firstLine.user_id}})">Eliminar</a></td>
+            <td><a href="" onclick="confirmVolunteerDelete({{firstLine.user_id}})">Eliminar</a></td>
             {{else}}
             <td></td>
             <td></td>
@@ -43,7 +43,7 @@
 
         </tr>
 
-        {{> listRowsWorkers}}
+        {{> listRowsVolunteers}}
 
     </tbody>
 
