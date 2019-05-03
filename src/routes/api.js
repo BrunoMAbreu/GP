@@ -7,7 +7,7 @@ module.exports = function (app, passport) {
     // Submenu of "Operações"
     const op_submenu = [
         { href: "/voluntarios_sub", name: "Voluntários", type: ["Administrador", "Funcionário"] },
-        { href: "/workers", name: "Funcionários", type: ["Administrador"] },
+        { href: "/users", name: "Funcionários", type: ["Administrador"] },
         { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
         { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
         { href: "/animais_sub", name: "Animais", type: ["Administrador", "Funcionário", "Voluntário"] },
@@ -45,31 +45,50 @@ module.exports = function (app, passport) {
         res.render('register', { description: "Registo", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res) });
     });
 
-    // UPDATE: update user data
-    app.get('/workers/update/:id', function (req, res) {
+    // GET: View user data
+    app.get('/users/:id', function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         User.getUser({ user_id: req.params.id }, function (err, result) {
             if (err) console.log(err);
-            console.log("result: ", result)
-
             const user = result[0];
             const userData = {
+                user_id: req.params.id,
                 username: user.username,
                 email: user.email,
                 phone: user.phone,
-                birthDate: user.birthDate
+                birthDate: user.birthDate.toISOString().slice(0,10)
             }
-            console.log("userData: ", userData)
-
             res.render('updateUser', { description: "Actualizar utilizador", isUserLogged: isUserLogged(req, res), op_submenu: setOpSubmenu(req, res), user: userData });
          });
-        //firstLine: firstLine,
-        //users: users,
-        //searchColumnRowspan: searchColumnRowspan
-        //});
-        //res.render('');
-        //});
+    });
 
+    // TODO
+    // PUT: Update user data
+    app.put('/users/:id', function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+
+        console.log("req.body", req.body)
+
+        const newUserData = {};
+
+        User.updateUser(newUserData, function(){
+
+        });
+
+
+/*
+        User.getUser({ user_id: req.params.id }, function (err, result) {
+            if (err) console.log(err);
+            const user = result[0];
+            const userData = {
+                user_id: req.params.id,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                birthDate: user.birthDate.toISOString().slice(0,10)
+            }
+            res.render('updateUser', { description: "Actualizar utilizador", isUserLogged: isUserLogged(req, res), op_submenu: setOpSubmenu(req, res), user: userData });
+         });*/
     });
 
 
@@ -102,10 +121,10 @@ module.exports = function (app, passport) {
     );
 
     // Users' List
-    app.get('/workers', function (req, res) {
+    app.get('/users', function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         let users = [];
-        const route = "workers";
+        const route = "users";
         const profile = "funcionário";
 
         const reqQuery = req.query;
@@ -158,17 +177,17 @@ module.exports = function (app, passport) {
 
 
     // DELETE: delete user
-    app.delete('/workers/delete/:id', function (req, res) {
+    app.delete('/users/:id', function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         User.deleteUser(req.params.id, function (result) {
-            res.redirect('/workers');
+            res.redirect('/users');
         })
     });
 
 
 
     /*
-        app.post('/workers', function (req, res) {
+        app.post('/users', function (req, res) {
             console.log("POST: " + 111111)
             console.log("req.params: ", req.params)
             console.log("req.body: ", req.body)

@@ -122,10 +122,31 @@ function confirmUserDelete(id) {
     let response = confirm("Deseja apagar este utilizador?");
     if (response) {
         let xhr = new XMLHttpRequest();
-        xhr.open("DELETE", "/workers/delete/" + id, true);
+        xhr.open("DELETE", "/users/" + id, true);
         xhr.send();
     }
 }
+
+
+function updateUser(id) {
+    const data = {
+        username: document.getElementById("username").value,
+        email: document.getElementById("email").value,
+        phone:  document.getElementById("phone").value,
+        birthDate: document.getElementById("birthDate").value,
+        profile: document.getElementById("profile").value
+    }
+    
+    console.log("data: ", data)
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", "/users/" + id, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(data));
+}
+
+
+
 
 /*
 function login() {
