@@ -34,10 +34,11 @@ module.exports = {
         enum: [
             "voluntário",
             "funcionário",
-            "administrador"
+            "administrador",
+            "utilizador"
         ],
         required: true,
-        default: "voluntário"
+        default: "utilizador"
     },
     birthDate: {
         type: "date",
