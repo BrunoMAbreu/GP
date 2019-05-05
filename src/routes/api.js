@@ -6,7 +6,7 @@ module.exports = function (app, passport) {
 
     // Submenu of "Operações"
     const op_submenu = [
-        { href: "/volunteers", name: "Voluntários", type: ["Administrador", "Funcionário"] },
+        { href: "/volunteers", name: "Voluntários", type: ["Administrador"] }, //, "Funcionário"
         { href: "/workers", name: "Funcionários", type: ["Administrador"] },
         { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
         { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
@@ -38,7 +38,7 @@ module.exports = function (app, passport) {
         if (flashMessage.msg) {
             flashMessage.show = true;
         }
-        res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res),  selectedMenu: setPropertyTrue(selectedMenu, "home") });
+        res.render('login', { description: "Login", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res), selectedMenu: setPropertyTrue(selectedMenu, "home") });
     });
     app.get('/logout', function (req, res) {
         req.logout();
@@ -84,14 +84,19 @@ module.exports = function (app, passport) {
                 default:
                     break;
             }
-            res.render('updateWorker', {
-                description: "Actualizar funcionário",
-                isUserLogged: isUserLogged(req, res),
-                op_submenu: setOpSubmenu(req, res),
-                user: userData,
-                selected: selected,
-                selectedMenu: setPropertyTrue(selectedMenu, "operations") 
-            });
+            if (req.session.passport.user.profile === "administrador") {
+                res.render('updateWorker', {
+                    description: "Actualizar funcionário",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    user: userData,
+                    selected: selected,
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                });
+            } else {
+                res.redirect('/');
+            }
+
         });
     });
 
@@ -127,14 +132,18 @@ module.exports = function (app, passport) {
                 default:
                     break;
             }
-            res.render('updateVolunteer', {
-                description: "Actualizar voluntário",
-                isUserLogged: isUserLogged(req, res),
-                op_submenu: setOpSubmenu(req, res),
-                user: userData,
-                selected: selected,
-                selectedMenu: setPropertyTrue(selectedMenu, "operations") 
-            });
+            if (req.session.passport.user.profile === "administrador") {
+                res.render('updateVolunteer', {
+                    description: "Actualizar voluntário",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    user: userData,
+                    selected: selected,
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                });
+            } else {
+                res.redirect('/');
+            }
         });
     });
 
@@ -160,21 +169,25 @@ module.exports = function (app, passport) {
 
     // PUT: Update volunteer's data
     app.put('/volunteers/:id', isLoggedIn, function (req, res) {
-        const User = mongoDBConfig.collections[0].model;
-        const newUserData = {
-            username: req.body.username,
-            email: req.body.email,
-            phone: req.body.phone,
-            birthDate: req.body.birthDate,
-            profile: req.body.profile
-        };
-        User.updateUser(newUserData, function (data) {
-            if (data !== null) {
-                res.status(400).send(true);
-            } else {
-                res.status(400).send(false);
-            }
-        });
+        if (req.session.passport.user.profile === "administrador") {
+            const User = mongoDBConfig.collections[0].model;
+            const newUserData = {
+                username: req.body.username,
+                email: req.body.email,
+                phone: req.body.phone,
+                birthDate: req.body.birthDate,
+                profile: req.body.profile
+            };
+            User.updateUser(newUserData, function (data) {
+                if (data !== null) {
+                    res.status(400).send(true);
+                } else {
+                    res.status(400).send(false);
+                }
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 
 
@@ -248,16 +261,21 @@ module.exports = function (app, passport) {
                 });
             }
             const firstLine = users.shift();
-            res.render('workersList', {
-                description: "Funcionários",
-                isUserLogged: isUserLogged(req, res),
-                op_submenu: setOpSubmenu(req, res),
-                firstLine: firstLine,
-                users: users,
-                searchColumnRowspan: searchColumnRowspan,
-                route: route,
-                selectedMenu: setPropertyTrue(selectedMenu, "operations") 
-            });
+
+            if (req.session.passport.user.profile === "administrador") {
+                res.render('workersList', {
+                    description: "Funcionários",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    firstLine: firstLine,
+                    users: users,
+                    searchColumnRowspan: searchColumnRowspan,
+                    route: route,
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                });
+            } else {
+                res.redirect('/');
+            }
         });
     });
 
@@ -305,16 +323,20 @@ module.exports = function (app, passport) {
                 });
             }
             const firstLine = users.shift();
-            res.render('workersList', {
-                description: "Voluntários",
-                isUserLogged: isUserLogged(req, res),
-                op_submenu: setOpSubmenu(req, res),
-                firstLine: firstLine,
-                users: users,
-                searchColumnRowspan: searchColumnRowspan,
-                route: route,
-                selectedMenu: setPropertyTrue(selectedMenu, "operations") 
-            });
+            if (req.session.passport.user.profile === "administrador") {
+                res.render('workersList', {
+                    description: "Voluntários",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    firstLine: firstLine,
+                    users: users,
+                    searchColumnRowspan: searchColumnRowspan,
+                    route: route,
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                });
+            } else {
+                res.redirect('/');
+            }
         });
     });
 
@@ -322,19 +344,27 @@ module.exports = function (app, passport) {
 
     // DELETE: delete worker
     app.delete('/workers/:id', isLoggedIn, function (req, res) {
-        const User = mongoDBConfig.collections[0].model;
-        User.deleteUser(req.params.id, function (result) {
-            res.redirect('/workers');
-        })
+        if (req.session.passport.user.profile === "administrador") {
+            const User = mongoDBConfig.collections[0].model;
+            User.deleteUser(req.params.id, function (result) {
+                res.redirect('/workers');
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 
 
     // DELETE: delete volunteer
     app.delete('/volunteers/:id', isLoggedIn, function (req, res) {
-        const User = mongoDBConfig.collections[0].model;
-        User.deleteUser(req.params.id, function (result) {
-            res.redirect('/volunteers');
-        })
+        if (req.session.passport.user.profile === "administrador") {
+            const User = mongoDBConfig.collections[0].model;
+            User.deleteUser(req.params.id, function (result) {
+                res.redirect('/volunteers');
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 
 
@@ -426,16 +456,16 @@ function setPropertyTrue(object, prop) {
 }
 
 
-    // route middleware to make sure... DESNECESSÁRIO?
-    function isLoggedIn(req, res, next) {
+// route middleware to make sure... DESNECESSÁRIO?
+function isLoggedIn(req, res, next) {
 
-        // if user is authenticated in the session, carry on
-        if (req.isAuthenticated())
-            return next();
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+        return next();
 
-        // if they aren't redirect them to the home page
-        res.redirect('/');
-    }
+    // if they aren't redirect them to the home page
+    res.redirect('/');
+}
 
 
 
