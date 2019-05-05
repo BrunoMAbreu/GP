@@ -6,7 +6,7 @@ module.exports = function (app, passport) {
 
     // Submenu of "Operações"
     const op_submenu = [
-        { href: "/volunteers", name: "Voluntários", type: ["Administrador", "Funcionário"] },
+        { href: "/volunteers", name: "Voluntários", type: ["Administrador"] }, //, "Funcionário"
         { href: "/workers", name: "Funcionários", type: ["Administrador"] },
         { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
         { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
