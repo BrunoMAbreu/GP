@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/assOrEdit', (req, res) => {
+router.get('/addOrEdit', (req, res) => {
     res.render("animal/addOrEdit", {
         viewTitle : "Adicionar Animal"
     });
