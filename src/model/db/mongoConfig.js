@@ -236,7 +236,7 @@ let updateUser = function (newUserData, callback) {
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, { new: true }, function (err, data) {
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ email: newUserData.email }, newUserData, { new: true }, function (err, data) {
         if (err) console.log(err);
         callback(data);
     });

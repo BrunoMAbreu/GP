@@ -119,16 +119,77 @@ function subMenuOperations() {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 function confirmUserDelete(id) {
     let response = confirm("Deseja apagar este utilizador?");
+=======
+function confirmWorkerDelete(id) {
+    let response = confirm("Deseja apagar este funcionário?");
+>>>>>>> 15a6b2dcd8310d99cdb157c4341d71125db00c84
     if (response) {
         let xhr = new XMLHttpRequest();
-        xhr.open("DELETE", "/workers/delete/" + id, true);
+        xhr.open("DELETE", "/workers/" + id, true);
         xhr.send();
     }
 }
 >>>>>>> 7d4f99401dccb9db359773f734d9d732ce7e8721
+
+function confirmVolunteerDelete(id) {
+    let response = confirm("Deseja apagar este voluntário?");
+    if (response) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/volunteers/" + id, true);
+        xhr.send();
+    }
+}
+
+function updateWorker(id) {
+    const data = {
+        username: document.getElementById("username").value,
+        email: document.getElementById("email").value,
+        phone:  document.getElementById("phone").value,
+        birthDate: document.getElementById("birthDate").value,
+        profile: document.getElementById("updateProfile").value
+    }
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", "/workers/" + id, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if ((this.readyState === 4) && (this.status === 400)) {
+            if(this.responseText === "true"){
+                window.location.replace("/workers");
+            } else {
+                alert("Não foi possível guardar as alterações.")
+            }
+        }
+    }
+    xhr.send(JSON.stringify(data));
+}
+
+function updateVolunteer(id) {
+    const data = {
+        username: document.getElementById("username").value,
+        email: document.getElementById("email").value,
+        phone:  document.getElementById("phone").value,
+        birthDate: document.getElementById("birthDate").value,
+        profile: document.getElementById("updateProfile").value
+    }
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", "/volunteers/" + id, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if ((this.readyState === 4) && (this.status === 400)) {
+            if(this.responseText === "true"){
+                window.location.replace("/volunteers");
+            } else {
+                alert("Não foi possível guardar as alterações.")
+            }
+        }
+    }
+    xhr.send(JSON.stringify(data));
+}
+
 
 /*
 function login() {
