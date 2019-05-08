@@ -14,7 +14,7 @@ describe("Mongo 'users' collection", function () {
     let userModel = null;
     let testInsertUser = null;
 
-    before(function (done) {
+    before(function () {
         mongoDBConfig = require("../src/model/db/mongoConfig").mongoDBConfig;
         userModel = mongoDBConfig.collections[0].model;
         newUser = {
@@ -35,61 +35,55 @@ describe("Mongo 'users' collection", function () {
             result.birthDate.getUTCDate().should.equal(newUser.birthDate.getUTCDate());
             result.profile.should.equal("voluntário");
         }
-        done();
+        //done();
     });
-    beforeEach(function (done) {
-        // insert user in db
+    beforeEach(function () {
         userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (result) {
-            done();
         });
     });
-    afterEach(function (done) {
+    afterEach(function () {
         // delete user from db
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                done(error);
             }
             if (result) {
                 userModel.deleteUser(result._id, function (data) {
-                    done();
                 });
-            } else {
-                done();
             }
         });
     });
 
-    it('Insert user in DB', function (done) {
+    it('Insert user in DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                done(error);
+                //done(error);
             }
             testInsertUser(result);
-            done();
+            //done();
         })
     })
-    it('Update user in DB', function (done) {
+    it('Update user in DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                done(error);
+                //done(error);
             }
             const newUserData = { _id: result._id, username: "Ana" }
             userModel.updateUser(newUserData, function (res) {
                 res.username.should.equal(newUserData.username);
-                done();
+                //done();
             });
         });
     });
-    it('Delete user from DB', function (done) {
+    it('Delete user from DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                done(error);
+                //done(error);
             }
             userModel.deleteUser(result._id, function (data) {
                 userModel.getUserByEmail(newUser.email, function (err, result) {
                     should.not.exist(err);
                     should.not.exist(result);
-                    done();
+                    //done();
                 });
             });
         })
