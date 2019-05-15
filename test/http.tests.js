@@ -48,6 +48,19 @@ describe("HTTP server", function () {
                 }
             });
     });
+    it('Animals list page status 200: OK', function (done) {
+        chai
+            .request(url)
+            .get("/animals")
+            .end(function (error, response, body) {
+                if (error) {
+                    done(error);
+                } else {
+                    chai.expect(response.statusCode).to.equal(200);
+                    done();
+                }
+            });
+    });
     it('Non-existing page status 404: Not Found', function (done) {
         chai
             .request(url)

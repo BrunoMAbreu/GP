@@ -47,10 +47,18 @@ module.exports = function (app, passport) {
     });
     app.get('/register', function (req, res) {
         let flashMessage = { show: false, msg: req.flash('registerMessage')[0] }
+        let flashMessage1 = { show: false, msg: req.flash('addDateMessage')[0] }
+        let flashMessage2 = { show: false, msg: req.flash('phoneNumberMessage')[0] }
         if (flashMessage.msg) {
             flashMessage.show = true;
         }
-        res.render('register', { description: "Registo", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, op_submenu: setOpSubmenu(req, res), selectedMenu: setPropertyTrue(selectedMenu, "home") });
+        if (flashMessage1.msg) {
+            flashMessage1.show = true;
+        }
+        if (flashMessage2.msg) {
+            flashMessage2.show = true;
+        }
+        res.render('register', { description: "Registo", isUserLogged: isUserLogged(req, res), flashMessage: flashMessage, flashMessage1: flashMessage1, flashMessage2: flashMessage2, op_submenu: setOpSubmenu(req, res), selectedMenu: setPropertyTrue(selectedMenu, "home") });
     });
 
     // GET: View worker's data

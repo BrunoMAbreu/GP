@@ -30,6 +30,9 @@ module.exports = function (passport) {
                 // find a user whose email is the same as the forms email
                 // we are checking to see if the user trying to login already exists
                 const User = mongoDBConfig.collections[0].model;
+                var today = new Date((new Date()).toString().substring(0,15));
+                var date = new Date((new Date(req.body.birthDate)).toString().substring(0,15));
+
                 User.getUserByEmail(email, function (err, result) {
                     if (err) {
                         return done(err);
@@ -37,7 +40,11 @@ module.exports = function (passport) {
                         return done(null, false, req.flash('registerMessage', 'Lamentamos mas houve um problema com o site. Por favor, tente mais tarde.'));
                     } else if (result !== null){
                         return done(null, false, req.flash('registerMessage', 'Este endereço email já está registado.'));
-                    } else {
+                    } else if(date > today){
+                        return done(null, false, req.flash('addDateMessage', 'Data inválida.'));
+                    } else if(("" + req.body.phoneNumber).length !== 9){
+                        return done(null, false, req.flash('phoneNumberMessage', 'Número de telemóvel inválido.'));
+                    }else {
                         // if the user doesn't already exist in the db
                         User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.birthDate, function (result) {                           
                             return done(null, result);

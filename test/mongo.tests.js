@@ -8,7 +8,7 @@ const should = chai.should();
 
 
 describe("Mongo 'users' collection", function () {
-    this.timeout(5000);
+    this.timeout(10000);
     let mongoDBConfig = null;
     let newUser = null;
     let userModel = null;
@@ -56,34 +56,34 @@ describe("Mongo 'users' collection", function () {
     it('Insert user in DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                //done(error);
+                done(error);
             }
             testInsertUser(result);
-            //done();
+            done();
         })
     })
     it('Update user in DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                //done(error);
+                done(error);
             }
             const newUserData = { _id: result._id, username: "Ana" }
             userModel.updateUser(newUserData, function (res) {
                 res.username.should.equal(newUserData.username);
-                //done();
+                done();
             });
         });
     });
     it('Delete user from DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                //done(error);
+                done(error);
             }
             userModel.deleteUser(result._id, function (data) {
                 userModel.getUserByEmail(newUser.email, function (err, result) {
                     should.not.exist(err);
                     should.not.exist(result);
-                    //done();
+                    done();
                 });
             });
         })
