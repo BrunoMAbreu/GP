@@ -1,17 +1,45 @@
 <div class="textDisplay">
 <h2>{{viewTitle}}</h2>
-    <dl class="dl-horizontal">
-        <dt>Nome</dt>
-        <dd>{{animal.name}}</dd>
-        <dt>Data de Nascimento</dt>
-        <dd>{{animal.birthday}}</dd>
-        <dt>Genero</dt>
-        <dd>{{animal.gender}}</dd>
-        <dt>Vacinado</dt>
-        <dd>{{animal.vaccinated}}</dd>
-        <dt>Esterilizado</dt>
-        <dd>{{animal.sterilized}}</dd>
-        <dt>Cão</dt>
-        <dd>{{animal.dog}}</dd>
+    <div style="position:absolute; margin-left:10%">
+        {{#ifGenderCond animal.gender}}
+            <img class="animal-image-male" src="{{animal.photoLink}}" alt="Fotografia do animal"/>
+        {{else}}
+            <img class="animal-image-female" src="{{animal.photoLink}}" alt="Fotografia do animal"/>
+        {{/ifGenderCond}}
+    </div>
+    <dl class="dl-horizontal" style="position:absolute; left:30%">
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Nome</dt>
+        <dd style="margin: 0; display: inline;">{{animal.name}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Data de Nascimento</dt>
+        <dd style="margin: 0; display: inline;">{{birthday}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Género</dt>
+        {{#ifGenderCond animal.gender}}
+            <dd style="margin: 0; display: inline;">Macho</dd>
+        {{else}}
+            <dd style="margin: 0; display: inline;">Fêmea</dd>
+        {{/ifGenderCond}}
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Vacinado</dt>
+        {{#ifBoolCond animal.vaccinated}}
+            <dd style="margin: 0; display: inline;">Sim</dd>
+        {{else}}
+            <dd style="margin: 0; display: inline;">Não</dd>
+        {{/ifBoolCond}}
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Esterilizado</dt>
+        {{#ifBoolCond animal.sterilized}}
+            <dd style="margin: 0; display: inline;">Sim</dd>
+        {{else}}
+            <dd style="margin: 0; display: inline;">Não</dd>
+        {{/ifBoolCond}}
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Tipo</dt>
+        {{#ifBoolCond animal.dog}}
+            <dd style="margin: 0; display: inline;">Cão</dd>
+        {{else}}
+            <dd style="margin: 0; display: inline;">Gato</dd>
+        {{/ifBoolCond}}
     </dl>
 </div>

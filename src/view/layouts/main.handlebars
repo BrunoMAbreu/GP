@@ -30,7 +30,7 @@
             
             {{#if selectedMenu.home}}
             <li class="menu_element" id="selected">Início</li>
-            <li class="menu_element"><a href="/animals">Animais</a></li>
+            <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
                 {{#if isUserLogged.username}}
                     {{> operationsDropDownMenu}}
@@ -38,7 +38,7 @@
             <li class="menu_element"><a href="/about">Sobre nós</a></li>
             {{else if selectedMenu.animals}}
             <li class="menu_element"><a href="/">Início</a></li>
-            <li class="menu_element" id="selected">Animais</li>
+            <li class="menu_element"><a href="/animals/catalog" id="selected">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
                 {{#if isUserLogged.username}}
                     {{> operationsDropDownMenu}}
@@ -46,7 +46,7 @@
             <li class="menu_element"><a href="/about">Sobre nós</a></li>
             {{else if selectedMenu.volunteering}}
             <li class="menu_element"><a href="/">Início</a></li>
-            <li class="menu_element"><a href="/animals">Animais</a></li>
+            <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element" id="selected">Voluntariado</li>
                 {{#if isUserLogged.username}}
                     {{> operationsDropDownMenu}}
@@ -54,7 +54,7 @@
             <li class="menu_element"><a href="/about">Sobre nós</a></li>
             {{else if selectedMenu.operations}}
             <li class="menu_element"><a href="/">Início</a></li>
-            <li class="menu_element"><a href="/animals">Animais</a></li>
+            <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
                 {{#if isUserLogged.username}}
                     {{> operationsDropDownMenu}}
@@ -62,7 +62,7 @@
             <li class="menu_element"><a href="/about">Sobre nós</a></li>
             {{else if selectedMenu.about}}
             <li class="menu_element"><a href="/">Início</a></li>
-            <li class="menu_element"><a href="/animals">Animais</a></li>
+            <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
                 {{#if isUserLogged.username}}
                     {{> operationsDropDownMenu}}

@@ -136,8 +136,16 @@ function confirmUserDelete(id) {
     }
 }
 
+function confirmAnimalDelete(id) {
+    let response = confirm("Deseja apagar esta ficha?");
+    if (response) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/animals/" + id, true);
+        xhr.send();
+    }
+}
+
 function confirmVolunteerDelete(id) {
-    console.log("ok1");
     let response = confirm("Deseja apagar este voluntário?");
     if (response) {
         let xhr = new XMLHttpRequest();
