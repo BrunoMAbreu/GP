@@ -84,7 +84,7 @@ let connectMongoDB = function (cb) {
     });
     //createUserCollection();
 };
-require('../animal.model');
+require('./schemas/animal.model');
 
 /**
  * Creates mongoDB collection "User"

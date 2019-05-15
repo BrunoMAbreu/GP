@@ -11,7 +11,7 @@ module.exports = function (app, passport) {
         { href: "/users", name: "Utilizadores", type: ["Administrador"] },
         { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
         { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
-        { href: "/animais_sub", name: "Animais", type: ["Administrador", "Funcionário", "Voluntário"] },
+        { href: "/animals", name: "Animais", type: ["Administrador", "Funcionário", "Voluntário"] },
         { href: "/adopcoes_sub", name: "Adopções", type: ["Administrador", "Funcionário"] },
         { href: "/apadrinhamentos_sub", name: "Apadrinhamentos", type: ["Administrador", "Funcionário"] },
         { href: "/entradaESaidaAnimais_sub", name: "Entrada e Saída de Animais", type: ["Administrador", "Funcionário"] }
@@ -317,6 +317,7 @@ module.exports = function (app, passport) {
                     showActions: true
                 });
             });
+            
             const searchColumnRowspan = 12;
             while (users.length < searchColumnRowspan) {
                 users.push({
@@ -330,7 +331,6 @@ module.exports = function (app, passport) {
                 });
             }
             const firstLine = users.shift();
-
             if (req.session.passport.user.profile === "administrador") {
                 res.render('workersList', {
                     description: "Funcionários",
@@ -502,7 +502,7 @@ module.exports = function (app, passport) {
 
 
     var animalAPI = require('./animalRoutes.js');
-    app.use('/animal', animalAPI);
+    app.use('/animals', animalAPI);
 
     // Must be last route
     app.get('*', function (req, res) {

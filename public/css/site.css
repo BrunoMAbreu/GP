@@ -515,3 +515,25 @@ abbr {
     border-radius: 10px;
     background-color: white;
 }
+
+.animal_container {
+    list-style:none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .float {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .float:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+  .float-item {
+    float: left;
+  }
