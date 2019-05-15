@@ -4,7 +4,7 @@ console.log("running 00_entry.point.js");
 require("../app.js");
 
 describe("", function () {
-    this.timeout(5000);
+    this.timeout(10000);
     before(function (done) {
         setTimeout(function () {
             done();

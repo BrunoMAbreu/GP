@@ -47,7 +47,7 @@ router.get('/add', (req, res) => {
     if (req.session.passport.user.profile === "administrador" ||
         req.session.passport.user.profile === "funcionário") {
         let flashMessage = { show: false, msg: req.flash('addAnimalMessage')[0] }
-        let flashMessage1 = { show: false, msg: req.flash('addAnimalDateMessage')[0] }
+        let flashMessage1 = { show: false, msg: req.flash('addDateMessage')[0] }
             if (flashMessage.msg) {
                 flashMessage.show = true;
             }
@@ -175,7 +175,7 @@ router.get('/update/:id', (req, res) => {
     if (req.session.passport.user.profile === "administrador" ||
         req.session.passport.user.profile === "funcionário") {
             let flashMessage = { show: false, msg: req.flash('addAnimalMessage')[0] }
-            let flashMessage1 = { show: false, msg: req.flash('addAnimalDateMessage')[0] }
+            let flashMessage1 = { show: false, msg: req.flash('addDateMessage')[0] }
                 if (flashMessage.msg) {
                     flashMessage.show = true;
                 }
@@ -232,9 +232,8 @@ function insertRecord(req, res){
         }
         var today = new Date((new Date()).toString().substring(0,15));
         var date = new Date((new Date(req.body.birthday)).toString().substring(0,15));
-        if(date > today){
-            console.log("ok123");
-            req.flash('addAnimalDateMessage', 'Data inválida.');
+        if(date > today || today.getFullYear() - date.getFullYear() >= 20){
+            req.flash('addDateMessage', 'Data inválida.');
         }
         if(!animalAlreadyExists && date <= today){
             var animal = new Animal();
@@ -295,7 +294,14 @@ function updateRecord(req, res){
                     req.flash('addAnimalMessage', 'Já existe um animal com este nome.');
                     animalAlreadyExists = true;
                 }
-                if(!animalAlreadyExists){
+                var today = new Date((new Date()).toString().substring(0,15));
+                var date = new Date((new Date(req.body.birthday)).toString().substring(0,15));
+                if(date > today || today.getFullYear() - date.getFullYear() >= 20){
+                    req.flash('addDateMessage', 'Data inválida.');
+                }
+                if(!animalAlreadyExists && 
+                    date <= today &&
+                    today.getFullYear() - date.getFullYear() < 20){
                     Animal.findOneAndUpdate({ _id : req.body._id }, req.body, {new: true}, (err, doc) => {
                         if(!err){
                             res.redirect('/animals');
