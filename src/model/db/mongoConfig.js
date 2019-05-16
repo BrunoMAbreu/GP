@@ -62,33 +62,33 @@ let connectMongoDB = function (cb) {
         let testUserProfileAdmin = "administrador";
         getUserByEmail(testUserEmailAdmin, function (err, result) {
             if (result) {
-                updateUser({ _id: result._id, profile: testUserProfileAdmin }, function () {
+                updateUser({ _id: result._id, profile: testUserProfileAdmin }, function (err, result) {
                 })
             } else {
-                insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (res) {
+                insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (err, res) {
                     getUserByEmail(testUserEmailAdmin, function (err, result) {                       
-                        updateUser({ _id: result._id, profile: testUserProfileAdmin }, function () {
+                        updateUser({ _id: result._id, profile: testUserProfileAdmin }, function (err, result) {
                         })
                     })
                 });
             }
         })
         let testUserProfileFunc = "funcionário";
-        insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (res) {
+        insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (err, res) {
             getUserByEmail("a@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function () {
+                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
                 })
             })
         });
-        insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (res) {
+        insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
             getUserByEmail("b@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function () {
+                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
                 })
             })
         });
-        insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (res) {
+        insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
             getUserByEmail("c@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function () {
+                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
                 })
             })
         });
@@ -212,7 +212,7 @@ let insertUser = function (name, email, password, phone, birthDate, callback) {
     // Insert
     mongoDBConfig.collections[0].model.create(newUser, function (err, res) {
         if (err) return console.error("error: " + err);
-        callback(res);
+        callback(err, res);
     });
     //});
 }
@@ -341,9 +341,9 @@ let updateUser = function (newUserData, callback) {
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findOneAndUpdate({ email: newUserData.email }, newUserData, { new: true }, function (err, data) {
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, { new: true }, function (err, data) {
         if (err) console.log(err);
-        callback(data);
+        callback(err, data);
     });
 }
 

@@ -14,7 +14,7 @@ describe("Mongo 'users' collection", function () {
     let userModel = null;
     let testInsertUser = null;
 
-    before(function () {
+    before(function (done) {
         mongoDBConfig = require("../src/model/db/mongoConfig").mongoDBConfig;
         userModel = mongoDBConfig.collections[0].model;
         newUser = {
@@ -25,7 +25,7 @@ describe("Mongo 'users' collection", function () {
             birthDate: new Date()
         };
         // Aux function
-        testInsertUser = function (result) {
+        testInsertUser = function (result, callback) {
             result.username.should.equal(newUser.name);
             result.email.should.equal(newUser.email);
             result.password.should.be.a("string");
@@ -33,23 +33,24 @@ describe("Mongo 'users' collection", function () {
             result.birthDate.getUTCFullYear().should.equal(newUser.birthDate.getUTCFullYear());
             result.birthDate.getUTCMonth().should.equal(newUser.birthDate.getUTCMonth());
             result.birthDate.getUTCDate().should.equal(newUser.birthDate.getUTCDate());
-            result.profile.should.equal("voluntário");
-        }
-        //done();
+            result.profile.should.equal("utilizador");
+            callback();
+        };
+        setTimeout(function () {
+            done();
+        }, 2000);
     });
-    beforeEach(function () {
-        userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (result) {
-            
+    beforeEach(function (done) {
+        userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (err, result) {
+            if (err) done(err);
+            done();
         });
     });
-    afterEach(function () {
+    afterEach(function (done) {
         // delete user from db
-        userModel.findOneAndRemove({email: newUser.email}, function (err, result) {
-            if(result){
-                done();
-            }
-            done(err);
-            
+        userModel.findOneAndDelete({ email: newUser.email }, function (err, result) {
+            if (err) done(err);
+            done();
         });
         /*userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
@@ -61,27 +62,31 @@ describe("Mongo 'users' collection", function () {
         });*/
     });
 
-    it('Insert user in DB', function () {
+    it('Insert user in DB', function (done) {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
                 done(err);
             }
-            testInsertUser(result);
-            done();
+            testInsertUser(result, done);
+            /*setTimeout(function () {
+                done();
+            }, 1000);*/
         })
     })
-    it('Update user in DB', function () {
+    it('Update user in DB', function (done) {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
                 done(err);
             }
-            const newUserData = { _id: result._id, username: "Ana" }
-            userModel.updateUser(newUserData, function (res) {
+            const newUserData = { _id: result._id, username: "Ana" };
+            userModel.updateUser(newUserData, function (err, res) {
+                if (err) done(err);
                 res.username.should.equal(newUserData.username);
                 done();
             });
         });
     });
+    /*
     it('Delete user from DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
@@ -96,4 +101,5 @@ describe("Mongo 'users' collection", function () {
             });
         })
     })
+    */
 });
