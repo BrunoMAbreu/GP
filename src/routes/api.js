@@ -283,6 +283,7 @@ module.exports = function (app, passport) {
         }
     );
 
+    
     // User Register
     app.post('/register', passport.authenticate('local-register', {
         successRedirect: '/',

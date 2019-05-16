@@ -6,7 +6,6 @@ let Animal;
 setTimeout(function () {
     Animal = mongoDBConfig.collections[1].model;
 }, 2000);
-
 //mongoose.model('animals');
 
 var Handlebars = require('handlebars');
