@@ -1,5 +1,5 @@
 module.exports = {
-    adoptions_id: {
+    adoption_id: {
         type: "number",
         min: 1,
         unique: true,
@@ -9,16 +9,12 @@ module.exports = {
     user_id: {
         type: "number",
         min: 1,
-        unique: true,
-        required: true,
-        index: true
+        required: true
     },
     animal_id: {
         type: "string",
-        min: 1,
         unique: true,
-        required: true,
-        index: true
+        required: true
     },
     adoptionDate: {
         type: "date",

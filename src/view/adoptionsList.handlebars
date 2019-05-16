@@ -1,12 +1,12 @@
 <div class="tooltips">
     <img src="./images/help.jpg" with="25" height="25" alt="Ajuda" />
-    <span class="tooltiptext">Nesta p&aacute;gina poder&aacute; consultar e editar e eliminar as adopções que se
+    <span class="tooltiptext">Nesta p&aacute;gina poder&aacute; consultar, editar e eliminar as adopções que se
         encontram registadas no SI.</span>
 </div>
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
 </div>
-<table id="adoptionsListTable">
+<table id="usersListTable">
     <thead>
         <tr>
             <th>Pesquisar por:</th>
@@ -19,23 +19,23 @@
     </thead>
     <tbody>
         <tr>
-            <td id="searchCell" rowspan={{searchColumnRowspan}}>{{> searchColumn}}</td>
+            <td id="searchCell" rowspan={{searchColumnRowspan}}>{{> searchColumnAdoptions}}</td>
             <td>
-                {{adoption_id}}
+                {{firstLine.adoption_id}}
             </td>
             <td>
-                {{adopter}}
+                {{firstLine.adopter}}
             </td>
             <td>
-                {{animal}}
+                {{firstLine.animal}}
             </td>
             <td>
-                {{adoptionDate}}
+                {{firstLine.adoptionDate}}
             </td>
             {{#if firstLine.showActions}}
-            <td><a href="/{{firstLine.route}}/{{firstLine.user_id}}">Visualizar</a></td>
-            <td><a href="/{{firstLine.route}}/{{firstLine.user_id}}">Actualizar</a></td>
-            <td><a href="" onclick="confirmAdoptionDelete({{firstLine.user_id}})">Eliminar</a></td>
+            <td><a href="/{{firstLine.route}}/{{firstLine.adoption_id}}">Visualizar</a></td>
+            <td><a href="/{{firstLine.route}}/{{firstLine.adoption_id}}">Actualizar</a></td>
+            <td><a href="" onclick="confirmAdoptionDelete({{firstLine.adoption_id}})">Eliminar</a></td>
             {{else}}
             <td></td>
             <td></td>

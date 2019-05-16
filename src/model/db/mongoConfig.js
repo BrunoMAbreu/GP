@@ -66,7 +66,7 @@ let connectMongoDB = function (cb) {
                 })
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (res) {
-                    getUserByEmail(testUserEmailAdmin, function (err, result) {
+                    getUserByEmail(testUserEmailAdmin, function (err, result) {                       
                         updateUser({ _id: result._id, profile: testUserProfileAdmin }, function () {
                         })
                     })
@@ -92,6 +92,14 @@ let connectMongoDB = function (cb) {
                 })
             })
         });
+
+        insertAdoption(19, "5cdda56c2b9fe8beac697d4a", function (res) {
+            console.log("Farofa Adoption: ", res)
+        });
+        insertAdoption(8, "5cdd91a5dbf287c6f020baf8", function (res) {
+            console.log("Carrapateira Adoption: ", res)
+        });
+
         // FIM: Para testar; APAGAR -------------------------------
 
         cb();
@@ -147,16 +155,6 @@ let createAnimalCollection = function () {
     mongoDBConfig.collections.forEach(element => {
         if (element.name === animalsCollectionName) {
             element.schema = animalSchema;
-
-/*            element.schema.statics.getUserCollectionIndex = getUserCollectionIndex;
-            element.schema.statics.insertUser = insertUser;
-            element.schema.statics.getUserByEmail = getUserByEmail;
-            element.schema.statics.getUserById = getUserById;
-            element.schema.statics.getUserByProfile = getUserByProfile;
-            element.schema.statics.getUser = getUser;
-            element.schema.statics.updateUser = updateUser;
-            element.schema.statics.deleteUser = deleteUser;*/
-
             element.model = Mongoose.model('animalModel', animalSchema);
         }
     })
@@ -171,6 +169,7 @@ let createAdoptionCollection = function () {
     mongoDBConfig.collections.forEach(element => {
         if (element.name === adoptionsCollectionName) {
             element.schema = adoptionSchema;
+            element.schema.plugin(passportLocalMongoose);
 
             //element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getAdoptionCollectionIndex = getAdoptionCollectionIndex;
@@ -236,7 +235,7 @@ let insertAdoption = function (user_id, animal_id, callback) {
         animal_id: animal_id
     }
     // Insert
-    mongoDBConfig.collections[0].model.create(newAdoption, function (err, res) {
+    mongoDBConfig.collections[2].model.create(newAdoption, function (err, res) {
         if (err) return console.error("error: " + err);
         callback(res);
     });

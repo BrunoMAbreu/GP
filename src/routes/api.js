@@ -300,129 +300,66 @@ module.exports = function (app, passport) {
 
     // Adoptions' List
     app.get('/adoptions', isLoggedIn, function (req, res) {
-        //const User = mongoDBConfig.collections[0].model;
+        const User = mongoDBConfig.collections[0].model;
+        const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
 
-
-
-
-        const Animal = animalAPI.Animal; //// get animal list model
-        console.log(">>>>>>>", Animal)
-
-
+        //console.log(">>>>>>>", Animal)
 
         let adoptions = [];
         const route = "adoptions";
         const searchColumnRowspan = 12;
-        const profile = "administrador";
-        const reqQuery = req.query;
-        let query = { profile: profile };
-        if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
-            for (let [key, value] of Object.entries(reqQuery)) {
-                if (value !== "") {
-                    query[key] = (key === "adoptionDate")
-                        ? { '$gte': value }
-                        : { '$regex': value, '$options': 'i' }
-                }
-            }
-        }
-        Adoption.getAdoption(query, function (err, result) {
+
+        Adoption.getAdoption({}, function (err, result) {
             if (err) console.error(err);
-
             result.forEach(element => {
-                adoptions.push({
-                    adoption_id: element.adoption_id,
-                    adopter: element.adopter,
-                    animal: element.animal,
-                    adoptionDate: element.birthDate.toISOString().slice(0, 10),
-                    route: route,
-                    showActions: true
-                });
-            });
+                let adopter = null;
+                let animal = null;
+                User.getUser({ user_id: element.user_id }, function (err, result) {
+                    if (err) console.log(err);
+                    adopter = result[0].username;
+                    Animal.find({ _id: element.animal_id }, function (err, result) {
+                        if (err) console.log(err);
+                        animal = result[0].name;
+                        adoptions.push({
+                            adoption_id: element.adoption_id,
+                            adopter: adopter,
+                            animal: animal,
+                            adoptionDate: element.adoptionDate.toISOString().slice(0, 10),
+                            route: route,
+                            showActions: true
+                        });
 
-            while (adoptions.length < searchColumnRowspan) {
-                adoptions.push({
-                    user_id: "",
-                    username: "",
-                    email: "",
-                    phone: "",
-                    birthDate: "",
-                    route: route,
-                    showActions: false
-                });
-            }
-            const firstLine = adoptions.shift();
-            if (req.session.passport.user.profile === "administrador") {
-                res.render('adoptionsList', {
-                    description: "Adopções",
-                    isUserLogged: isUserLogged(req, res),
-                    op_submenu: setOpSubmenu(req, res),
-                    firstLine: firstLine,
-                    adoptions: adoptions,
-                    searchColumnRowspan: searchColumnRowspan,
-                    route: route,
-                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
-                });
-            } else {
-                res.redirect('/');
-            }
-
-            /*const User = mongoDBConfig.collections[0].model;
-            let users = [];
-            const route = "workers";
-            const profile = "funcionário";
-    
-            const reqQuery = req.query;
-            let query = { profile: profile };
-            if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
-                for (let [key, value] of Object.entries(reqQuery)) {
-                    if (value !== "") {
-                        query[key] = (key === "birthDate")
-                            ? { '$gte': value }
-                            : { '$regex': value, '$options': 'i' }
-                    }
-                }
-            }
-            User.getUser(query, function (err, result) {
-                result.forEach(element => {
-                    users.push({
-                        user_id: element.user_id,
-                        username: element.username,
-                        email: element.email,
-                        phone: element.phone,
-                        birthDate: element.birthDate.toISOString().slice(0, 10),
-                        route: route,
-                        showActions: true
                     });
                 });
-                
-                const searchColumnRowspan = 12;
-                while (users.length < searchColumnRowspan) {
-                    users.push({
-                        user_id: "",
-                        username: "",
-                        email: "",
-                        phone: "",
-                        birthDate: "",
+            });
+            setTimeout(function () {
+                while (adoptions.length < searchColumnRowspan) {
+                    adoptions.push({
+                        adoption_id: "",
+                        adopter: "",
+                        animal: "",
+                        adoptionDate: "",
                         route: route,
                         showActions: false
                     });
                 }
-                const firstLine = users.shift();
+                const firstLine = adoptions.shift();
                 if (req.session.passport.user.profile === "administrador") {
-                    res.render('workersList', {
-                        description: "Funcionários",
+                    res.render('adoptionsList', {
+                        description: "Adopções",
                         isUserLogged: isUserLogged(req, res),
                         op_submenu: setOpSubmenu(req, res),
                         firstLine: firstLine,
-                        users: users,
+                        adoptions: adoptions,
                         searchColumnRowspan: searchColumnRowspan,
                         route: route,
                         selectedMenu: setPropertyTrue(selectedMenu, "operations")
                     });
                 } else {
                     res.redirect('/');
-                }*/
+                }
+            }, 1000);
         });
     });
 
