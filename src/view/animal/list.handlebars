@@ -64,9 +64,15 @@
                     {{/ifBoolCond}}
                 {{/ifNullCond}}
                 {{#if firstLine.showActions}}
+                {{#ifBoolCond isVolunteerLogged}}
+                <td><a href="/animals/details/{{firstLine._id}}">Visualizar</a></td>
+                <td></td>
+                <td></td>
+                {{else}}
                 <td><a href="/animals/details/{{firstLine._id}}">Visualizar</a></td>
                 <td><a href="/animals/update/{{firstLine._id}}">Actualizar</a></td>
                 <td><a href="/animals/delete/{{firstLine._id}}">Eliminar</a></td>
+                {{/ifBoolCond}}
                 {{else}}
                 <td></td>
                 <td></td>
