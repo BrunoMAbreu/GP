@@ -60,7 +60,8 @@ router.get('/add', (req, res) => {
             op_submenu: setOpSubmenu(req, res),
             selectedMenu: setPropertyTrue(selectedMenu, "operations"),
             flashMessage: flashMessage,
-            flashMessage1: flashMessage1
+            flashMessage1: flashMessage1,
+            isUpdate: false
         });
     }
     else{
@@ -202,7 +203,11 @@ router.get('/update/:id', (req, res) => {
                     animal: doc,
                     animalBirthday: birthday,
                     flashMessage: flashMessage,
-                    flashMessage1: flashMessage1
+                    flashMessage1: flashMessage1,
+                    isUpdate: true,
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
                 });
             }
         });
