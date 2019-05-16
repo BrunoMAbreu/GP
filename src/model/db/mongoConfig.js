@@ -5,6 +5,8 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const autoIncrement = require('mongoose-auto-increment');
 
 const usersCollectionName = "users";
+const animalsCollectionName = "animals";
+const adoptionsCollectionName = "adoptions";
 
 // Object to be exported
 let mongoDBConfig = {
@@ -16,6 +18,16 @@ let mongoDBConfig = {
         schema: null,
         model: null,
         saltRounds: 12
+    },
+    {
+        name: animalsCollectionName,
+        schema: null,
+        model: null
+    },
+    {
+        name: adoptionsCollectionName,
+        schema: null,
+        model: null
     }]
 }
 /*
@@ -34,6 +46,8 @@ let connectMongoDB = function (cb) {
     mongoDBConfig.connection.once('open', function () {
         console.log("Connection to mongodb established");
         createUserCollection();
+        createAnimalCollection();
+        createAdoptionCollection();
 
 
 
@@ -52,7 +66,7 @@ let connectMongoDB = function (cb) {
                 })
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (res) {
-                    getUserByEmail(testUserEmailAdmin, function (err, result) {
+                    getUserByEmail(testUserEmailAdmin, function (err, result) {                       
                         updateUser({ _id: result._id, profile: testUserProfileAdmin }, function () {
                         })
                     })
@@ -78,13 +92,21 @@ let connectMongoDB = function (cb) {
                 })
             })
         });
+
+        insertAdoption(19, "5cdda56c2b9fe8beac697d4a", function (res) {
+            console.log("Farofa Adoption: ", res)
+        });
+        insertAdoption(8, "5cdd91a5dbf287c6f020baf8", function (res) {
+            console.log("Carrapateira Adoption: ", res)
+        });
+
         // FIM: Para testar; APAGAR -------------------------------
 
         cb();
     });
     //createUserCollection();
 };
-require('./schemas/animal.model');
+//require('./schemas/animal.model');
 
 /**
  * Creates mongoDB collection "User"
@@ -125,6 +147,46 @@ let createUserCollection = function () {
 }
 
 
+let createAnimalCollection = function () {
+    const animalSchema = new Schema(require("./schemas/animal.model.js"), { collection: animalsCollectionName });
+    autoIncrement.initialize(mongoDBConfig.connection);
+    animalSchema.plugin(autoIncrement.plugin, { model: 'animalModel', field: 'animal_id', startAt: 1 });
+
+    mongoDBConfig.collections.forEach(element => {
+        if (element.name === animalsCollectionName) {
+            element.schema = animalSchema;
+            element.model = Mongoose.model('animalModel', animalSchema);
+        }
+    })
+}
+
+
+let createAdoptionCollection = function () {
+    const adoptionSchema = new Schema(require("./schemas/adoptions.js"), { collection: adoptionsCollectionName });
+    autoIncrement.initialize(mongoDBConfig.connection);
+    adoptionSchema.plugin(autoIncrement.plugin, { model: 'adoptionModel', field: 'adoption_id', startAt: 1 });
+
+    mongoDBConfig.collections.forEach(element => {
+        if (element.name === adoptionsCollectionName) {
+            element.schema = adoptionSchema;
+            element.schema.plugin(passportLocalMongoose);
+
+            //element.schema.statics.validatePassword = validatePassword;
+            element.schema.statics.getAdoptionCollectionIndex = getAdoptionCollectionIndex;
+            element.schema.statics.insertAdoption = insertAdoption;
+
+            //element.schema.statics.getUserByEmail = getUserByEmail;
+            //element.schema.statics.getUserById = getUserById;
+            //element.schema.statics.getUserByProfile = getUserByProfile;
+            element.schema.statics.getAdoption = getAdoption;
+            //element.schema.statics.updateUser = updateUser;
+            //element.schema.statics.deleteUser = deleteUser;
+
+            element.model = Mongoose.model('adoptionModel', adoptionSchema);
+        }
+    })
+}
+
 /**
  * CREATE: Inserts new user into mongoDB
  * @param {*} name User name
@@ -139,21 +201,45 @@ let insertUser = function (name, email, password, phone, birthDate, callback) {
     if (index === -1) {
         console.error("Collection " + usersCollectionName + " not in mongoDBConfig");
     }
-    mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
-        const newUser = {
-            //user_id: ((result === null) ? 1 : ++result.user_id),
-            username: name,
-            email: email,
-            password: password,
-            phone: phone,
-            birthDate: birthDate
-        }
-        // Insert
-        mongoDBConfig.collections[0].model.create(newUser, function (err, res) {
-            if (err) return console.error("error: " + err);
-            callback(res);
-        });
+    //mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
+    const newUser = {
+        username: name,
+        email: email,
+        password: password,
+        phone: phone,
+        birthDate: birthDate
+    }
+    // Insert
+    mongoDBConfig.collections[0].model.create(newUser, function (err, res) {
+        if (err) return console.error("error: " + err);
+        callback(res);
     });
+    //});
+}
+
+
+
+/**
+ * CREATE: Inserts new adoption into mongoDB
+ * @param {*} user_id User id (integer)
+ * @param {*} animal_id animal id (objectID, string)
+ * @param {*} callback 
+ */
+let insertAdoption = function (user_id, animal_id, callback) {
+    let index = getCollectionIndex(adoptionsCollectionName);
+    if (index === -1) {
+        console.error("Collection " + adoptionsCollectionName + " not in mongoDBConfig");
+    }
+    const newAdoption = {
+        user_id: user_id,
+        animal_id: animal_id
+    }
+    // Insert
+    mongoDBConfig.collections[2].model.create(newAdoption, function (err, res) {
+        if (err) return console.error("error: " + err);
+        callback(res);
+    });
+
 }
 
 
@@ -216,8 +302,26 @@ let getUserByProfile = function (profile, callback) {
  * @param {*} callback
  * @returns users object array
  */
-let getUser = function(searchObject, callback){
+let getUser = function (searchObject, callback) {
     const index = getCollectionIndex(usersCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.find(searchObject, function (err, result) {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
+
+
+/**
+ * READ: returns adoptions with given query parameters
+ * @param {*} searchObject 
+ * @param {*} callback
+ * @returns adoptions object array 
+ */
+let getAdoption = function (searchObject, callback) {
+    const index = getCollectionIndex(adoptionsCollectionName);
     if (index === -1) {
         return -1;
     }
@@ -292,6 +396,22 @@ let getUserCollectionIndex = function () {
     let index = -1;
     for (let i = 0; i < mongoDBConfig.collections.length; i++) {
         if (mongoDBConfig.collections[i].name === usersCollectionName) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+}
+
+
+/**
+ * Returns index of the collection in mongoDBConfig.collections[] 
+ * @param {*} collectionName 
+ */
+let getAdoptionCollectionIndex = function () {
+    let index = -1;
+    for (let i = 0; i < mongoDBConfig.collections.length; i++) {
+        if (mongoDBConfig.collections[i].name === adoptionsCollectionName) {
             index = i;
             break;
         }

@@ -1,5 +1,5 @@
 'use strict';
-console.log("running mongo.js")
+console.log("running mongo.animals.js")
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -9,15 +9,26 @@ const should = chai.should();
 
 describe("Mongo 'animals' collection", function () {
     this.timeout(10000);
+
+    let mongoDBConfig = null;
+    let Animal = null;
+
     let mongoose = null;
     let newAnimal = null;
-    let Animal = null;
+
     let testInsertAnimal = null;
 
     before(function () {
-        mongoose = require('mongoose');
-        Animal = mongoose.model('animals');
-        newAnimal = new Animal()
+        mongoDBConfig = require("../src/model/db/mongoConfig").mongoDBConfig;
+        Animal = mongoDBConfig.collections[1].model;
+
+        //console.log("animalModel: ", animalModel)
+
+
+        /*mongoose = require('mongoose');
+        Animal = mongoose.model('animals');*/
+
+        newAnimal = new Animal();
         newAnimal.name = "AnimalTeste";
         newAnimal.birthday = new Date();
         newAnimal.gender = "Male";
@@ -39,41 +50,42 @@ describe("Mongo 'animals' collection", function () {
             result.photoLink.should.equal(newAnimal.photoLink);
             result.dog.should.equal(newAnimal.dog);
         }
-        //done();
     });
     beforeEach(function () {
-        newAnimal.save((err, doc) => {});
+        newAnimal.save((err, doc) => {
+            if(err) console.log(err);
+        });
     });
     afterEach(function () {
         // delete user from db
-        Animal.findByIdAndRemove(newAnimal._id, (err, doc) => {});
+        Animal.findByIdAndRemove(newAnimal._id, (err, doc) => {
+            if(err) console.log(err);
+        });
     });
 
     it('Insert animal in DB', function () {
         Animal.find((err, docs) => {
             if (err) {
-                //done(error);
+                done(err);
             }
             testInsertAnimal(result);
-            //done();
+            done();
         });
     });
     it('Update animal in DB', function () {
         const newAnimalData = { _id: newAnimal._id, name: "testeAnimal2" }
         Animal.findOneAndUpdate({ _id : newAnimalData._id }, newAnimal, {new: true}, (err, doc) => {
-            //if(err) done(error);
+            if(err) done(err);
             //else{
                 doc.name.should.equal(newAnimal.name);
-            //    done();
+                done();
             //}
         });
     });
     it('Delete animal from DB', function () {
         Animal.findByIdAndRemove(newAnimal._id, (err, doc) => {
-            //if (!err) {
-            //    done();
-            //}
-            //else { done(err); }
+            if (err) done(err);
+            done;
         });
     })
 });

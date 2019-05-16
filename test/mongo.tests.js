@@ -39,24 +39,32 @@ describe("Mongo 'users' collection", function () {
     });
     beforeEach(function () {
         userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (result) {
+            
         });
     });
     afterEach(function () {
         // delete user from db
-        userModel.getUserByEmail(newUser.email, function (err, result) {
+        userModel.findOneAndRemove({email: newUser.email}, function (err, result) {
+            if(result){
+                done();
+            }
+            done(err);
+            
+        });
+        /*userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
             }
             if (result) {
                 userModel.deleteUser(result._id, function (data) {
                 });
             }
-        });
+        });*/
     });
 
     it('Insert user in DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                done(error);
+                done(err);
             }
             testInsertUser(result);
             done();
@@ -65,7 +73,7 @@ describe("Mongo 'users' collection", function () {
     it('Update user in DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                done(error);
+                done(err);
             }
             const newUserData = { _id: result._id, username: "Ana" }
             userModel.updateUser(newUserData, function (res) {
@@ -77,7 +85,7 @@ describe("Mongo 'users' collection", function () {
     it('Delete user from DB', function () {
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
-                done(error);
+                done(err);
             }
             userModel.deleteUser(result._id, function (data) {
                 userModel.getUserByEmail(newUser.email, function (err, result) {

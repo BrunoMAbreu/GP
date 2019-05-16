@@ -8,7 +8,7 @@ describe("", function () {
     before(function (done) {
         setTimeout(function () {
             done();
-        }, 2000);
+        }, 6000);
     });
     it('', function (done) {
         done();

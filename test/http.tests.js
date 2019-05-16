@@ -9,6 +9,7 @@ const should = chai.should();
 const url = "http://localhost:8080";
 
 describe("HTTP server", function () {
+    this.timeout(10000);
     it('Main page status 200: OK', function (done) {
         chai
             .request(url)
