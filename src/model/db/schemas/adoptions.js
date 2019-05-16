@@ -6,55 +6,23 @@ module.exports = {
         required: true,
         index: true
     },
-    username: {
-        type: "string",
-        trim: true,
-        required: true
-    },
-    email: {
-        type: "string",
-        trim: true,
+    user_id: {
+        type: "number",
+        min: 1,
         unique: true,
         required: true,
         index: true
     },
-    password: {
+    animal_id: {
         type: "string",
-        minLength: 8,
-        required: true
-    },
-    phone: {
-        type: "string",
-        trim: true,
-        required: true
-    },
-    profile: {
-        type: "string",
-        trim: true,
-        enum: [
-            "voluntário",
-            "funcionário",
-            "administrador",
-            "utilizador"
-        ],
+        min: 1,
+        unique: true,
         required: true,
-        default: "utilizador"
+        index: true
     },
-    birthDate: {
-        type: "date",
-        required: true
-    },
-    registerDate: {
+    adoptionDate: {
         type: "date",
         required: true,
         default: new Date()
-    },
-    isLogged: {
-        type: "boolean",
-        default: true,
-        required: true
-    },
-    animalsAdopted: {
-        type: "array"
     }
 }

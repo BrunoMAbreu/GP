@@ -1,7 +1,8 @@
 <div class="tooltips">
-        <img src="./images/help.jpg" with="25" height="25" alt="Ajuda" />
-        <span class="tooltiptext">Nesta p&aacute;gina poder&aacute; consultar e editar e eliminar as adopções que se encontram registadas no SI.</span>
-    </div>
+    <img src="./images/help.jpg" with="25" height="25" alt="Ajuda" />
+    <span class="tooltiptext">Nesta p&aacute;gina poder&aacute; consultar e editar e eliminar as adopções que se
+        encontram registadas no SI.</span>
+</div>
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
 </div>
@@ -20,19 +21,16 @@
         <tr>
             <td id="searchCell" rowspan={{searchColumnRowspan}}>{{> searchColumn}}</td>
             <td>
-                {{firstLine.user_id}}
+                {{adoption_id}}
             </td>
             <td>
-                {{firstLine.username}}
+                {{adopter}}
             </td>
             <td>
-                {{firstLine.phone}}
+                {{animal}}
             </td>
             <td>
-                {{firstLine.email}}
-            </td>
-            <td>
-                {{firstLine.birthDate}}
+                {{adoptionDate}}
             </td>
             {{#if firstLine.showActions}}
             <td><a href="/{{firstLine.route}}/{{firstLine.user_id}}">Visualizar</a></td>

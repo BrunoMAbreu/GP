@@ -1,22 +1,19 @@
-{{#each users}}
+{{#each adopters}}
 <tr>
     <td>
-        {{user_id}}
+        {{adoption_id}}
     </td>
     <td>
-        {{username}}
+        {{adopter}}
     </td>
     <td>
-        {{phone}}
+        {{animal}}
     </td>
     <td>
-        {{email}}
-    </td>
-    <td>
-        {{birthDate}}
+        {{adoptionDate}}
     </td>
 
-    {{> actionsVolunteers}}
+    {{> actionsAdopters}}
     
 </tr>
 {{/each}}

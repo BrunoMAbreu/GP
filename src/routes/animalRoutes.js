@@ -1,7 +1,14 @@
+const mongoDBConfig = require("../model/db/mongoConfig").mongoDBConfig;
 const express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-var Animal = mongoose.model('animals');
+//var mongoose = require('mongoose');
+let Animal;
+setTimeout(function () {
+    Animal = mongoDBConfig.collections[1].model;
+}, 2000);
+
+//mongoose.model('animals');
+
 var Handlebars = require('handlebars');
 
 const op_submenu = [
@@ -11,7 +18,7 @@ const op_submenu = [
     { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
     { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
     { href: "/animals", name: "Animais", type: ["Administrador", "Funcionário", "Voluntário"] },
-    { href: "/adopcoes_sub", name: "Adopções", type: ["Administrador", "Funcionário"] },
+    { href: "/adoptions", name: "Adopções", type: ["Administrador", "Funcionário"] },
     { href: "/apadrinhamentos_sub", name: "Apadrinhamentos", type: ["Administrador", "Funcionário"] },
     { href: "/entradaESaidaAnimais_sub", name: "Entrada e Saída de Animais", type: ["Administrador", "Funcionário"] }
 ]
