@@ -283,7 +283,7 @@ module.exports = function (app, passport) {
         }
     );
 
-    
+
     // User Register
     app.post('/register', passport.authenticate('local-register', {
         successRedirect: '/',
@@ -311,7 +311,36 @@ module.exports = function (app, passport) {
         const route = "adoptions";
         const searchColumnRowspan = 12;
 
-        Adoption.getAdoption({}, function (err, result) {
+        //const profile = "utilizador";
+
+        const reqQuery = req.query;
+
+        let adoptionQuery = {};
+        let userPattern = null;
+        let animalPattern = null;
+        let isSearching = false;
+        if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
+            for (let [key, value] of Object.entries(reqQuery)) {
+                if (value !== "") {
+                    switch (key) {
+                        case "adoptionDate":
+                            adoptionQuery[key] = { '$gte': value };
+                            break;
+                        case "adopter":
+                            userPattern = new RegExp(value, "i");
+                            break;
+                        case "animal":
+                            animalPattern = new RegExp(value, "i");
+                            break;
+                        default:
+                            break;
+                    }
+                    isSearching = true;
+                }
+            }
+        }
+
+        Adoption.getAdoption(adoptionQuery, function (err, result) {
             if (err) console.error(err);
             result.forEach(element => {
                 let adopter = null;
@@ -330,7 +359,10 @@ module.exports = function (app, passport) {
                             route: route,
                             showActions: true
                         });
-
+                        if (isSearching &&
+                            ((userPattern && !adopter.match(userPattern)) || (animalPattern && !animal.match(animalPattern)))) {
+                            adoptions.pop();
+                        }
                     });
                 });
             });
@@ -493,7 +525,20 @@ module.exports = function (app, passport) {
         const User = mongoDBConfig.collections[0].model;
         let users = [];
         const route = "users";
-        User.getUser({}, function (err, result) {
+        const profile = "utilizador";
+
+        const reqQuery = req.query;
+        let query = { profile: profile };
+        if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
+            for (let [key, value] of Object.entries(reqQuery)) {
+                if (value !== "") {
+                    query[key] = (key === "birthDate")
+                        ? { '$gte': value }
+                        : { '$regex': value, '$options': 'i' }
+                }
+            }
+        }
+        User.getUser(query, function (err, result) {
             result.forEach(element => {
                 users.push({
                     user_id: element.user_id,
