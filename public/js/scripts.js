@@ -21,7 +21,7 @@ window.addEventListener("load", setForm);
 window.onclick = function (e) {
     if (!e.target.matches('#dropbtn')) {
         const myDropdown = document.getElementById("dropDownMenu");
-        if (myDropdown.classList.contains('show')) {
+        if (myDropdown && myDropdown.classList.contains('show')) {
             myDropdown.classList.remove('show');
         }
     }
