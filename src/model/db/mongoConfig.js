@@ -12,6 +12,7 @@ const adoptionsCollectionName = "adoptions";
 let mongoDBConfig = {
     name: "quintaDoMiao",
     url: process.env.MONGO_URL || "mongodb://localhost:27017/",
+    mongoose: null,
     connection: null,
     collections: [{
         name: usersCollectionName,
@@ -41,6 +42,7 @@ let mongoDBFunctions = {
 let connectMongoDB = function (cb) {
     const mongoDB = mongoDBConfig.url + mongoDBConfig.name;
     Mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, autoIndex: true });
+    mongoDBConfig.mongoose = Mongoose;
     mongoDBConfig.connection = Mongoose.connection;
     mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
     mongoDBConfig.connection.once('open', function () {
