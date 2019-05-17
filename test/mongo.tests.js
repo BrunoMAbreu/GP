@@ -11,12 +11,12 @@ describe("Mongo 'users' collection", function () {
     this.timeout(10000);
     let mongoDBConfig = null;
     let newUser = null;
-    let userModel = null;
+    //let userModel = null;
     let testInsertUser = null;
 
     before(function (done) {
         mongoDBConfig = require("../src/model/db/mongoConfig").mongoDBConfig;
-        userModel = mongoDBConfig.collections[0].model;
+        //userModel = mongoDBConfig.collections[0].model;
         newUser = {
             name: "Xana Xanax",
             email: "x@x",
@@ -39,13 +39,14 @@ describe("Mongo 'users' collection", function () {
         done();
     });
     beforeEach(function (done) {
+        let userModel = mongoDBConfig.collections[0].model;
         userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (err, result) {
             if (err) done(err);
             done();
         });
     });
     afterEach(function (done) {
-        // delete user from db
+        let userModel = mongoDBConfig.collections[0].model;
         userModel.findOneAndDelete({ email: newUser.email }, function (err, result) {
             if (err) done(err);
             done();
@@ -53,6 +54,7 @@ describe("Mongo 'users' collection", function () {
     });
 
     it('Insert user in DB', function (done) {
+        let userModel = mongoDBConfig.collections[0].model;
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
                 done(err);
@@ -64,6 +66,7 @@ describe("Mongo 'users' collection", function () {
         })
     })
     it('Update user in DB', function (done) {
+        let userModel = mongoDBConfig.collections[0].model;
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
                 done(err);
@@ -78,6 +81,7 @@ describe("Mongo 'users' collection", function () {
     });
     /*
     it('Delete user from DB', function () {
+        let userModel = mongoDBConfig.collections[0].model;
         userModel.getUserByEmail(newUser.email, function (err, result) {
             if (err) {
                 done(err);
