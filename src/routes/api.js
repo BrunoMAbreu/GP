@@ -580,7 +580,7 @@ module.exports = function (app, passport) {
         });
     });
 
-    // DELETE: delete worker
+    // DELETE: delete user
     app.delete('/users/:id', isLoggedIn, function (req, res) {
         if (req.session.passport.user.profile === "administrador") {
             const User = mongoDBConfig.collections[0].model;
@@ -617,6 +617,20 @@ module.exports = function (app, passport) {
             res.redirect('/');
         }
     });
+
+
+    // DELETE: delete adoptions
+    app.delete('/adoptions/:id', isLoggedIn, function (req, res) {
+        if (req.session.passport.user.profile === "administrador") {
+            const Adoption = mongoDBConfig.collections[2].model;
+            Adoption.deleteAdoption(req.params.id, function (result) {
+                res.redirect('/adoptions');
+            });
+        } else {
+            res.redirect('/');
+        }
+    });
+
 
     app.use('/animals', animalAPI);
 

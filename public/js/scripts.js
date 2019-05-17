@@ -147,9 +147,18 @@ function confirmAnimalDelete(id) {
 
 function confirmVolunteerDelete(id) {
     let response = confirm("Deseja apagar este voluntário?");
-    if (response) {
+    if (response) {       
         let xhr = new XMLHttpRequest();
         xhr.open("DELETE", "/volunteers/" + id, true);
+        xhr.send();
+    }
+}
+
+function confirmAdoptionDelete(id) {
+    let response = confirm("Deseja apagar esta adopção?");
+    if (response) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/adoptions/" + id, true);
         xhr.send();
     }
 }
