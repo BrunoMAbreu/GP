@@ -10,10 +10,10 @@ describe("", function () {
     before(function (done) {
         setTimeout(function () {
             let httpTests = require("./tests/http.tests");
-            let mongoUserTests = require("./tests/mongo.users.tests")(mongoDBConfig);
-            let mongoAnimalsTests = require("./tests/mongo.animals.tests")(mongoDBConfig);
+            let mongoUserTests = require("./tests/mongo.users.tests")(mongoDBConfig.collections[0]);
+            let mongoAnimalsTests = require("./tests/mongo.animals.tests")(mongoDBConfig.collections[1]);
             done();
-        }, 6000);
+        }, 8000);
     });
     it('', function (done) {
         done();

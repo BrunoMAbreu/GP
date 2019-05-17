@@ -6,11 +6,11 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 const should = chai.should();
 
-module.exports = function (mongoDBConfig) {
+module.exports = function (animalCollection) {
     describe("Mongo 'animals' collection", function () {
         this.timeout(10000);
 
-        let mongoDBConfig = null;
+        //let mongoDBConfig = null;
         let Animal = null;
 
         //let mongoose = null;
@@ -19,10 +19,7 @@ module.exports = function (mongoDBConfig) {
         let testInsertAnimal = null;
 
         before(function (done) {
-            //mongoDBConfig = require("../../src/model/db/mongoConfig").mongoDBConfig;
-            Animal = mongoDBConfig.collections[1].model;
-
-            //console.log("animalModel: ", animalModel)
+            Animal = animalCollection.model;
 
 
             /*mongoose = require('mongoose');

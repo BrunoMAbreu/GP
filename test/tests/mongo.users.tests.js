@@ -7,7 +7,7 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 const should = chai.should();
 
-module.exports = function (mongoDBConfig) {
+module.exports = function (userCollection) {
     describe("Mongo 'users' collection", function () {
         this.timeout(10000);
         let newUser = null;
@@ -15,7 +15,7 @@ module.exports = function (mongoDBConfig) {
         let testInsertUser = null;
 
         before(function (done) {
-            userModel = mongoDBConfig.collections[0].model;
+            userModel = userCollection.model;
             newUser = {
                 name: "Xana Xanax",
                 email: "x@x",
@@ -38,12 +38,17 @@ module.exports = function (mongoDBConfig) {
             done();
         });
         beforeEach(function (done) {
+
+            //console.log("beforeEach userModel> ", userModel)
+
             userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (err, result) {
                 if (err) done(err);
                 done();
             });
         });
         afterEach(function (done) {
+            //console.log("afterEach userModel> ", userModel)
+
             userModel.findOneAndDelete({ email: newUser.email }, function (err, result) {
                 if (err) done(err);
                 done();
