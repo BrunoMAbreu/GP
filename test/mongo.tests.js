@@ -52,14 +52,6 @@ describe("Mongo 'users' collection", function () {
             if (err) done(err);
             done();
         });
-        /*userModel.getUserByEmail(newUser.email, function (err, result) {
-            if (err) {
-            }
-            if (result) {
-                userModel.deleteUser(result._id, function (data) {
-                });
-            }
-        });*/
     });
 
     it('Insert user in DB', function (done) {
