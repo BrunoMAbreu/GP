@@ -182,7 +182,7 @@ let createAdoptionCollection = function () {
             //element.schema.statics.getUserByProfile = getUserByProfile;
             element.schema.statics.getAdoption = getAdoption;
             //element.schema.statics.updateUser = updateUser;
-            //element.schema.statics.deleteUser = deleteUser;
+            element.schema.statics.deleteAdoption = deleteAdoption;
 
             element.model = Mongoose.model('adoptionModel', adoptionSchema);
         }
@@ -367,6 +367,24 @@ let deleteUser = function (id, callback) {
     });
 }
 
+
+/**
+ * DELETE: deletes adoption with given id
+ * @param {*} id mongo document _id (ObjectID: hexadecimal as a string)
+ */
+let deleteAdoption = function (id, callback) {
+    const index = getCollectionIndex(adoptionsCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+
+    console.log(">deleteAdoption")
+
+    mongoDBConfig.collections[index].model.findOneAndRemove({ adoption_id: id }, function (err, data) {
+        if (err) console.log(err);
+        callback(data);
+    });
+}
 
 
 
