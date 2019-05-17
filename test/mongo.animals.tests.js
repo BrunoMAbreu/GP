@@ -51,10 +51,6 @@ describe("Mongo 'animals' collection", function () {
             result.dog.should.equal(newAnimal.dog);
         }
         done();
-        /*
-        setTimeout(function (done) {
-            done();
-        }, 2000);*/
     });
     /*beforeEach(function (done) {
         newAnimal.save(function (err, doc) {

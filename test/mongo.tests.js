@@ -36,9 +36,7 @@ describe("Mongo 'users' collection", function () {
             result.profile.should.equal("utilizador");
             callback();
         };
-        setTimeout(function () {
-            done();
-        }, 2000);
+        done();
     });
     beforeEach(function (done) {
         userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (err, result) {
