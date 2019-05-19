@@ -16,7 +16,7 @@
                 <th>Vacinado</th>
                 <th>Tipo</th>
                 <th>Esterilizado</th>
-                <th colspan="3">Ações</th>
+                <th colspan="2">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -64,11 +64,9 @@
                     {{/ifBoolCond}}
                 {{/ifNullCond}}
                 {{#if firstLine.showActions}}
-                <td><a href="/animals/details/{{firstLine._id}}">Visualizar</a></td>
                 <td><a href="/animals/update/{{firstLine._id}}">Actualizar</a></td>
                 <td><a href="/animals/delete/{{firstLine._id}}">Eliminar</a></td>
                 {{else}}
-                <td></td>
                 <td></td>
                 <td></td>
                 {{/if}}
