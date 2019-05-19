@@ -21,7 +21,7 @@ window.addEventListener("load", setForm);
 window.onclick = function (e) {
     if (!e.target.matches('#dropbtn')) {
         const myDropdown = document.getElementById("dropDownMenu");
-        if (myDropdown.classList.contains('show')) {
+        if (myDropdown && myDropdown.classList.contains('show')) {
             myDropdown.classList.remove('show');
         }
     }
@@ -147,9 +147,18 @@ function confirmAnimalDelete(id) {
 
 function confirmVolunteerDelete(id) {
     let response = confirm("Deseja apagar este voluntário?");
-    if (response) {
+    if (response) {       
         let xhr = new XMLHttpRequest();
         xhr.open("DELETE", "/volunteers/" + id, true);
+        xhr.send();
+    }
+}
+
+function confirmAdoptionDelete(id) {
+    let response = confirm("Deseja apagar esta adopção?");
+    if (response) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/adoptions/" + id, true);
         xhr.send();
     }
 }

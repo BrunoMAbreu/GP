@@ -1,34 +1,37 @@
-const mongoose = require('mongoose');
-
-var animalSchema = new mongoose.Schema({
-    name:{
+module.exports = {
+    animal_id: {
+        type: "number",
+        min: 1,
+        unique: true,
+        required: true,
+        index: true
+    },
+    name: {
         type: String,
         required: true
     },
-    birthday:{
+    birthday: {
         type: Date,
         required: true
     },
-    gender:{
+    gender: {
         type: String,
         required: true
     },
-    vaccinated:{
+    vaccinated: {
         type: Boolean,
         required: true
     },
-    dog:{
+    dog: {
         type: Boolean,
         required: true
     },
-    sterilized:{
+    sterilized: {
         type: Boolean,
         required: true
     },
-    photoLink:{
+    photoLink: {
         type: String,
         required: true
     }
-});
-
-mongoose.model('animals', animalSchema);
+}
