@@ -232,38 +232,24 @@ function updateUser(id) {
     xhr.send(JSON.stringify(data));
 }
 
-/*
-function login() {
-    const formElement = document.getElementById("loginForm");
-    const data = "email=" + formElement.email.value + "&password=" + formElement.password.value;
+
+function updateAdoption(id) {
+    const data = {
+        adopter: document.getElementById("adopter").value,
+        animal: document.getElementById("animal").value,
+        adoptionDate: document.getElementById("adoptionDate").value
+    }
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/login", true);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.responseType = "text";
+    xhr.open("PUT", "/adoptions/" + id, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
-        if(xhr.readyState === 4){
-            if(xhr.responseText === "false"){
-                alert("Login inválido");
+        if ((this.readyState === 4) && (this.status === 400)) {
+            if(this.responseText === "true"){
+                window.location.replace("/adoptions");
+            } else {
+                alert("Não foi possível guardar as alterações.")
             }
-
-            console.log("xhr.responseText: " + xhr.responseText);
-            console.log("xhr.responseURL: " + xhr.responseURL); */
-            //if (xhr.responseText == "redirect") {
-                //redirecting to main page from here.
-                //window.location.replace(xhr.responseURL);
-              //}
-
-/*
-else if (xhr.status === 200){
-    console.log("aaaaaa");
-    //onSuccess(xhr.responseText, xhr.responseType);
-}*/
-/*
-else{
-    console.log(xhr.status);
+        }
+    }
+    xhr.send(JSON.stringify(data));
 }
-*/
-/*       }
-   }
-   xhr.send(data);
-}*/
