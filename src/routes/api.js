@@ -207,6 +207,38 @@ module.exports = function (app, passport) {
         });
     });
 
+
+    // GET: View adoption data
+    app.get('/adoptions/:id', isLoggedIn, function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+        const Animal = mongoDBConfig.collections[1].model;
+        const Adoption = mongoDBConfig.collections[2].model;
+        Adoption.getAdoption({ adoption_id: req.params.id }, function (err, result) {
+            let adoption = {
+                adoption_id: req.params.id,
+                adoptionDate: result[0].adoptionDate.toISOString().slice(0, 10)
+            };
+            User.getUser({ user_id: result[0].user_id }, function (err, res) {
+                adoption.adopter = res[0].username;
+
+                Animal.find({ _id: result[0].animal_id }, function (err, result) {
+                    adoption.animal = result[0].name;
+                });
+            });
+            if (req.session.passport.user.profile === "administrador") {
+                res.render('updateAdoption', {
+                    description: "Actualizar adopção",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    adoption: adoption,
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                });
+            } else {
+                res.redirect('/');
+            }
+        });
+    });
+
     // PUT: Update user's data
     app.put('/users/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
@@ -267,6 +299,53 @@ module.exports = function (app, passport) {
         } else {
             res.redirect('/');
         }
+    });
+
+
+    // TODO:
+    // PUT: Update adoption data
+    app.put('/adoptions/:id', isLoggedIn, function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+        const Animal = mongoDBConfig.collections[1].model;
+        const Adoption = mongoDBConfig.collections[2].model;
+
+        Adoption.getAdoption({ adoption_id: req.params.id }, function (err, adoptionRes) {
+            let newAdoptionData = {
+                _id: adoptionRes[0]._id,
+                adoption_id: req.params.id,
+                adoptionDate: req.body.adoptionDate
+            };
+            let newUserData = {
+                user_id: adoptionRes[0].user_id
+            }
+            let newAnimalData = {
+                _id: adoptionRes[0].animal_id,
+                name: req.body.animal
+            }
+            User.getUser(newUserData, function (err, result) {
+                newUserData.username = req.body.adopter;
+                newUserData._id = result[0]._id;
+                User.updateUser(newUserData, function (err, data) {
+                    if (data === null) {
+                        res.status(400).send(false);
+                    } else {
+                        Adoption.updateAdoption(newAdoptionData, function (err, data) {
+                            if (data === null) {
+                                res.status(400).send(false);
+                            } else {
+                                Animal.findByIdAndUpdate(newAnimalData._id, newAnimalData, { new: true }, function (err, animalRes) {
+                                    if (data === null) {
+                                        res.status(400).send(false);
+                                    } else {
+                                        res.status(400).send(true);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
     });
 
 

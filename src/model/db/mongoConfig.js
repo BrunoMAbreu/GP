@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
@@ -181,7 +182,7 @@ let createAdoptionCollection = function () {
             //element.schema.statics.getUserById = getUserById;
             //element.schema.statics.getUserByProfile = getUserByProfile;
             element.schema.statics.getAdoption = getAdoption;
-            //element.schema.statics.updateUser = updateUser;
+            element.schema.statics.updateAdoption = updateAdoption;
             element.schema.statics.deleteAdoption = deleteAdoption;
 
             element.model = Mongoose.model('adoptionModel', adoptionSchema);
@@ -237,11 +238,10 @@ let insertAdoption = function (user_id, animal_id, callback) {
         animal_id: animal_id
     }
     // Insert
-    mongoDBConfig.collections[2].model.create(newAdoption, function (err, res) {
+    mongoDBConfig.collections[index].model.create(newAdoption, function (err, res) {
         if (err) return console.error("error: " + err);
         callback(res);
     });
-
 }
 
 
@@ -348,6 +348,23 @@ let updateUser = function (newUserData, callback) {
         callback(err, data);
     });
 }
+
+
+/**
+ * UPDATE:updates adoption data
+ * @param {*} newAdoptionData Object with properties to be changed (_id required and immutable). eg, {_id:"...", name:"Bobby"}
+ */
+let updateAdoption = function (newAdoptionData, callback) {
+    const index = getCollectionIndex(adoptionsCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newAdoptionData._id }, newAdoptionData, { new: true }, function (err, data) {
+        if (err) console.log(err);
+        callback(err, data);
+    });
+}
+
 
 
 /**
