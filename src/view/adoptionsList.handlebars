@@ -14,7 +14,7 @@
             <th>Adoptante</th>
             <th>Animal</th>
             <th>Data de Adopção</th>
-            <th colspan="3">Acções</th>
+            <th colspan="2">Acções</th>
         </tr>
     </thead>
     <tbody>
@@ -33,11 +33,9 @@
                 {{firstLine.adoptionDate}}
             </td>
             {{#if firstLine.showActions}}
-            <td><a href="/{{firstLine.route}}/{{firstLine.adoption_id}}">Visualizar</a></td>
             <td><a href="/{{firstLine.route}}/{{firstLine.adoption_id}}">Actualizar</a></td>
             <td><a href="" onclick="confirmAdoptionDelete({{firstLine.adoption_id}})">Eliminar</a></td>
             {{else}}
-            <td></td>
             <td></td>
             <td></td>
             {{/if}}
