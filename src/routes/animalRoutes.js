@@ -130,8 +130,11 @@ router.get('/', isLoggedIn, (req, res) => {
     let animals = [];
     Animal.find((err, docs) => {
         if (req.session.passport.user.profile === "administrador" ||
-        req.session.passport.user.profile === "funcionário") {
+        req.session.passport.user.profile === "funcionário" ||
+        req.session.passport.user.profile === "voluntário") {
             if(!err){
+                var isVolunteerLogged = false;
+                if(req.session.passport.user.profile === "voluntário") isVolunteerLogged = true;
                 docs.forEach(element => {
                     animals.push({
                         _id: element._id,
@@ -141,7 +144,8 @@ router.get('/', isLoggedIn, (req, res) => {
                         birthday: element.birthday.toISOString().slice(0, 10),
                         dog: element.dog,
                         sterilized: element.sterilized,
-                        showActions: true
+                        showActions: true,
+                        isVolunteerLogged: isVolunteerLogged
                     });
                 });
                 const searchColumnRowspan = 12;
@@ -165,7 +169,8 @@ router.get('/', isLoggedIn, (req, res) => {
                     op_submenu: setOpSubmenu(req, res),
                     selectedMenu: setPropertyTrue(selectedMenu, "operations"),
                     searchColumnRowspan: searchColumnRowspan,
-                    route: "animals"
+                    route: "animals",
+                    isVolunteerLogged: isVolunteerLogged
                 });
             }
             else{
