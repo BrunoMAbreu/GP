@@ -209,7 +209,7 @@ module.exports = function (app, passport) {
 
 
     // GET: Page to create adoption
-    app.get('/adoption/new/', isLoggedIn, function (req, res) {
+    app.get('/adoption/add/', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
@@ -224,14 +224,16 @@ module.exports = function (app, passport) {
                 };
                 adopters.push(newUser);
             })
-            //console.log("USERS usersArray: ", usersArray)
         });
-
         Adoption.getAdoption({}, function (err, adoptionsArray) {
             Animal.find({}, function (err, animalsArray) {
                 if (err) console.log(err);
+                let animalsAdoptedIds = [];
+                adoptionsArray.forEach(elem => {
+                    animalsAdoptedIds.push(elem.animal_id);
+                })
                 animalsArray.forEach(elem => {
-                    if (adoptionsArray.indexOf(elem._id) !== -1) {
+                    if (animalsAdoptedIds.indexOf((elem.id).toString()) === -1) {
                         let newAnimal = {
                             animal: elem.name,
                             animal_id: elem.animal_id
@@ -239,36 +241,13 @@ module.exports = function (app, passport) {
                         animals.push(newAnimal);
                     }
                 });
-                //console.log("ANIMALS animalsArray: ", animalsArray)
             });
         })
-
-
-
-
-        /*
-        Adoption.getAdoption({ adoption_id: req.params.id }, function (err, result) {
-            let adoption = {
-                adoption_id: req.params.id,
-                adoptionDate: result[0].adoptionDate.toISOString().slice(0, 10)
-            };
-            User.getUser({ user_id: result[0].user_id }, function (err, res) {
-                adoption.adopter = res[0].username;
-    
-                Animal.find({ _id: result[0].animal_id }, function (err, result) {
-                    adoption.animal = result[0].name;
-                });
-            });
-    */
-
-
-
         if (req.session.passport.user.profile === "administrador") {
             res.render('createAdoption', {
                 description: "Registar adopção",
                 isUserLogged: isUserLogged(req, res),
                 op_submenu: setOpSubmenu(req, res),
-                //adoption: adoption,
                 adopters: adopters,
                 animals: animals,
                 selectedMenu: setPropertyTrue(selectedMenu, "operations")
@@ -276,9 +255,6 @@ module.exports = function (app, passport) {
         } else {
             res.redirect('/');
         }
-
-
-        //res.redirect('/adoptions');
     });
 
 
