@@ -96,12 +96,29 @@ let connectMongoDB = function (cb) {
             })
         });
 
+        let adoption1 = {
+            user_id: 19,
+            animal_id: "5cdda56c2b9fe8beac697d4a",
+            adoptionDate: (new Date()).toISOString()
+        }
+        insertAdoption(adoption1, function (res) {
+            console.log("Farofa Adoption: ", res)
+        });
+        let adoption2 = {
+            user_id: 8,
+            animal_id: "5cdd91a5dbf287c6f020baf8",
+            adoptionDate: (new Date()).toISOString()
+        }
+        insertAdoption(adoption2, function (res) {
+            console.log("Carrapateira Adoption: ", res)
+        });
+/*
         insertAdoption(19, "5cdda56c2b9fe8beac697d4a", function (res) {
             console.log("Farofa Adoption: ", res)
         });
         insertAdoption(8, "5cdd91a5dbf287c6f020baf8", function (res) {
             console.log("Carrapateira Adoption: ", res)
-        });
+        }); */
 
         // FIM: Para testar; APAGAR -------------------------------
 
@@ -228,17 +245,19 @@ let insertUser = function (name, email, password, phone, birthDate, callback) {
  * @param {*} animal_id animal id (objectID, string)
  * @param {*} callback 
  */
-let insertAdoption = function (user_id, animal_id, callback) {
+let insertAdoption = function (adoptionData, callback) {
     let index = getCollectionIndex(adoptionsCollectionName);
     if (index === -1) {
         console.error("Collection " + adoptionsCollectionName + " not in mongoDBConfig");
     }
+    /*
     const newAdoption = {
-        user_id: user_id,
-        animal_id: animal_id
-    }
+        user_id: adoptionData.user_id,
+        animal_id: adoptionData.animal_id,
+        adoptionDate: adoptionData.adoptionDate
+    }*/
     // Insert
-    mongoDBConfig.collections[index].model.create(newAdoption, function (err, res) {
+    mongoDBConfig.collections[index].model.create(adoptionData, function (err, res) {
         if (err) return console.error("error: " + err);
         callback(res);
     });
