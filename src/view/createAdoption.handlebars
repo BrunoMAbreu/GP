@@ -4,12 +4,12 @@
     </div>
 <div id="register">
     <h1>Registar adopção</h1>
-    <form id="registerForm" onsubmit="createAdoption({{adoption.adoption_id}}); return false" method="post">
+    <form id="registerForm" onsubmit="createAdoption(); return false">
         <div class="form-group">
             <label>Adoptante</label>
             <select id="adopterSelect" class="input-form">
                 {{#adopters}}
-                <option value="{{adopter}}">{{adopter_id}} - {{adopter}}</option>
+                <option value="{{adopter_id}}_{{adopter}}">{{adopter_id}} - {{adopter}}</option>
                 {{/adopters}}
             </select>
             <span class="highlight"></span>
@@ -20,7 +20,7 @@
             <label>Animal</label>
             <select id="animalSelect" class="input-form">
                 {{#animals}}
-                <option value="{{animal}}">{{animal_id}} - {{animal}}</option>
+                <option value="{{animal_id}}_{{animal}}">{{animal_id}} - {{animal}}</option>
                 {{/animals}}
             </select>
             <span class="highlight"></span>

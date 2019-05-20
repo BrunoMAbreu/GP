@@ -253,3 +253,30 @@ function updateAdoption(id) {
     }
     xhr.send(JSON.stringify(data));
 }
+
+function createAdoption() {
+
+
+
+    const data = {
+        adopter: document.getElementById("adopterSelect").value,
+        animal: document.getElementById("animalSelect").value,
+        adoptionDate: document.getElementById("adoptionDate").value
+    }
+
+    console.log("data", data)
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/adoption/add", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if ((this.readyState === 4) && (this.status === 400)) {
+            if(this.responseText === "true"){
+                window.location.replace("/adoptions");
+            } else {
+                alert("Não foi possível registar a adopção.")
+            }
+        }
+    }
+    xhr.send(JSON.stringify(data));
+}

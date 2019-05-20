@@ -258,6 +258,30 @@ module.exports = function (app, passport) {
     });
 
 
+    // POST: Create adoption
+    app.post('/adoption/add/', isLoggedIn, function (req, res) {
+        const Animal = mongoDBConfig.collections[1].model;
+        const Adoption = mongoDBConfig.collections[2].model;
+        const animal_id = req.body.animal.split("_")[0];
+        const adopter_id = req.body.adopter.split("_")[0];
+        Animal.find({ animal_id: animal_id }, function (err, animalsArray) {
+            if (err) console.log(err);
+            let newAdoptionData = {
+                user_id: adopter_id,
+                animal_id: animalsArray[0]._id,
+                adoptionDate: req.body.adoptionDate
+            };
+            Adoption.insertAdoption(newAdoptionData, function (data) {
+                if (data !== null) {
+                    res.status(400).send(true);
+                } else {
+                    res.status(400).send(false);
+                }
+            });
+        })
+    });
+
+
     // GET: View adoption data
     app.get('/adoptions/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
