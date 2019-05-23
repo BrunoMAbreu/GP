@@ -5,7 +5,7 @@
 </div>
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
-    <h3><a class="confirmationButton" href="/adoption/add">Adicionar</a></h3>
+    <h3><a class="confirmationButton" href="/adoptions/add">Adicionar</a></h3>
 </div>
 <table id="usersListTable">
     <thead>
@@ -15,7 +15,7 @@
             <th>Adoptante</th>
             <th>Animal</th>
             <th>Data de Adopção</th>
-            <th colspan="2">Acções</th>
+            <th colspan="3">Acções</th>
         </tr>
     </thead>
     <tbody>
@@ -34,9 +34,11 @@
                 {{firstLine.adoptionDate}}
             </td>
             {{#if firstLine.showActions}}
-            <td><a href="/{{firstLine.route}}/{{firstLine.adoption_id}}">Actualizar</a></td>
+            <td><a href="/{{firstLine.route}}/details/{{firstLine.adoption_id}}">Visualizar</a></td>
+            <td><a href="/{{firstLine.route}}/update/{{firstLine.adoption_id}}">Actualizar</a></td>
             <td><a href="" onclick="confirmAdoptionDelete({{firstLine.adoption_id}})">Eliminar</a></td>
             {{else}}
+            <td></td>
             <td></td>
             <td></td>
             {{/if}}

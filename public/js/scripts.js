@@ -261,7 +261,7 @@ function createAdoption() {
         adoptionDate: document.getElementById("adoptionDate").value
     }
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/adoption/add", true);
+    xhr.open("POST", "/adoptions/add", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
         if ((this.readyState === 4) && (this.status === 400)) {
