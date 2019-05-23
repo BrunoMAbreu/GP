@@ -235,8 +235,8 @@ function updateUser(id) {
 
 function updateAdoption(id) {
     const data = {
-        adopter: document.getElementById("adopter").value,
-        animal: document.getElementById("animal").value,
+        adopter: document.getElementById("adopterSelect").value,
+        animal: document.getElementById("animalSelect").value,
         adoptionDate: document.getElementById("adoptionDate").value
     }
     let xhr = new XMLHttpRequest();
@@ -255,17 +255,11 @@ function updateAdoption(id) {
 }
 
 function createAdoption() {
-
-
-
     const data = {
         adopter: document.getElementById("adopterSelect").value,
         animal: document.getElementById("animalSelect").value,
         adoptionDate: document.getElementById("adoptionDate").value
     }
-
-    console.log("data", data)
-
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/adoption/add", true);
     xhr.setRequestHeader("Content-Type", "application/json");

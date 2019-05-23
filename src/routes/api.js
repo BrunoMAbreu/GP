@@ -282,7 +282,64 @@ module.exports = function (app, passport) {
     });
 
 
+    // GET: Update adoption data
+    app.get('/adoptions/:id', isLoggedIn, function (req, res) {
+        const User = mongoDBConfig.collections[0].model;
+        const Animal = mongoDBConfig.collections[1].model;
+        const Adoption = mongoDBConfig.collections[2].model;
+
+        Adoption.getAdoption({ adoption_id: req.params.id }, function (err, adoptionsArray) {
+            let adopters = [];
+            let animals = [];
+            let adoptionObj = {
+                adoption_id: req.params.id,
+                adoptionDate: adoptionsArray[0].adoptionDate.toISOString().slice(0, 10)
+            };
+
+            User.getUser({}, function (err, usersArray) {
+                usersArray.forEach(elem => {
+                    let newUser = {
+                        adopter: elem.username,
+                        adopter_id: elem.user_id
+                    };
+                    if (elem.user_id !== adoptionsArray[0].user_id) {
+                        adopters.push(newUser);
+                    } else {
+                        adopters.unshift(newUser);
+                    }
+                })
+            });
+            Animal.find({}, function (err, animalsArray) {
+                if (err) console.log(err);
+                animalsArray.forEach(elem => {
+                    let newAnimal = {
+                        animal: elem.name,
+                        animal_id: elem.animal_id
+                    };
+                    if (elem._id.toString() !== adoptionsArray[0].animal_id) {
+                        animals.push(newAnimal);
+                    } else {
+                        animals.unshift(newAnimal);
+                    }
+                });
+            });
+            if (req.session.passport.user.profile === "administrador") {
+                res.render('updateAdoption', {
+                    description: "Alterar adopção",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    adoption: adoptionObj,
+                    adopters: adopters,
+                    animals: animals,
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                });
+            } else {
+                res.redirect('/');
+            }
+        });
+    });
     // GET: View adoption data
+    /*
     app.get('/adoptions/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
@@ -311,7 +368,7 @@ module.exports = function (app, passport) {
                 res.redirect('/');
             }
         });
-    });
+    });*/
 
     // PUT: Update user's data
     app.put('/users/:id', isLoggedIn, function (req, res) {
@@ -376,11 +433,16 @@ module.exports = function (app, passport) {
     });
 
 
+
+
+
     // PUT: Update adoption data
     app.put('/adoptions/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
+        console.log("req.body: ",req.body)
+        console.log("req.params: ",req.params)
 
         Adoption.getAdoption({ adoption_id: req.params.id }, function (err, adoptionRes) {
             let newAdoptionData = {
@@ -391,12 +453,23 @@ module.exports = function (app, passport) {
             let newUserData = {
                 user_id: adoptionRes[0].user_id
             }
+            const underscoreIndex = req.body.animal.indexOf("_") + 1;
+            const animalName = req.body.animal.slice(underscoreIndex);
+            console.log("animalName: ", animalName)
+
             let newAnimalData = {
                 _id: adoptionRes[0].animal_id,
-                name: req.body.animal
+                name: animalName
             }
+
+console.log("newAdoptionData: ", newAdoptionData)
+console.log("newUserData: ", newUserData)
+console.log("newAnimalData: ", newAnimalData)
+
             User.getUser(newUserData, function (err, result) {
-                newUserData.username = req.body.adopter;
+                const underscoreIndex = req.body.adopter.indexOf("_") + 1;
+                newUserData.username = req.body.adopter.slice(underscoreIndex);
+                //newUserData.username = req.body.adopter;
                 newUserData._id = result[0]._id;
                 User.updateUser(newUserData, function (err, data) {
                     if (data === null) {
@@ -456,17 +529,10 @@ module.exports = function (app, passport) {
         const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
-
-        //console.log(">>>>>>>", Animal)
-
         let adoptions = [];
         const route = "adoptions";
         const searchColumnRowspan = 12;
-
-        //const profile = "utilizador";
-
         const reqQuery = req.query;
-
         let adoptionQuery = {};
         let userPattern = null;
         let animalPattern = null;
@@ -499,10 +565,10 @@ module.exports = function (app, passport) {
                 let animal = null;
                 User.getUser({ user_id: element.user_id }, function (err, result) {
                     if (err) console.log(err);
-                    adopter = result[0].username;
+                    adopter = (result.length !== 0) ? result[0].username : "Utilizador eliminado";
                     Animal.find({ _id: element.animal_id }, function (err, result) {
                         if (err) console.log(err);
-                        animal = result[0].name;
+                        animal = (result.length !== 0) ? result[0].name : "Animal eliminado";
                         adoptions.push({
                             adoption_id: element.adoption_id,
                             adopter: adopter,
