@@ -209,7 +209,7 @@ module.exports = function (app, passport) {
 
 
     // GET: Page to create adoption
-    app.get('/adoption/add/', isLoggedIn, function (req, res) {
+    app.get('/adoptions/add/', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
@@ -259,7 +259,7 @@ module.exports = function (app, passport) {
 
 
     // POST: Create adoption
-    app.post('/adoption/add/', isLoggedIn, function (req, res) {
+    app.post('/adoptions/add/', isLoggedIn, function (req, res) {
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
         const animal_id = req.body.animal.split("_")[0];
@@ -281,9 +281,54 @@ module.exports = function (app, passport) {
         })
     });
 
+    app.get('/adoptions/details/:id', function (req, res) {
+
+        const User = mongoDBConfig.collections[0].model;
+        const Animal = mongoDBConfig.collections[1].model;
+        const Adoption = mongoDBConfig.collections[2].model;
+
+        Adoption.getAdoption({ adoption_id: req.params.id }, function (err, adoptionsArray) {
+            if (err) console.log(err);
+            let adoptionData = {
+                adoption_id: req.params.id,
+                adoptionDate: adoptionsArray[0].adoptionDate.toISOString().slice(0, 10),
+                adopter_id: adoptionsArray[0].user_id,
+                adopter: null,
+                animal_id: null,
+                animal: null,
+                animal_photo: null,
+                animal_gender: null
+            };
+
+            User.getUser({ user_id: adoptionData.adopter_id }, function (err, usersArray) {
+                if (err) console.log(err);
+                adoptionData.adopter = usersArray[0].username;
+                Animal.find({_id: adoptionsArray[0].animal_id}, function (err, animalArray) {
+                    if (err) console.log(err);
+                    adoptionData.animal_id = animalArray[0].animal_id;
+                    adoptionData.animal = animalArray[0].name;
+                    adoptionData.animal_photo = animalArray[0].photoLink;
+                    adoptionData.animal_gender = animalArray[0].gender;
+                    if (req.session.passport.user.profile === "administrador") {
+                        res.render("detailsAdoption", {
+                            description: "Visualizar adopção",
+                            isUserLogged: isUserLogged(req, res),
+                            op_submenu: setOpSubmenu(req, res),
+                            adoption: adoptionData,
+                            isUserLogged: isUserLogged(req, res),
+                            op_submenu: setOpSubmenu(req, res),
+                            selectedMenu: setPropertyTrue(selectedMenu, "operations"),
+                        });
+                    } else {
+                        res.redirect('/');
+                    }
+                });
+            });
+        });
+    });
 
     // GET: Update adoption data
-    app.get('/adoptions/:id', isLoggedIn, function (req, res) {
+    app.get('/adoptions/update/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
@@ -338,37 +383,7 @@ module.exports = function (app, passport) {
             }
         });
     });
-    // GET: View adoption data
-    /*
-    app.get('/adoptions/:id', isLoggedIn, function (req, res) {
-        const User = mongoDBConfig.collections[0].model;
-        const Animal = mongoDBConfig.collections[1].model;
-        const Adoption = mongoDBConfig.collections[2].model;
-        Adoption.getAdoption({ adoption_id: req.params.id }, function (err, result) {
-            let adoption = {
-                adoption_id: req.params.id,
-                adoptionDate: result[0].adoptionDate.toISOString().slice(0, 10)
-            };
-            User.getUser({ user_id: result[0].user_id }, function (err, res) {
-                adoption.adopter = res[0].username;
 
-                Animal.find({ _id: result[0].animal_id }, function (err, result) {
-                    adoption.animal = result[0].name;
-                });
-            });
-            if (req.session.passport.user.profile === "administrador") {
-                res.render('updateAdoption', {
-                    description: "Actualizar adopção",
-                    isUserLogged: isUserLogged(req, res),
-                    op_submenu: setOpSubmenu(req, res),
-                    adoption: adoption,
-                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
-                });
-            } else {
-                res.redirect('/');
-            }
-        });
-    });*/
 
     // PUT: Update user's data
     app.put('/users/:id', isLoggedIn, function (req, res) {
@@ -433,9 +448,6 @@ module.exports = function (app, passport) {
     });
 
 
-
-
-
     // PUT: Update adoption data
     app.put('/adoptions/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
@@ -459,7 +471,6 @@ module.exports = function (app, passport) {
             User.getUser(newUserData, function (err, result) {
                 const underscoreIndex = req.body.adopter.indexOf("_") + 1;
                 newUserData.username = req.body.adopter.slice(underscoreIndex);
-                //newUserData.username = req.body.adopter;
                 newUserData._id = result[0]._id;
                 User.updateUser(newUserData, function (err, data) {
                     if (data === null) {
