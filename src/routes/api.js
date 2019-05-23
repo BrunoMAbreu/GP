@@ -441,9 +441,6 @@ module.exports = function (app, passport) {
         const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
-        console.log("req.body: ",req.body)
-        console.log("req.params: ",req.params)
-
         Adoption.getAdoption({ adoption_id: req.params.id }, function (err, adoptionRes) {
             let newAdoptionData = {
                 _id: adoptionRes[0]._id,
@@ -455,17 +452,10 @@ module.exports = function (app, passport) {
             }
             const underscoreIndex = req.body.animal.indexOf("_") + 1;
             const animalName = req.body.animal.slice(underscoreIndex);
-            console.log("animalName: ", animalName)
-
             let newAnimalData = {
                 _id: adoptionRes[0].animal_id,
                 name: animalName
             }
-
-console.log("newAdoptionData: ", newAdoptionData)
-console.log("newUserData: ", newUserData)
-console.log("newAnimalData: ", newAnimalData)
-
             User.getUser(newUserData, function (err, result) {
                 const underscoreIndex = req.body.adopter.indexOf("_") + 1;
                 newUserData.username = req.body.adopter.slice(underscoreIndex);
