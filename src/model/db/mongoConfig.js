@@ -413,9 +413,6 @@ let deleteAdoption = function (id, callback) {
     if (index === -1) {
         return -1;
     }
-
-    console.log(">deleteAdoption")
-
     mongoDBConfig.collections[index].model.findOneAndRemove({ adoption_id: id }, function (err, data) {
         if (err) console.log(err);
         callback(data);
