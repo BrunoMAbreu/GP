@@ -1,5 +1,5 @@
 'use strict';
-console.log("running mongo.js")
+console.log("running mongo.users.tests.js")
 
 //const mongoDBConfig = require("../../src/model/db/mongoConfig").mongoDBConfig;
 const chai = require('chai');

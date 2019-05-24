@@ -1,5 +1,5 @@
 'use strict';
-console.log("running mongo.js")
+console.log("running mongo.animals.tests.js")
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -44,7 +44,7 @@ describe("Mongo 'animals' collection", function () {
     });
     afterEach(function (done) {
         // delete user from db
-        Animal.findByIdAndRemove(newAnimal._id, (err, doc) => function (err, result){});
+        Animal.findByIdAndRemove(newAnimal._id, function (err, result){});
         done();
     });
 
