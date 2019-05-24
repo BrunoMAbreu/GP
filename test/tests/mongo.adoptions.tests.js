@@ -104,22 +104,20 @@ module.exports = function (userCollection, animalCollection, adoptionCollection)
                 });
             });
         });
-        /*
-        it('Delete adoption from DB', function () {
-            let userModel = mongoDBConfig.collections[0].model;
-            userModel.getUserByEmail(newUser.email, function (err, result) {
-                if (err) {
-                    done(err);
-                }
-                userModel.deleteUser(result._id, function (data) {
-                    userModel.getUserByEmail(newUser.email, function (err, result) {
-                        should.not.exist(err);
-                        should.not.exist(result);
+        it('Delete adoption from DB', function (done) {
+            let newAdoption = {
+                user_id: 1,
+                animal_id: 1,
+                adoptionDate: new Date()
+            }
+            adoptionModel.insertAdoption(newAdoption, function (result) {
+                adoptionModel.getAdoption({ user_id: 1 }, function (err, result) {
+                    newAdoptionId = result[0].adoption_id;
+                    adoptionModel.deleteAdoption(newAdoptionId, function (data) {
                         done();
-                    });
-                });
-            })
+                    })
+                })
+            });
         })
-        */
     });
 }

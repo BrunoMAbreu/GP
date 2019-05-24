@@ -38,17 +38,12 @@ module.exports = function (userCollection) {
             done();
         });
         beforeEach(function (done) {
-
-            //console.log("beforeEach userModel> ", userModel)
-
             userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (err, result) {
                 if (err) done(err);
                 done();
             });
         });
         afterEach(function (done) {
-            //console.log("afterEach userModel> ", userModel)
-
             userModel.findOneAndDelete({ email: newUser.email }, function (err, result) {
                 if (err) done(err);
                 done();
@@ -76,22 +71,19 @@ module.exports = function (userCollection) {
                 });
             });
         });
-        /*
-        it('Delete user from DB', function () {
-            let userModel = mongoDBConfig.collections[0].model;
-            userModel.getUserByEmail(newUser.email, function (err, result) {
-                if (err) {
-                    done(err);
-                }
-                userModel.deleteUser(result._id, function (data) {
-                    userModel.getUserByEmail(newUser.email, function (err, result) {
+        it('Delete user from DB', function (done) {
+            let newUserEmail = "belmira@b";
+            userModel.insertUser("Belmira", newUserEmail, "123", "123456789", new Date(), function (err, result) {
+                if (err) done(err);
+                userModel.deleteUser(result.user_id, function (data) {
+                    userModel.getUserByEmail(newUserEmail, function (err, result) {
+                        if(err) done(err);
                         should.not.exist(err);
                         should.not.exist(result);
                         done();
                     });
                 });
-            })
-        })
-        */
-    });
+            });
+        });
+    })
 }
