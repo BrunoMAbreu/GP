@@ -133,7 +133,7 @@ let connectMongoDB = function (cb) {
                 insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
                     updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
                         let adoption2 = {
-                            user_id: 8,
+                            user_id: res.user_id,
                             animal_id: newAnimal2._id,
                             adoptionDate: (new Date()).toISOString()
                         }
