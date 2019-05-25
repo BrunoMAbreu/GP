@@ -55,9 +55,15 @@ let connectMongoDB = function (cb) {
 
 
         // Isto APAGA a colecção "user"; Só para testes!!!!!
-        
+
         Mongoose.connection.collections['users'].drop(function (err) {
-            console.log('collection dropped');
+            console.log('collection users dropped');
+        });
+        Mongoose.connection.collections['animals'].drop(function (err) {
+            console.log('collection animals dropped');
+        });
+        Mongoose.connection.collections['adoptions'].drop(function (err) {
+            console.log('collection adoptions dropped');
         });
 
         // Para testar; APAGAR -------------------------------
@@ -69,25 +75,19 @@ let connectMongoDB = function (cb) {
                 })
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (err, res) {
-                    getUserByEmail(testUserEmailAdmin, function (err, result) {
-                        updateUser({ _id: result._id, profile: testUserProfileAdmin }, function (err, result) {
+                    //getUserByEmail(testUserEmailAdmin, function (err, result) {
+                        updateUser({ _id: res._id, profile: testUserProfileAdmin }, function (err, result) {
                         })
-                    })
+                    //})
                 });
             }
         })
         let testUserProfileFunc = "funcionário";
         insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (err, res) {
-            getUserByEmail("a@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
+            //getUserByEmail("a@f", function (err, result) {
+                updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
                 })
-            })
-        });
-        insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
-            getUserByEmail("b@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
-                })
-            })
+            //})
         });
 
         let AnimalTeste = mongoDBConfig.collections[1].model;
@@ -105,7 +105,6 @@ let connectMongoDB = function (cb) {
             } else {
                 newAnimal1._id = doc._id;
                 insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
-                    //getUserByEmail("c@f", function (err, result) {
                     updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
                         let adoption1 = {
                             user_id: res.user_id,
@@ -113,35 +112,40 @@ let connectMongoDB = function (cb) {
                             adoptionDate: (new Date()).toISOString()
                         }
                         insertAdoption(adoption1, function (res) {
-                            console.log("Farofa Adoption: ", res)
                         });
                     })
-                    //})
                 });
             }
         });
+        let newAnimal2 = new AnimalTeste();
+        newAnimal2.name = "Tareco";
+        newAnimal2.birthday = new Date();
+        newAnimal2.gender = "Male";
+        newAnimal2.vaccinated = true;
+        newAnimal2.sterilized = true;
+        newAnimal2.photoLink = "https://3.bp.blogspot.com/-OOvDRRDXc7g/Td2WkJuq1yI/AAAAAAAABp8/5rx6z6ApVAM/s1600/baboon2.jpg";
+        newAnimal2.dog = false;
+        newAnimal2.save(function (err, doc) {
+            if (err) {
+                console.log(err)
+            } else {
+                newAnimal2._id = doc._id;
+                insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
+                    updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+                        let adoption2 = {
+                            user_id: 8,
+                            animal_id: newAnimal2._id,
+                            adoptionDate: (new Date()).toISOString()
+                        }
+                        insertAdoption(adoption2, function (res) {
 
+                        });
+                    })
 
-
-
-        /*
-        let adoption2 = {
-            user_id: 8,
-            animal_id: "5cdd91a5dbf287c6f020baf8",
-            adoptionDate: (new Date()).toISOString()
-        }
-        insertAdoption(adoption2, function (res) {
-            console.log("Carrapateira Adoption: ", res)
-        });*/
-        /*
-                insertAdoption(19, "5cdda56c2b9fe8beac697d4a", function (res) {
-                    console.log("Farofa Adoption: ", res)
                 });
-                insertAdoption(8, "5cdd91a5dbf287c6f020baf8", function (res) {
-                    console.log("Carrapateira Adoption: ", res)
-                }); */
-
-        // FIM: Para testar; APAGAR -------------------------------
+            }
+        });
+       // FIM: Para testar; APAGAR -------------------------------
 
         cb();
     });
