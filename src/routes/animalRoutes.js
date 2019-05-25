@@ -261,8 +261,23 @@ function insertRecord(req, res){
             animal.dog = req.body.dog;
             animal.sterilized = req.body.sterilized;
             animal.save((err, doc) => {
-                if(!err)
-                    res.redirect('/animals');
+                if(!err){
+                    let newMovementData = {
+                        user_id: "1",//Responsável do albergue
+                        animal_id: doc._id,
+                        date: new Date(),
+                        isIn: true,
+                        isComplete: true
+                    };
+                    const Movement = mongoDBConfig.collections[3].model;
+                    Movement.insertMovement(newMovementData, function (data) {
+                        if (data !== null) {
+                            res.redirect('/animals');
+                        } else {
+                            res.status(400).send(false);
+                        }
+                    });
+                }
                 else{
                     if(err.name === 'ValidationError'){
                         handleValidationError(err, req.body);

@@ -274,3 +274,24 @@ function createAdoption() {
     }
     xhr.send(JSON.stringify(data));
 }
+
+function createMovement() {
+    const data = {
+        user: document.getElementById("userSelect").value,
+        animal: document.getElementById("animalSelect").value,
+        date: new Date()
+    }
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/movements/add", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if ((this.readyState === 4) && (this.status === 400)) {
+            if(this.responseText === "true"){
+                window.location.replace("/movements");
+            } else {
+                alert("Não foi possível registar o movimento.")
+            }
+        }
+    }
+    xhr.send(JSON.stringify(data));
+}

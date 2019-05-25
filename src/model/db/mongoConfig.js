@@ -8,6 +8,7 @@ const autoIncrement = require('mongoose-auto-increment');
 const usersCollectionName = "users";
 const animalsCollectionName = "animals";
 const adoptionsCollectionName = "adoptions";
+const movementsCollectionName = "movements";
 
 // Object to be exported
 let mongoDBConfig = {
@@ -28,6 +29,11 @@ let mongoDBConfig = {
     },
     {
         name: adoptionsCollectionName,
+        schema: null,
+        model: null
+    },
+    {
+        name: movementsCollectionName,
         schema: null,
         model: null
     }]
@@ -56,6 +62,7 @@ let connectMongoDB = function (cb) {
         createUserCollection();
         createAnimalCollection();
         createAdoptionCollection();
+        createMovementCollection();
 
 
 
@@ -240,6 +247,22 @@ let createAdoptionCollection = function () {
     })
 }
 
+let createMovementCollection = function () {
+    const movementSchema = new Schema(require("./schemas/movements.js"), { collection: movementsCollectionName });
+    autoIncrement.initialize(mongoDBConfig.connection);
+    movementSchema.plugin(autoIncrement.plugin, { model: 'movementModel', field: 'movement_id', startAt: 1 });
+
+    mongoDBConfig.collections.forEach(element => {
+        if (element.name === movementsCollectionName) {
+            element.schema = movementSchema;
+
+            element.schema.statics.getMovement = getMovement;
+            element.schema.statics.insertMovement = insertMovement;
+            element.model = Mongoose.model('movementModel', movementSchema);
+        }
+    })
+}
+
 /**
  * CREATE: Inserts new user into mongoDB
  * @param {*} name User name
@@ -291,6 +314,19 @@ let insertAdoption = function (adoptionData, callback) {
     }*/
     // Insert
     mongoDBConfig.collections[index].model.create(adoptionData, function (err, res) {
+        if (err) return console.error("error: " + err);
+        callback(res);
+    });
+}
+
+let insertMovement = function (movementData, callback) {
+    let index = getCollectionIndex(movementsCollectionName);
+    if (index === -1) {
+        console.error("Collection " + movementsCollectionName + " not in mongoDBConfig");
+    }
+    console.log("ok: " + movementData.isIn);
+    // Insert
+    mongoDBConfig.collections[index].model.create(movementData, function (err, res) {
         if (err) return console.error("error: " + err);
         callback(res);
     });
@@ -385,6 +421,16 @@ let getAdoption = function (searchObject, callback) {
     });
 }
 
+let getMovement = function (searchObject, callback) {
+    const index = getCollectionIndex(movementsCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.find(searchObject, function (err, result) {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
 
 /**
  * UPDATE:updates user data

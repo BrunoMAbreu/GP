@@ -474,24 +474,12 @@ abbr {
 
 
 .dot-green {
-    height: 2px;
-    width: 2px;
-    margin: 5px;
-    display: flex;
-    flex-wrap: wrap;
-    background-color: green;
-    border-radius: 50%;
+    color: green;
 }
 
 
 .dot-red {
-    height: 2px;
-    width: 2px;
-    margin: 5px;
-    display: flex;
-    flex-wrap: wrap;
-    background-color: red;
-    border-radius: 50%;
+    color: red;
 }
 
 .body-dimensions {

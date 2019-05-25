@@ -5,6 +5,7 @@ const mongoDBConfig = require("../model/db/mongoConfig").mongoDBConfig;
 module.exports = function (app, passport) {
 
     let animalAPI = require('./animalRoutes.js');
+    let movementAPI = require('./movementRoutes.js');
 
     // Submenu of "Operações"
     const op_submenu = [
@@ -839,6 +840,7 @@ module.exports = function (app, passport) {
 
 
     app.use('/animals', animalAPI);
+    app.use('/movements', movementAPI);
 
     // Must be last route
     app.get('*', function (req, res) {
