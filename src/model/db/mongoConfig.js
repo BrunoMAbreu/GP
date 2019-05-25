@@ -55,10 +55,10 @@ let connectMongoDB = function (cb) {
 
 
         // Isto APAGA a colecção "user"; Só para testes!!!!!
-        /*
+        
         Mongoose.connection.collections['users'].drop(function (err) {
             console.log('collection dropped');
-        });*/
+        });
 
         // Para testar; APAGAR -------------------------------
         let testUserEmailAdmin = "a@a";
@@ -69,7 +69,7 @@ let connectMongoDB = function (cb) {
                 })
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (err, res) {
-                    getUserByEmail(testUserEmailAdmin, function (err, result) {                       
+                    getUserByEmail(testUserEmailAdmin, function (err, result) {
                         updateUser({ _id: result._id, profile: testUserProfileAdmin }, function (err, result) {
                         })
                     })
@@ -89,21 +89,42 @@ let connectMongoDB = function (cb) {
                 })
             })
         });
-        insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
-            getUserByEmail("c@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
-                })
-            })
+
+        let AnimalTeste = mongoDBConfig.collections[1].model;
+        let newAnimal1 = new AnimalTeste();
+        newAnimal1.name = "Princesa";
+        newAnimal1.birthday = new Date();
+        newAnimal1.gender = "Female";
+        newAnimal1.vaccinated = true;
+        newAnimal1.sterilized = true;
+        newAnimal1.photoLink = "https://i.pinimg.com/474x/17/30/96/17309677f9320c574517dff1f0897bf6--rhinos-god.jpg";
+        newAnimal1.dog = false;
+        newAnimal1.save(function (err, doc) {
+            if (err) {
+                console.log(err)
+            } else {
+                newAnimal1._id = doc._id;
+                insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
+                    //getUserByEmail("c@f", function (err, result) {
+                    updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+                        let adoption1 = {
+                            user_id: res.user_id,
+                            animal_id: newAnimal1._id,
+                            adoptionDate: (new Date()).toISOString()
+                        }
+                        insertAdoption(adoption1, function (res) {
+                            console.log("Farofa Adoption: ", res)
+                        });
+                    })
+                    //})
+                });
+            }
         });
 
-        let adoption1 = {
-            user_id: 19,
-            animal_id: "5cdda56c2b9fe8beac697d4a",
-            adoptionDate: (new Date()).toISOString()
-        }
-        insertAdoption(adoption1, function (res) {
-            console.log("Farofa Adoption: ", res)
-        });
+
+
+
+        /*
         let adoption2 = {
             user_id: 8,
             animal_id: "5cdd91a5dbf287c6f020baf8",
@@ -111,14 +132,14 @@ let connectMongoDB = function (cb) {
         }
         insertAdoption(adoption2, function (res) {
             console.log("Carrapateira Adoption: ", res)
-        });
-/*
-        insertAdoption(19, "5cdda56c2b9fe8beac697d4a", function (res) {
-            console.log("Farofa Adoption: ", res)
-        });
-        insertAdoption(8, "5cdd91a5dbf287c6f020baf8", function (res) {
-            console.log("Carrapateira Adoption: ", res)
-        }); */
+        });*/
+        /*
+                insertAdoption(19, "5cdda56c2b9fe8beac697d4a", function (res) {
+                    console.log("Farofa Adoption: ", res)
+                });
+                insertAdoption(8, "5cdd91a5dbf287c6f020baf8", function (res) {
+                    console.log("Carrapateira Adoption: ", res)
+                }); */
 
         // FIM: Para testar; APAGAR -------------------------------
 
