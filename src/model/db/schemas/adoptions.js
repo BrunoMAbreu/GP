@@ -13,7 +13,6 @@ module.exports = {
     },
     animal_id: {
         type: "string",
-        unique: true,
         required: true
     },
     adoptionDate: {
