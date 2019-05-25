@@ -449,48 +449,36 @@ module.exports = function (app, passport) {
 
     // PUT: Update adoption data
     app.put('/adoptions/:id', isLoggedIn, function (req, res) {
-        const User = mongoDBConfig.collections[0].model;
         const Animal = mongoDBConfig.collections[1].model;
         const Adoption = mongoDBConfig.collections[2].model;
         Adoption.getAdoption({ adoption_id: req.params.id }, function (err, adoptionRes) {
+
+            let underscoreIndex = req.body.adopter.indexOf("_");
+            const adopter_id = req.body.adopter.slice(0, underscoreIndex);
             let newAdoptionData = {
                 _id: adoptionRes[0]._id,
                 adoption_id: req.params.id,
-                adoptionDate: req.body.adoptionDate
+                adoptionDate: req.body.adoptionDate,
+                user_id: adopter_id,
             };
-            let newUserData = {
-                user_id: adoptionRes[0].user_id
-            }
-            const underscoreIndex = req.body.animal.indexOf("_") + 1;
-            const animalName = req.body.animal.slice(underscoreIndex);
-            let newAnimalData = {
-                _id: adoptionRes[0].animal_id,
-                name: animalName
-            }
-            User.getUser(newUserData, function (err, result) {
-                const underscoreIndex = req.body.adopter.indexOf("_") + 1;
-                newUserData.username = req.body.adopter.slice(underscoreIndex);
-                newUserData._id = result[0]._id;
-                User.updateUser(newUserData, function (err, data) {
-                    if (data === null) {
-                        res.status(400).send(false);
-                    } else {
-                        Adoption.updateAdoption(newAdoptionData, function (err, data) {
-                            if (data === null) {
-                                res.status(400).send(false);
-                            } else {
-                                Animal.findByIdAndUpdate(newAnimalData._id, newAnimalData, { new: true }, function (err, animalRes) {
-                                    if (data === null) {
-                                        res.status(400).send(false);
-                                    } else {
-                                        res.status(400).send(true);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
+            underscoreIndex = req.body.animal.indexOf("_");
+            const animalId = req.body.animal.slice(0, underscoreIndex);
+
+            Animal.find({ animal_id: animalId }, function (err, animalRes) {
+                if (err || animalRes === null) {
+                    res.status(400).send(false);
+                } else {
+                    newAdoptionData.animal_id = animalRes[0]._id.toString();
+                    Adoption.updateAdoption(newAdoptionData, function (err, data) {
+                        if (err || data === null) {
+                            res.status(400).send(false);
+                        } else {
+                            res.status(400).send(true);
+                        }
+                    });
+                }
             });
+
         });
     });
 

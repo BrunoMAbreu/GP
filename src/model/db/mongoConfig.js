@@ -48,6 +48,11 @@ let connectMongoDB = function (cb) {
     mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
     mongoDBConfig.connection.once('open', function () {
         console.log("Connection to mongodb established");
+
+        // para testes
+        Mongoose.connection.db.dropDatabase();
+
+
         createUserCollection();
         createAnimalCollection();
         createAdoptionCollection();
@@ -55,8 +60,7 @@ let connectMongoDB = function (cb) {
 
 
         // Isto APAGA a colecção "user"; Só para testes!!!!!
-
-        Mongoose.connection.collections['users'].drop(function (err) {
+        /*Mongoose.connection.collections['users'].drop(function (err) {
             console.log('collection users dropped');
         });
         Mongoose.connection.collections['animals'].drop(function (err) {
@@ -64,7 +68,7 @@ let connectMongoDB = function (cb) {
         });
         Mongoose.connection.collections['adoptions'].drop(function (err) {
             console.log('collection adoptions dropped');
-        });
+        });*/
 
         // Para testar; APAGAR -------------------------------
         let testUserEmailAdmin = "a@a";
@@ -75,19 +79,15 @@ let connectMongoDB = function (cb) {
                 })
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (err, res) {
-                    //getUserByEmail(testUserEmailAdmin, function (err, result) {
                     updateUser({ _id: res._id, profile: testUserProfileAdmin }, function (err, result) {
                     })
-                    //})
                 });
             }
         })
         let testUserProfileFunc = "funcionário";
         insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (err, res) {
-            //getUserByEmail("a@f", function (err, result) {
             updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
             })
-            //})
         });
 
         let AnimalTeste = mongoDBConfig.collections[1].model;
@@ -106,17 +106,19 @@ let connectMongoDB = function (cb) {
                 newAnimal1._id = doc._id;
                 insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
                     updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
-                        let adoption1 = {
+                        let adoption = {
                             user_id: res.user_id,
                             animal_id: newAnimal1._id,
                             adoptionDate: (new Date()).toISOString()
                         }
-                        insertAdoption(adoption1, function (res) {
+                        insertAdoption(adoption, function (res) {
+                            if (err) console.log(err)
                         });
                     })
                 });
             }
         });
+
         let newAnimal2 = new AnimalTeste();
         newAnimal2.name = "Tareco";
         newAnimal2.birthday = new Date();
@@ -124,23 +126,39 @@ let connectMongoDB = function (cb) {
         newAnimal2.vaccinated = true;
         newAnimal2.sterilized = true;
         newAnimal2.photoLink = "https://3.bp.blogspot.com/-OOvDRRDXc7g/Td2WkJuq1yI/AAAAAAAABp8/5rx6z6ApVAM/s1600/baboon2.jpg";
-        newAnimal2.dog = false;
+        newAnimal2.dog = true;
         newAnimal2.save(function (err, doc) {
             if (err) {
                 console.log(err)
             } else {
                 newAnimal2._id = doc._id;
                 insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
+                    if (err) console.log(err)
                     updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+                        if (err) console.log(err)
                         let adoption2 = {
                             user_id: res.user_id,
                             animal_id: newAnimal2._id,
                             adoptionDate: (new Date()).toISOString()
                         }
                         insertAdoption(adoption2, function (res) {
+                            if (err) console.log(err)
                         });
                     })
                 });
+            }
+        });
+        let newAnimal3 = new AnimalTeste();
+        newAnimal3.name = "Tofu";
+        newAnimal3.birthday = new Date();
+        newAnimal3.gender = "Male";
+        newAnimal3.vaccinated = false;
+        newAnimal3.sterilized = true;
+        newAnimal3.photoLink = "https://www.zambiatourism.com/media/crocodile-013-1280x960.jpg";
+        newAnimal3.dog = true;
+        newAnimal3.save(function (err, doc) {
+            if (err) {
+                console.log(err)
             }
         });
         // FIM: Para testar; APAGAR -------------------------------
@@ -212,19 +230,11 @@ let createAdoptionCollection = function () {
     mongoDBConfig.collections.forEach(element => {
         if (element.name === adoptionsCollectionName) {
             element.schema = adoptionSchema;
-            element.schema.plugin(passportLocalMongoose);
-
-            //element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getAdoptionCollectionIndex = getAdoptionCollectionIndex;
             element.schema.statics.insertAdoption = insertAdoption;
-
-            //element.schema.statics.getUserByEmail = getUserByEmail;
-            //element.schema.statics.getUserById = getUserById;
-            //element.schema.statics.getUserByProfile = getUserByProfile;
             element.schema.statics.getAdoption = getAdoption;
             element.schema.statics.updateAdoption = updateAdoption;
             element.schema.statics.deleteAdoption = deleteAdoption;
-
             element.model = Mongoose.model('adoptionModel', adoptionSchema);
         }
     })
