@@ -76,8 +76,8 @@ let connectMongoDB = function (cb) {
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (err, res) {
                     //getUserByEmail(testUserEmailAdmin, function (err, result) {
-                        updateUser({ _id: res._id, profile: testUserProfileAdmin }, function (err, result) {
-                        })
+                    updateUser({ _id: res._id, profile: testUserProfileAdmin }, function (err, result) {
+                    })
                     //})
                 });
             }
@@ -85,8 +85,8 @@ let connectMongoDB = function (cb) {
         let testUserProfileFunc = "funcionário";
         insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (err, res) {
             //getUserByEmail("a@f", function (err, result) {
-                updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
-                })
+            updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+            })
             //})
         });
 
@@ -138,14 +138,12 @@ let connectMongoDB = function (cb) {
                             adoptionDate: (new Date()).toISOString()
                         }
                         insertAdoption(adoption2, function (res) {
-
                         });
                     })
-
                 });
             }
         });
-       // FIM: Para testar; APAGAR -------------------------------
+        // FIM: Para testar; APAGAR -------------------------------
 
         cb();
     });

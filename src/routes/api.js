@@ -217,44 +217,44 @@ module.exports = function (app, passport) {
         let animals = [];
 
         User.getUser({}, function (err, usersArray) {
-            usersArray.forEach(elem => {
-                let newUser = {
-                    adopter: elem.username,
-                    adopter_id: elem.user_id
-                };
-                adopters.push(newUser);
-            })
-        });
-        Adoption.getAdoption({}, function (err, adoptionsArray) {
-            Animal.find({}, function (err, animalsArray) {
-                if (err) console.log(err);
-                let animalsAdoptedIds = [];
-                adoptionsArray.forEach(elem => {
-                    animalsAdoptedIds.push(elem.animal_id);
-                })
-                animalsArray.forEach(elem => {
-                    if (animalsAdoptedIds.indexOf((elem.id).toString()) === -1) {
-                        let newAnimal = {
-                            animal: elem.name,
-                            animal_id: elem.animal_id
+            Adoption.getAdoption({}, function (err, adoptionsArray) {
+                Animal.find({}, function (err, animalsArray) {
+                    if (err) console.log(err);
+                    let animalsAdoptedIds = [];
+                    adoptionsArray.forEach(elem => {
+                        animalsAdoptedIds.push(elem.animal_id);
+                    })
+                    usersArray.forEach(elem => {
+                        let newUser = {
+                            adopter: elem.username,
+                            adopter_id: elem.user_id
                         };
-                        animals.push(newAnimal);
+                        adopters.push(newUser);
+                    })
+                    animalsArray.forEach(elem => {
+                        if (animalsAdoptedIds.indexOf((elem.id).toString()) === -1) {
+                            let newAnimal = {
+                                animal: elem.name,
+                                animal_id: elem.animal_id
+                            };
+                            animals.push(newAnimal);
+                        }
+                    });
+                    if (req.session.passport.user.profile === "administrador") {
+                        res.render('createAdoption', {
+                            description: "Registar adopção",
+                            isUserLogged: isUserLogged(req, res),
+                            op_submenu: setOpSubmenu(req, res),
+                            adopters: adopters,
+                            animals: animals,
+                            selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                        });
+                    } else {
+                        res.redirect('/');
                     }
                 });
             });
-        })
-        if (req.session.passport.user.profile === "administrador") {
-            res.render('createAdoption', {
-                description: "Registar adopção",
-                isUserLogged: isUserLogged(req, res),
-                op_submenu: setOpSubmenu(req, res),
-                adopters: adopters,
-                animals: animals,
-                selectedMenu: setPropertyTrue(selectedMenu, "operations")
-            });
-        } else {
-            res.redirect('/');
-        }
+        });
     });
 
 
@@ -303,7 +303,7 @@ module.exports = function (app, passport) {
             User.getUser({ user_id: adoptionData.adopter_id }, function (err, usersArray) {
                 if (err) console.log(err);
                 adoptionData.adopter = usersArray[0].username;
-                Animal.find({_id: adoptionsArray[0].animal_id}, function (err, animalArray) {
+                Animal.find({ _id: adoptionsArray[0].animal_id }, function (err, animalArray) {
                     if (err) console.log(err);
                     adoptionData.animal_id = animalArray[0].animal_id;
                     adoptionData.animal = animalArray[0].name;
@@ -340,47 +340,46 @@ module.exports = function (app, passport) {
                 adoption_id: req.params.id,
                 adoptionDate: adoptionsArray[0].adoptionDate.toISOString().slice(0, 10)
             };
-
             User.getUser({}, function (err, usersArray) {
-                usersArray.forEach(elem => {
-                    let newUser = {
-                        adopter: elem.username,
-                        adopter_id: elem.user_id
-                    };
-                    if (elem.user_id !== adoptionsArray[0].user_id) {
-                        adopters.push(newUser);
+                Animal.find({}, function (err, animalsArray) {
+                    if (err) console.log(err);
+                    usersArray.forEach(elem => {
+                        let newUser = {
+                            adopter: elem.username,
+                            adopter_id: elem.user_id
+                        };
+                        if (elem.user_id !== adoptionsArray[0].user_id) {
+                            adopters.push(newUser);
+                        } else {
+                            adopters.unshift(newUser);
+                        }
+                    })
+                    animalsArray.forEach(elem => {
+                        let newAnimal = {
+                            animal: elem.name,
+                            animal_id: elem.animal_id
+                        };
+                        if (elem._id.toString() !== adoptionsArray[0].animal_id) {
+                            animals.push(newAnimal);
+                        } else {
+                            animals.unshift(newAnimal);
+                        }
+                    });
+                    if (req.session.passport.user.profile === "administrador") {
+                        res.render('updateAdoption', {
+                            description: "Alterar adopção",
+                            isUserLogged: isUserLogged(req, res),
+                            op_submenu: setOpSubmenu(req, res),
+                            adoption: adoptionObj,
+                            adopters: adopters,
+                            animals: animals,
+                            selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                        });
                     } else {
-                        adopters.unshift(newUser);
-                    }
-                })
-            });
-            Animal.find({}, function (err, animalsArray) {
-                if (err) console.log(err);
-                animalsArray.forEach(elem => {
-                    let newAnimal = {
-                        animal: elem.name,
-                        animal_id: elem.animal_id
-                    };
-                    if (elem._id.toString() !== adoptionsArray[0].animal_id) {
-                        animals.push(newAnimal);
-                    } else {
-                        animals.unshift(newAnimal);
+                        res.redirect('/');
                     }
                 });
             });
-            if (req.session.passport.user.profile === "administrador") {
-                res.render('updateAdoption', {
-                    description: "Alterar adopção",
-                    isUserLogged: isUserLogged(req, res),
-                    op_submenu: setOpSubmenu(req, res),
-                    adoption: adoptionObj,
-                    adopters: adopters,
-                    animals: animals,
-                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
-                });
-            } else {
-                res.redirect('/');
-            }
         });
     });
 
