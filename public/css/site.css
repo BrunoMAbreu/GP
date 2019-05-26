@@ -482,6 +482,10 @@ abbr {
     color: red;
 }
 
+.dot-yellow {
+    color: orange;
+}
+
 .body-dimensions {
     margin: 10px;
 }

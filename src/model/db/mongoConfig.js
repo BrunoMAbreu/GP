@@ -106,6 +106,7 @@ let connectMongoDB = function (cb) {
         newAnimal1.sterilized = true;
         newAnimal1.photoLink = "https://i.pinimg.com/474x/17/30/96/17309677f9320c574517dff1f0897bf6--rhinos-god.jpg";
         newAnimal1.dog = false;
+        newAnimal1.state = "Adotado";
         newAnimal1.save(function (err, doc) {
             if (err) {
                 console.log(err)
@@ -134,6 +135,7 @@ let connectMongoDB = function (cb) {
         newAnimal2.sterilized = true;
         newAnimal2.photoLink = "https://3.bp.blogspot.com/-OOvDRRDXc7g/Td2WkJuq1yI/AAAAAAAABp8/5rx6z6ApVAM/s1600/baboon2.jpg";
         newAnimal2.dog = true;
+        newAnimal2.state = "Adotado";
         newAnimal2.save(function (err, doc) {
             if (err) {
                 console.log(err)
@@ -163,6 +165,7 @@ let connectMongoDB = function (cb) {
         newAnimal3.sterilized = true;
         newAnimal3.photoLink = "https://www.zambiatourism.com/media/crocodile-013-1280x960.jpg";
         newAnimal3.dog = true;
+        newAnimal3.state = "Disponível";
         newAnimal3.save(function (err, doc) {
             if (err) {
                 console.log(err)
@@ -324,7 +327,6 @@ let insertMovement = function (movementData, callback) {
     if (index === -1) {
         console.error("Collection " + movementsCollectionName + " not in mongoDBConfig");
     }
-    console.log("ok: " + movementData.isIn);
     // Insert
     mongoDBConfig.collections[index].model.create(movementData, function (err, res) {
         if (err) return console.error("error: " + err);

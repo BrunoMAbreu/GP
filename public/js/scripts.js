@@ -279,7 +279,7 @@ function createMovement() {
     const data = {
         user: document.getElementById("userSelect").value,
         animal: document.getElementById("animalSelect").value,
-        date: new Date()
+        date: new Date((new Date()).toString().substring(0,15))
     }
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/movements/add", true);

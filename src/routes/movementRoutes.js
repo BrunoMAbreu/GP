@@ -97,9 +97,18 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
                         showActions: true
                     });
                     if (isSearching &&
-                        ((userPattern && !adopter.match(userPattern)) || (animalPattern && !animal.match(animalPattern)))) {
+                        ((userPattern && !user.match(userPattern)) || (animalPattern && !animal.match(animalPattern)))) {
                         movements.pop();
                     }
+                    movements.sort(function (a, b) {
+                        if (a.movement_id < b.movement_id) {
+                          return 1;
+                        }
+                        if (a.movement_id > b.movement_id) {
+                          return -1;
+                        }
+                        return 0;
+                      });
                 });
             });
         });
@@ -142,42 +151,36 @@ router.get('/add', isLoggedIn, function (req, res) {
     let animals = [];
 
     User.getUser({}, function (err, usersArray) {
-        Movement.getMovement({}, function (err, movementsArray) {
-            Animal.find({}, function (err, animalsArray) {
-                if (err) console.log(err);
-                let animalsMovedIds = [];
-                movementsArray.forEach(elem => {
-                    animalsMovedIds.push(elem.animal_id);
-                })
-                usersArray.forEach(elem => {
-                    let newUser = {
-                        user: elem.username,
-                        user_id: elem.user_id
+        Animal.find({}, function (err, animalsArray) {
+            if (err) console.log(err);
+            usersArray.forEach(elem => {
+                let newUser = {
+                    user: elem.username,
+                    user_id: elem.user_id
+                };
+                responsabels.push(newUser);
+            })
+            animalsArray.forEach(elem => {
+                if (elem.state === "Disponível") {
+                    let newAnimal = {
+                        animal: elem.name,
+                        animal_id: elem.animal_id
                     };
-                    responsabels.push(newUser);
-                })
-                animalsArray.forEach(elem => {
-                    if (animalsMovedIds.indexOf((elem.id).toString()) === -1) {
-                        let newAnimal = {
-                            animal: elem.name,
-                            animal_id: elem.animal_id
-                        };
-                        animals.push(newAnimal);
-                    }
-                });
-                if (req.session.passport.user.profile === "administrador") {
-                    res.render('movement/createMovement', {
-                        description: "Registar Saída",
-                        isUserLogged: isUserLogged(req, res),
-                        op_submenu: setOpSubmenu(req, res),
-                        users: responsabels,
-                        animals: animals,
-                        selectedMenu: setPropertyTrue(selectedMenu, "operations")
-                    });
-                } else {
-                    res.redirect('/');
+                    animals.push(newAnimal);
                 }
             });
+            if (req.session.passport.user.profile === "administrador") {
+                res.render('movement/createMovement', {
+                    description: "Registar Saída",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    users: responsabels,
+                    animals: animals,
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                });
+            } else {
+                res.redirect('/');
+            }
         });
     });
 });
@@ -188,23 +191,103 @@ router.post('/add', isLoggedIn, function (req, res) {
     const user_id = req.body.user.split("_")[0];
     Animal.find({ animal_id: animal_id }, function (err, animalsArray) {
         if (err) console.log(err);
-        let newMovementData = {
-            user_id: user_id,
-            animal_id: animalsArray[0]._id,
-            date: new Date(),
-            isIn: false,
-            isComplete: false
-        };
-        Movement.insertMovement(newMovementData, function (data) {
-            if (data !== null) {
-                res.status(400).send(true);
-            } else {
-                res.status(400).send(false);
+        animalsArray[0].state = "Fora do albergue";
+        Animal.findOneAndUpdate({ _id : animalsArray[0]._id }, animalsArray[0], {new: true}, (err, doc) => {
+            if(!err){
+                let newMovementData = {
+                    user_id: user_id,
+                    animal_id: doc._id,
+                    date: new Date((new Date()).toString().substring(0,15)),
+                    isIn: false,
+                    isComplete: false
+                };
+                Movement.insertMovement(newMovementData, function (data) {
+                    if (data !== null) {
+                        res.status(400).send(true);
+                    } else {
+                        res.status(400).send(false);
+                    }
+                });
             }
         });
     })
 });
 
+router.get('/entry/:id', isLoggedIn, function (req, res) {
+    const Animal = mongoDBConfig.collections[1].model;
+    
+    Movement.getMovement({ movement_id: req.params.id }, function (err, movementsArray) {
+        if (err) console.log(err);
+        movementsArray[0].isComplete = true;
+        Movement.findOneAndUpdate({ _id : movementsArray[0]._id }, movementsArray[0], {new: true}, (err, docMovement) => {
+            if(!err){
+                Animal.find({ _id: docMovement.animal_id }, function (err, animalsArray) {
+                    if (err) console.log(err);
+                    animalsArray[0].state = "Disponível";
+                    Animal.findOneAndUpdate({ _id : animalsArray[0]._id }, animalsArray[0], {new: true}, (err, doc) => {
+                        if(!err){
+                            let newMovementData = {
+                                user_id: docMovement.user_id,
+                                animal_id: doc._id,
+                                date: new Date((new Date()).toString().substring(0,15)),
+                                isIn: true,
+                                isComplete: true
+                            };
+                            Movement.insertMovement(newMovementData, function (data) {
+                                if (data !== null) {
+                                    res.redirect('/movements');
+                                } else {
+                                    res.status(400).send(false);
+                                }
+                            });
+                        }
+                    });
+                })
+            }
+        });
+    });
+});
+
+router.get('/details/:id', function (req, res) {
+    const User = mongoDBConfig.collections[0].model;
+    const Animal = mongoDBConfig.collections[1].model;
+
+    Movement.getMovement({ movement_id: req.params.id }, function (err, movementsArray) {
+        if (err) console.log(err);
+        let movementData = {
+            movement_id: req.params.id,
+            date: movementsArray[0].date.toISOString().slice(0, 10),
+            user_id: movementsArray[0].user_id,
+            user: null,
+            animal_id: null,
+            animal: null,
+        };
+
+        User.getUser({ user_id: movementData.user_id }, function (err, usersArray) {
+            if (err) console.log(err);
+            movementData.user = usersArray[0];
+            Animal.find({ _id: movementsArray[0].animal_id }, function (err, animalArray) {
+                if (err) console.log(err);
+                movementData.animal_id = animalArray[0].animal_id;
+                movementData.animal = animalArray[0];
+                console.log("Estado: " + movementData.animal.state);
+                if (req.session.passport.user.profile === "administrador") {
+                    res.render("movement/details", {
+                        description: "Visualizar adopção",
+                        isUserLogged: isUserLogged(req, res),
+                        op_submenu: setOpSubmenu(req, res),
+                        movement: movementData,
+                        isUserLogged: isUserLogged(req, res),
+                        op_submenu: setOpSubmenu(req, res),
+                        selectedMenu: setPropertyTrue(selectedMenu, "operations"),
+                    });
+                } else {
+                    res.redirect('/');
+                }
+            });
+        });
+    });
+});
 
 function setPropertyTrue(object, prop) {
     for (let property in object) {

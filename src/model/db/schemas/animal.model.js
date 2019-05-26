@@ -33,5 +33,9 @@ module.exports = {
     photoLink: {
         type: String,
         required: true
+    },
+    state: {
+        type: String,
+        required: true
     }
 }
