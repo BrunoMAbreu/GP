@@ -1,5 +1,5 @@
 module.exports = {
-    adoption_id: {
+    movement_id: {
         type: "number",
         min: 1,
         unique: true,
@@ -7,17 +7,23 @@ module.exports = {
         index: true
     },
     user_id: {
-        type: "number",
-        min: 1,
+        type: "string",
         required: true
     },
     animal_id: {
         type: "string",
         required: true
     },
-    adoptionDate: {
+    date: {
         type: "date",
-        required: true,
-        default: new Date()
+        required: true
+    },
+    isIn:{
+        type: "boolean",
+        required: true
+    },
+    isComplete: {
+        type: "boolean",
+        required: true
     }
 }

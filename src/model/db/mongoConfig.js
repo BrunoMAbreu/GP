@@ -8,6 +8,7 @@ const autoIncrement = require('mongoose-auto-increment');
 const usersCollectionName = "users";
 const animalsCollectionName = "animals";
 const adoptionsCollectionName = "adoptions";
+const movementsCollectionName = "movements";
 
 // Object to be exported
 let mongoDBConfig = {
@@ -30,6 +31,11 @@ let mongoDBConfig = {
         name: adoptionsCollectionName,
         schema: null,
         model: null
+    },
+    {
+        name: movementsCollectionName,
+        schema: null,
+        model: null
     }]
 }
 /*
@@ -48,16 +54,27 @@ let connectMongoDB = function (cb) {
     mongoDBConfig.connection.on('error', console.error.bind(console, 'Connection error:'));
     mongoDBConfig.connection.once('open', function () {
         console.log("Connection to mongodb established");
+
+        // para testes
+        Mongoose.connection.db.dropDatabase();
+
+
         createUserCollection();
         createAnimalCollection();
         createAdoptionCollection();
+        createMovementCollection();
 
 
 
         // Isto APAGA a colecção "user"; Só para testes!!!!!
-        /*
-        Mongoose.connection.collections['users'].drop(function (err) {
-            console.log('collection dropped');
+        /*Mongoose.connection.collections['users'].drop(function (err) {
+            console.log('collection users dropped');
+        });
+        Mongoose.connection.collections['animals'].drop(function (err) {
+            console.log('collection animals dropped');
+        });
+        Mongoose.connection.collections['adoptions'].drop(function (err) {
+            console.log('collection adoptions dropped');
         });*/
 
         // Para testar; APAGAR -------------------------------
@@ -69,57 +86,88 @@ let connectMongoDB = function (cb) {
                 })
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (err, res) {
-                    getUserByEmail(testUserEmailAdmin, function (err, result) {                       
-                        updateUser({ _id: result._id, profile: testUserProfileAdmin }, function (err, result) {
-                        })
+                    updateUser({ _id: res._id, profile: testUserProfileAdmin }, function (err, result) {
                     })
                 });
             }
         })
         let testUserProfileFunc = "funcionário";
         insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (err, res) {
-            getUserByEmail("a@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
-                })
-            })
-        });
-        insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
-            getUserByEmail("b@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
-                })
-            })
-        });
-        insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
-            getUserByEmail("c@f", function (err, result) {
-                updateUser({ _id: result._id, profile: testUserProfileFunc }, function (err, result) {
-                })
+            updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
             })
         });
 
-        let adoption1 = {
-            user_id: 19,
-            animal_id: "5cdda56c2b9fe8beac697d4a",
-            adoptionDate: (new Date()).toISOString()
-        }
-        insertAdoption(adoption1, function (res) {
-            console.log("Farofa Adoption: ", res)
+        let AnimalTeste = mongoDBConfig.collections[1].model;
+        let newAnimal1 = new AnimalTeste();
+        newAnimal1.name = "Princesa";
+        newAnimal1.birthday = new Date();
+        newAnimal1.gender = "Female";
+        newAnimal1.vaccinated = true;
+        newAnimal1.sterilized = true;
+        newAnimal1.photoLink = "https://i.pinimg.com/474x/17/30/96/17309677f9320c574517dff1f0897bf6--rhinos-god.jpg";
+        newAnimal1.dog = false;
+        newAnimal1.save(function (err, doc) {
+            if (err) {
+                console.log(err)
+            } else {
+                newAnimal1._id = doc._id;
+                insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
+                    updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+                        let adoption = {
+                            user_id: res.user_id,
+                            animal_id: newAnimal1._id,
+                            adoptionDate: (new Date()).toISOString()
+                        }
+                        insertAdoption(adoption, function (res) {
+                            if (err) console.log(err)
+                        });
+                    })
+                });
+            }
         });
-        let adoption2 = {
-            user_id: 8,
-            animal_id: "5cdd91a5dbf287c6f020baf8",
-            adoptionDate: (new Date()).toISOString()
-        }
-        insertAdoption(adoption2, function (res) {
-            console.log("Carrapateira Adoption: ", res)
-        });
-/*
-        insertAdoption(19, "5cdda56c2b9fe8beac697d4a", function (res) {
-            console.log("Farofa Adoption: ", res)
-        });
-        insertAdoption(8, "5cdd91a5dbf287c6f020baf8", function (res) {
-            console.log("Carrapateira Adoption: ", res)
-        }); */
 
+        let newAnimal2 = new AnimalTeste();
+        newAnimal2.name = "Tareco";
+        newAnimal2.birthday = new Date();
+        newAnimal2.gender = "Male";
+        newAnimal2.vaccinated = true;
+        newAnimal2.sterilized = true;
+        newAnimal2.photoLink = "https://3.bp.blogspot.com/-OOvDRRDXc7g/Td2WkJuq1yI/AAAAAAAABp8/5rx6z6ApVAM/s1600/baboon2.jpg";
+        newAnimal2.dog = true;
+        newAnimal2.save(function (err, doc) {
+            if (err) {
+                console.log(err)
+            } else {
+                newAnimal2._id = doc._id;
+                insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
+                    if (err) console.log(err)
+                    updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+                        if (err) console.log(err)
+                        let adoption2 = {
+                            user_id: res.user_id,
+                            animal_id: newAnimal2._id,
+                            adoptionDate: (new Date()).toISOString()
+                        }
+                        insertAdoption(adoption2, function (res) {
+                            if (err) console.log(err)
+                        });
+                    })
+                });
+            }
+        });
+        let newAnimal3 = new AnimalTeste();
+        newAnimal3.name = "Tofu";
+        newAnimal3.birthday = new Date();
+        newAnimal3.gender = "Male";
+        newAnimal3.vaccinated = false;
+        newAnimal3.sterilized = true;
+        newAnimal3.photoLink = "https://www.zambiatourism.com/media/crocodile-013-1280x960.jpg";
+        newAnimal3.dog = true;
+        newAnimal3.save(function (err, doc) {
+            if (err) {
+                console.log(err)
+            }
+        });
         // FIM: Para testar; APAGAR -------------------------------
 
         cb();
@@ -189,20 +237,28 @@ let createAdoptionCollection = function () {
     mongoDBConfig.collections.forEach(element => {
         if (element.name === adoptionsCollectionName) {
             element.schema = adoptionSchema;
-            element.schema.plugin(passportLocalMongoose);
-
-            //element.schema.statics.validatePassword = validatePassword;
             element.schema.statics.getAdoptionCollectionIndex = getAdoptionCollectionIndex;
             element.schema.statics.insertAdoption = insertAdoption;
-
-            //element.schema.statics.getUserByEmail = getUserByEmail;
-            //element.schema.statics.getUserById = getUserById;
-            //element.schema.statics.getUserByProfile = getUserByProfile;
             element.schema.statics.getAdoption = getAdoption;
             element.schema.statics.updateAdoption = updateAdoption;
             element.schema.statics.deleteAdoption = deleteAdoption;
-
             element.model = Mongoose.model('adoptionModel', adoptionSchema);
+        }
+    })
+}
+
+let createMovementCollection = function () {
+    const movementSchema = new Schema(require("./schemas/movements.js"), { collection: movementsCollectionName });
+    autoIncrement.initialize(mongoDBConfig.connection);
+    movementSchema.plugin(autoIncrement.plugin, { model: 'movementModel', field: 'movement_id', startAt: 1 });
+
+    mongoDBConfig.collections.forEach(element => {
+        if (element.name === movementsCollectionName) {
+            element.schema = movementSchema;
+
+            element.schema.statics.getMovement = getMovement;
+            element.schema.statics.insertMovement = insertMovement;
+            element.model = Mongoose.model('movementModel', movementSchema);
         }
     })
 }
@@ -258,6 +314,19 @@ let insertAdoption = function (adoptionData, callback) {
     }*/
     // Insert
     mongoDBConfig.collections[index].model.create(adoptionData, function (err, res) {
+        if (err) return console.error("error: " + err);
+        callback(res);
+    });
+}
+
+let insertMovement = function (movementData, callback) {
+    let index = getCollectionIndex(movementsCollectionName);
+    if (index === -1) {
+        console.error("Collection " + movementsCollectionName + " not in mongoDBConfig");
+    }
+    console.log("ok: " + movementData.isIn);
+    // Insert
+    mongoDBConfig.collections[index].model.create(movementData, function (err, res) {
         if (err) return console.error("error: " + err);
         callback(res);
     });
@@ -352,6 +421,16 @@ let getAdoption = function (searchObject, callback) {
     });
 }
 
+let getMovement = function (searchObject, callback) {
+    const index = getCollectionIndex(movementsCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.find(searchObject, function (err, result) {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
 
 /**
  * UPDATE:updates user data
@@ -413,9 +492,6 @@ let deleteAdoption = function (id, callback) {
     if (index === -1) {
         return -1;
     }
-
-    console.log(">deleteAdoption")
-
     mongoDBConfig.collections[index].model.findOneAndRemove({ adoption_id: id }, function (err, data) {
         if (err) console.log(err);
         callback(data);

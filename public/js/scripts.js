@@ -235,8 +235,8 @@ function updateUser(id) {
 
 function updateAdoption(id) {
     const data = {
-        adopter: document.getElementById("adopter").value,
-        animal: document.getElementById("animal").value,
+        adopter: document.getElementById("adopterSelect").value,
+        animal: document.getElementById("animalSelect").value,
         adoptionDate: document.getElementById("adoptionDate").value
     }
     let xhr = new XMLHttpRequest();
@@ -255,19 +255,13 @@ function updateAdoption(id) {
 }
 
 function createAdoption() {
-
-
-
     const data = {
         adopter: document.getElementById("adopterSelect").value,
         animal: document.getElementById("animalSelect").value,
         adoptionDate: document.getElementById("adoptionDate").value
     }
-
-    console.log("data", data)
-
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/adoption/add", true);
+    xhr.open("POST", "/adoptions/add", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
         if ((this.readyState === 4) && (this.status === 400)) {
@@ -275,6 +269,27 @@ function createAdoption() {
                 window.location.replace("/adoptions");
             } else {
                 alert("Não foi possível registar a adopção.")
+            }
+        }
+    }
+    xhr.send(JSON.stringify(data));
+}
+
+function createMovement() {
+    const data = {
+        user: document.getElementById("userSelect").value,
+        animal: document.getElementById("animalSelect").value,
+        date: new Date()
+    }
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/movements/add", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if ((this.readyState === 4) && (this.status === 400)) {
+            if(this.responseText === "true"){
+                window.location.replace("/movements");
+            } else {
+                alert("Não foi possível registar o movimento.")
             }
         }
     }
