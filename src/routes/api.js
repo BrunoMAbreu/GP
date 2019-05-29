@@ -12,12 +12,9 @@ module.exports = function (app, passport) {
         { href: "/volunteers", name: "Voluntários", type: ["Administrador", "Funcionário"] }, //, "Funcionário"
         { href: "/workers", name: "Funcionários", type: ["Administrador"] },
         { href: "/users", name: "Utilizadores", type: ["Administrador"] },
-        { href: "/intervencoesMedicas_sub", name: "Intervenções Médicas", type: ["Administrador", "Funcionário"] },
-        { href: "/agenda_sub", name: "Agenda", type: ["Administrador", "Funcionário", "Voluntário"] },
         { href: "/animals", name: "Animais", type: ["Administrador", "Funcionário", "Voluntário"] },
         { href: "/adoptions", name: "Adopções", type: ["Administrador", "Funcionário"] },
-        { href: "/apadrinhamentos_sub", name: "Apadrinhamentos", type: ["Administrador", "Funcionário"] },
-        { href: "/entradaESaidaAnimais_sub", name: "Entrada e Saída de Animais", type: ["Administrador", "Funcionário"] }
+        { href: "/movements", name: "Entrada e Saída de Animais", type: ["Administrador", "Funcionário"] }
     ]
 
     let selectedMenu = {
