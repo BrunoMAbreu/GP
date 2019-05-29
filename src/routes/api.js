@@ -267,6 +267,7 @@ module.exports = function (app, passport) {
         const adopter_id = req.body.adopter.split("_")[0];
         Animal.find({ animal_id: animal_id }, function (err, animalsArray) {
             if (err) console.log(err);
+            animalsArray[0].state = "Adotado";
             let newAdoptionData = {
                 user_id: adopter_id,
                 animal_id: animalsArray[0]._id,

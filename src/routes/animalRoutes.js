@@ -49,6 +49,20 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
     return options.inverse(this);
   });
 
+  Handlebars.registerHelper('ifAdoptedCond', function(param, options) {
+    if(param === "Adotado") 
+      return options.fn(this);
+
+    return options.inverse(this);
+  });
+
+  Handlebars.registerHelper('ifAvailableCond', function(param, options) {
+    if(param === "Disponível") 
+      return options.fn(this);
+
+    return options.inverse(this);
+  });
+
 router.get('/add', (req, res) => {
     if (req.session.passport.user.profile === "administrador" ||
         req.session.passport.user.profile === "funcionário") {
@@ -91,6 +105,10 @@ router.get('/details/:id', (req, res) => {
 
             var birthday = dayFormat + "-" + monthFormat + "-" + doc.birthday.getFullYear();
         if(!err){
+            var normalUser = false;
+            if(!isUserLogged(req, res).isLogged || 
+            req.session.passport.user.profile === "utilizador") normalUser = true;
+
             res.render("animal/details", {
                 viewTitle: doc.nome,
                 animal: doc,
@@ -98,6 +116,7 @@ router.get('/details/:id', (req, res) => {
                 isUserLogged: isUserLogged(req, res),
                 op_submenu: setOpSubmenu(req, res),
                 selectedMenu: setPropertyTrue(selectedMenu, "operations"),
+                normalUser: normalUser
             });
         }
     });
@@ -260,6 +279,7 @@ function insertRecord(req, res){
             animal.vaccinated = req.body.vaccinated;
             animal.dog = req.body.dog;
             animal.sterilized = req.body.sterilized;
+            animal.state = "Disponível";
             animal.save((err, doc) => {
                 if(!err){
                     let newMovementData = {

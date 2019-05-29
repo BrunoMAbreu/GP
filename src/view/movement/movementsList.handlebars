@@ -43,8 +43,16 @@
             <td>
                 {{firstLine.date}}
             </td>
-            <td></td>
-            <td></td>
+            {{#if firstLine.showActions}}
+                <td><a href="/movements/details/{{firstLine.movement_id}}">Visualizar</a></td>
+                {{#if firstLine.isComplete}}
+                    <td></td>
+                {{else}}
+                    <td><a href="/movements/entry/{{firstLine.movement_id}}">Dar entrada</a></td>
+                {{/if}}
+            {{else}}
+                <td></td>
+            {{/if}}
             <td></td>
 
         </tr>
