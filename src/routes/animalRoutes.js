@@ -144,7 +144,24 @@ router.get('/catalog', (req, res) => {
 
 router.get('/', isLoggedIn, (req, res) => {
     let animals = [];
-    Animal.find((err, docs) => {
+
+    const reqQuery = req.query;
+    let query = {};
+        let isSearching = false;
+        if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
+            for (let [key, value] of Object.entries(reqQuery)) {
+                if (value !== "") {
+                    console.log("KEY: " + key + " || VALUE: " + value);
+
+                    query[key] = (key === "birthdate")
+                        ? { '$gte': value }
+                        : { '$regex': value, '$options': 'i' }
+                }
+            }
+        }
+        console.log(query["gender"]);
+    Animal.find(query, function (err, docs){
+        console.log(docs);
         if (req.session.passport.user.profile === "administrador" ||
         req.session.passport.user.profile === "funcionário" ||
         req.session.passport.user.profile === "voluntário") {
@@ -164,6 +181,7 @@ router.get('/', isLoggedIn, (req, res) => {
                         isVolunteerLogged: isVolunteerLogged
                     });
                 });
+
                 const searchColumnRowspan = 12;
                 while (animals.length < searchColumnRowspan) {
                     animals.push({
