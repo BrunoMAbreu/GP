@@ -48,6 +48,7 @@ module.exports = function (userCollection, animalCollection, adoptionCollection)
             newAnimal.vaccinated = false;
             newAnimal.dog = true;
             newAnimal.sterilized = false;
+            newAnimal.state = "Adotado";
 
             userModel.insertUser(newUser.name, newUser.email, newUser.password, newUser.phone, newUser.birthDate, function (err, result) {
                 if (err) done(err);
