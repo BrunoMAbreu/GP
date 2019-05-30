@@ -5,7 +5,7 @@
 </div>
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
-    <h3><a class="confirmationButton" href="/movements/add">Adicionar</a></h3>
+    <h3><a class="confirmationButton" href="/movements/add">Dar Saída</a></h3>
 </div>
 <table id="usersListTable">
     <thead>
@@ -48,7 +48,7 @@
                 {{#if firstLine.isComplete}}
                     <td></td>
                 {{else}}
-                    <td><a href="/movements/entry/{{firstLine.movement_id}}">Dar entrada</a></td>
+                    <td><a href="/movements/entry/{{firstLine.movement_id}}" class="confirmationButton">Dar entrada</a></td>
                 {{/if}}
             {{else}}
                 <td></td>
