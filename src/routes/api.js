@@ -529,7 +529,9 @@ module.exports = function (app, passport) {
                 if (value !== "") {
                     switch (key) {
                         case "adoptionDate":
-                            adoptionQuery[key] = { '$gte': value };
+                            let nextDayDate = new Date(value);
+                            nextDayDate.setDate(nextDayDate.getDate() + 1);
+                            adoptionQuery[key] = { '$gte': value, '$lt': nextDayDate };
                             break;
                         case "adopter":
                             userPattern = new RegExp(value, "i");
@@ -614,8 +616,10 @@ module.exports = function (app, passport) {
         if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
             for (let [key, value] of Object.entries(reqQuery)) {
                 if (value !== "") {
+                    let nextDayDate = new Date(value);
+                    nextDayDate.setDate(nextDayDate.getDate() + 1);
                     query[key] = (key === "birthDate")
-                        ? { '$gte': value }
+                        ? { '$gte': value, '$lt': nextDayDate }
                         : { '$regex': value, '$options': 'i' }
                 }
             }
@@ -676,8 +680,10 @@ module.exports = function (app, passport) {
         if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
             for (let [key, value] of Object.entries(reqQuery)) {
                 if (value !== "") {
+                    let nextDayDate = new Date(value);
+                    nextDayDate.setDate(nextDayDate.getDate() + 1);
                     query[key] = (key === "birthDate")
-                        ? { '$gte': value }
+                        ? { '$gte': value, '$lt': nextDayDate }
                         : { '$regex': value, '$options': 'i' }
                 }
             }
@@ -737,12 +743,15 @@ module.exports = function (app, passport) {
         if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
             for (let [key, value] of Object.entries(reqQuery)) {
                 if (value !== "") {
+                    let nextDayDate = new Date(value);
+                    nextDayDate.setDate(nextDayDate.getDate() + 1);
                     query[key] = (key === "birthDate")
-                        ? { '$gte': value }
+                        ? { '$gte': value, '$lt': nextDayDate }
                         : { '$regex': value, '$options': 'i' }
                 }
             }
         }
+
         User.getUser(query, function (err, result) {
             result.forEach(element => {
                 users.push({

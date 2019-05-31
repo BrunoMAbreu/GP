@@ -151,10 +151,10 @@ router.get('/', isLoggedIn, (req, res) => {
         if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
             for (let [key, value] of Object.entries(reqQuery)) {
                 if (value !== "") {
-                    console.log("KEY: " + key + " || VALUE: " + value);
-
-                    query[key] = (key === "birthdate")
-                        ? { '$gte': value }
+                    let nextDayDate = new Date(value);
+                    nextDayDate.setDate(nextDayDate.getDate() + 1);
+                    query[key] = (key === "birthday")
+                        ? { '$gte': value, '$lt': nextDayDate }
                         : { '$regex': value, '$options': 'i' }
                 }
             }
