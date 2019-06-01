@@ -159,9 +159,7 @@ router.get('/', isLoggedIn, (req, res) => {
                 }
             }
         }
-        console.log(query["gender"]);
     Animal.find(query, function (err, docs){
-        console.log(docs);
         if (req.session.passport.user.profile === "administrador" ||
         req.session.passport.user.profile === "funcionário" ||
         req.session.passport.user.profile === "voluntário") {

@@ -71,59 +71,65 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
             }
         }
     }
-
-    Movement.getMovement(movementQuery, function (err, result) {
-        if (err) console.error(err);
-        result.forEach(element => {
-            let user = null;
-            let animal = null;
-            User.getUser({ user_id: element.user_id }, function (err, result) {
-                if (err) console.log(err);
-                user = (result.length !== 0) ? result[0].username : "Utilizador eliminado";
-                Animal.find({ _id: element.animal_id }, function (err, result) {
+    if (req.session.passport.user.profile === "administrador" ||
+        req.session.passport.user.profile === "funcionário" ||
+        req.session.passport.user.profile === "voluntário") {
+            var isVolunteerLogged = false;
+            if(req.session.passport.user.profile === "voluntário") isVolunteerLogged = true;
+        Movement.getMovement(movementQuery, function (err, result) {
+            if (err) console.error(err);
+            result.forEach(element => {
+                let user = null;
+                let animal = null;
+                User.getUser({ user_id: element.user_id }, function (err, result) {
                     if (err) console.log(err);
-                    animal = (result.length !== 0) ? result[0].name : "Animal eliminado";
-                    movements.push({
-                        movement_id: element.movement_id,
-                        user: user,
-                        animal: animal,
-                        date: element.date.toISOString().slice(0, 10),
-                        isIn: element.isIn,
-                        isComplete: element.isComplete,
-                        route: route,
-                        showActions: true
+                    user = (result.length !== 0) ? result[0].username : "Utilizador eliminado";
+                    Animal.find({ _id: element.animal_id }, function (err, result) {
+                        if (err) console.log(err);
+                        animal = (result.length !== 0) ? result[0].name : "Animal eliminado";
+                        movements.push({
+                            movement_id: element.movement_id,
+                            user: user,
+                            animal: animal,
+                            date: element.date.toISOString().slice(0, 10),
+                            isIn: element.isIn,
+                            isComplete: element.isComplete,
+                            route: route,
+                            showActions: true,
+                            isVolunteerLogged: isVolunteerLogged
+                        });
+                        if (isSearching &&
+                            ((userPattern && !user.match(userPattern)) || (animalPattern && !animal.match(animalPattern)))) {
+                            movements.pop();
+                        }
+                        movements.sort(function (a, b) {
+                            if (a.movement_id < b.movement_id) {
+                                return 1;
+                            }
+                            if (a.movement_id > b.movement_id) {
+                                return -1;
+                            }
+                            return 0;
+                        });
                     });
-                    if (isSearching &&
-                        ((userPattern && !user.match(userPattern)) || (animalPattern && !animal.match(animalPattern)))) {
-                        movements.pop();
-                    }
-                    movements.sort(function (a, b) {
-                        if (a.movement_id < b.movement_id) {
-                          return 1;
-                        }
-                        if (a.movement_id > b.movement_id) {
-                          return -1;
-                        }
-                        return 0;
-                      });
                 });
             });
-        });
-        setTimeout(function () {
-            while (movements.length < searchColumnRowspan) {
-                movements.push({
-                    movement_id: "",
-                    user: "",
-                    animal: "",
-                    date: "",
-                    isIn: "",
-                    isComplete: "",
-                    route: route,
-                    showActions: false
-                });
-            }
-            const firstLine = movements.shift();
-            if (req.session.passport.user.profile === "administrador") {
+            setTimeout(function () {
+                while (movements.length < searchColumnRowspan) {
+                    movements.push({
+                        movement_id: "",
+                        user: "",
+                        animal: "",
+                        date: "",
+                        isIn: "",
+                        isComplete: "",
+                        route: route,
+                        showActions: false,
+                        isVolunteerLogged: isVolunteerLogged
+                    });
+                }
+                const firstLine = movements.shift();
+            
                 res.render('movement/movementsList', {
                     description: "Entradas e Saídas de Animais",
                     isUserLogged: isUserLogged(req, res),
@@ -132,13 +138,14 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
                     movements: movements,
                     searchColumnRowspan: searchColumnRowspan,
                     route: route,
-                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                    selectedMenu: setPropertyTrue(selectedMenu, "operations"),
+                    isVolunteerLogged: isVolunteerLogged
                 });
-            } else {
-                res.redirect('/');
-            }
-        }, 1000);
-    });
+            }, 1000);
+        });
+    }else{
+        res.redirect("/");
+    }
 });
 
 router.get('/add', isLoggedIn, function (req, res) {
