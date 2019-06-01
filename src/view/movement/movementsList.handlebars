@@ -5,7 +5,10 @@
 </div>
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
-    <h3><a class="confirmationButton" href="/movements/add">Dar Saída</a></h3>
+    {{#ifBoolCond isVolunteerLogged}}
+    {{/else}}
+        <h3><a class="confirmationButton" href="/movements/add">Dar Saída</a></h3>
+    {{/ifBoolCond}}
 </div>
 <table id="usersListTable">
     <thead>

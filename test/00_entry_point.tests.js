@@ -11,11 +11,13 @@ describe("", function () {
             let userCollection = mongoDBConfig.collections[0];
             let animalCollection = mongoDBConfig.collections[1];
             let adoptionCollection = mongoDBConfig.collections[2];
+            let movementCollection = mongoDBConfig.collections[3];
 
             let httpTests = require("./tests/http.tests");
             let mongoUserTests = require("./tests/mongo.users.tests")(userCollection);
             let mongoAnimalsTests = require("./tests/mongo.animals.tests")(animalCollection);
             let mongoAdoptionsTests = require("./tests/mongo.adoptions.tests")(userCollection, animalCollection, adoptionCollection);
+            let mongoMovementsTests = require("./tests/mongo.movements.tests")(userCollection, animalCollection, movementCollection);
             done();
         }, 2000);
     });

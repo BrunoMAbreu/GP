@@ -4,7 +4,10 @@
     </div>
     <div style="margin-left: 3em">
         <h2>Lista de Animais</h2>
-        <h3><a href="/animals/add" class="confirmationButton">Adicionar</a></h3>
+        {{#ifBoolCond isVolunteerLogged}}
+        {{else}}
+            <h3><a href="/animals/add" class="confirmationButton">Adicionar</a></h3>
+        {{/ifBoolCond}}
     </div>
     <table id="usersListTable">
         <thead>
