@@ -443,13 +443,8 @@ let updateUser = function (newUserData, callback) {
     if (index === -1) {
         return -1;
     }
-    console.log(">> ", newUserData)
-
     mongoDBConfig.collections[index].model.findOneAndUpdate({ user_id: newUserData.user_id }, newUserData, { new: true }, function (err, data) {
         if (err) console.log(err);
-
-        console.log(">>> data: ", data)
-
         callback(err, data);
     });
 }
