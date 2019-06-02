@@ -4,16 +4,26 @@
         <span class="tooltiptext">Nesta página poderá consultar os dados de uma ficha de um movimento</span>
     </div>
     <div style="position:absolute; margin-left:10%">
-        <h1>Movimento - {{movement.animal.name}}</h1>
+        {{#ifNullCond movement.animal}}
+        <h1>Movimento</h1>
+        {{else}}
+            <h1>Movimento - {{movement.animal.name}}</h1>
+        {{/ifNullCond}}
         <h3>{{movement.date}}</h3>
+        {{#ifNullCond movement.animal}}
+        {{else}}
         {{#ifGenderCond movement.animal.gender}}
             <img class="animal-image-male" src="{{movement.animal.photoLink}}" alt="Fotografia do animal"/>
         {{else}}
             <img class="animal-image-female" src="{{movement.animal.photoLink}}" alt="Fotografia do animal"/>
         {{/ifGenderCond}}
+        {{/ifNullCond}}
     </div>
     <dl class="dl-horizontal" style="position:absolute; left:30%; margin: 100px 30px">
         <h2>Informações do Animal</h2>
+        {{#ifNullCond movement.animal}}
+        <h3>Ficha Arquivada</h3>
+        {{else}}
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Data de Nascimento</dt>
         <dd style="margin: 0; display: inline;">{{movement.animal.birthday}}</dd>
         <p></p>
@@ -44,13 +54,17 @@
         {{else}}
             <dd style="margin: 0; display: inline;">Gato</dd>
         {{/ifBoolCond}}
-        
+        {{/ifNullCond}}
         <h2>Informações do Responsável</h2>
+        {{#ifNullCond movement.user}}
+        <h3>Ficha Arquivada</h3>
+        {{else}}
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Nome</dt>
         <dd style="margin: 0; display: inline;">{{movement.user.username}}</dd>
         <p></p>
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Contacto</dt>
         <dd style="margin: 0; display: inline;">{{movement.user.email}}</dd>
         <p></p>
+        {{/ifNullCond}}
     </dl>
 </div>
