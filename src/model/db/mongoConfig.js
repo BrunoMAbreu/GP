@@ -82,18 +82,18 @@ let connectMongoDB = function (cb) {
         let testUserProfileAdmin = "administrador";
         getUserByEmail(testUserEmailAdmin, function (err, result) {
             if (result) {
-                updateUser({ _id: result._id, profile: testUserProfileAdmin }, function (err, result) {
+                updateUser({ user_id: result.user_id, profile: testUserProfileAdmin }, function (err, result) {
                 })
             } else {
                 insertUser("Anabela Carrapateira", testUserEmailAdmin, "a", "1234654651", new Date(), function (err, res) {
-                    updateUser({ _id: res._id, profile: testUserProfileAdmin }, function (err, result) {
+                    updateUser({ user_id: res.user_id, profile: testUserProfileAdmin }, function (err, result) {
                     })
                 });
             }
         })
         let testUserProfileFunc = "funcionário";
         insertUser("André Feitor", "a@f", "a", "1234654651", new Date(), function (err, res) {
-            updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+            updateUser({ user_id: res.user_id, profile: testUserProfileFunc }, function (err, result) {
             })
         });
 
@@ -113,7 +113,7 @@ let connectMongoDB = function (cb) {
             } else {
                 newAnimal1._id = doc._id;
                 insertUser("Arlequim Farofa", "c@f", "a", "1234654651", new Date(), function (err, res) {
-                    updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+                    updateUser({ user_id: res.user_id, profile: testUserProfileFunc }, function (err, result) {
                         let adoption = {
                             user_id: res.user_id,
                             animal_id: newAnimal1._id,
@@ -143,7 +143,7 @@ let connectMongoDB = function (cb) {
                 newAnimal2._id = doc._id;
                 insertUser("Ana Fonseca", "b@f", "a", "1234654651", new Date(), function (err, res) {
                     if (err) console.log(err)
-                    updateUser({ _id: res._id, profile: testUserProfileFunc }, function (err, result) {
+                    updateUser({ user_id: res.user_id, profile: testUserProfileFunc }, function (err, result) {
                         if (err) console.log(err)
                         let adoption2 = {
                             user_id: res.user_id,
@@ -443,8 +443,13 @@ let updateUser = function (newUserData, callback) {
     if (index === -1) {
         return -1;
     }
-    mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newUserData._id }, newUserData, { new: true }, function (err, data) {
+    console.log(">> ", newUserData)
+
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ user_id: newUserData.user_id }, newUserData, { new: true }, function (err, data) {
         if (err) console.log(err);
+
+        console.log(">>> data: ", data)
+
         callback(err, data);
     });
 }

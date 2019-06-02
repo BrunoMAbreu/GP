@@ -387,13 +387,14 @@ module.exports = function (app, passport) {
     app.put('/users/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         const newUserData = {
+            user_id: req.params.id,
             username: req.body.username,
             email: req.body.email,
             phone: req.body.phone,
             birthDate: req.body.birthDate,
             profile: req.body.profile
         };
-        User.updateUser(newUserData, function (data) {
+        User.updateUser(newUserData, function (err, data) {
             if (data !== null) {
                 res.status(400).send(true);
             } else {
@@ -406,13 +407,14 @@ module.exports = function (app, passport) {
     app.put('/workers/:id', isLoggedIn, function (req, res) {
         const User = mongoDBConfig.collections[0].model;
         const newUserData = {
+            user_id: req.params.id,
             username: req.body.username,
             email: req.body.email,
             phone: req.body.phone,
             birthDate: req.body.birthDate,
             profile: req.body.profile
         };
-        User.updateUser(newUserData, function (data) {
+        User.updateUser(newUserData, function (err, data) {
             if (data !== null) {
                 res.status(400).send(true);
             } else {
@@ -427,13 +429,14 @@ module.exports = function (app, passport) {
             req.session.passport.user.profile === "funcionário") {
             const User = mongoDBConfig.collections[0].model;
             const newUserData = {
+                user_id: req.params.id,
                 username: req.body.username,
                 email: req.body.email,
                 phone: req.body.phone,
                 birthDate: req.body.birthDate,
                 profile: req.body.profile
             };
-            User.updateUser(newUserData, function (data) {
+            User.updateUser(newUserData, function (err, data) {
                 if (data !== null) {
                     res.status(400).send(true);
                 } else {
