@@ -1,8 +1,5 @@
 'use strict';
 
-Object.prototype.insertAfter = function (newNode) {
-    this.parentNode.insertBefore(newNode, this.nextSibling);
-}
 
 let loginForm = {
     passwordElement: null,
@@ -27,6 +24,13 @@ window.onclick = function (e) {
     }
 }
 
+
+function insertAfter(originalNodeId, newNode) {
+    let originalNode = document.getElementById(originalNodeId);
+    originalNode.parentNode.insertBefore(newNode, originalNode.nextSibling);
+}
+
+
 function setForm() {
     const metaTagsArray = document.getElementsByTagName('meta');
     for (let item of metaTagsArray) {
@@ -38,7 +42,7 @@ function setForm() {
             let imageEyePw = document.createElement("IMG");
             imageEyePw.style = "position: relative; top: -22px; right:-504px; text-align: right; height: 18px; width: 18px";
             imageEyePw.src = "./images/eye_cl.png";
-            document.getElementById("span_pw").insertAfter(imageEyePw);
+            insertAfter("span_pw", imageEyePw);
 
             imageEyePw.onclick = function () {
                 if (loginForm.pwShow) {
@@ -63,8 +67,8 @@ function setForm() {
             imageEyePw1.style = "position: relative; top: -22px; right:-504px; text-align: right; height: 18px; width: 18px";
             imageEyePw1.src = "./images/eye_cl.png";
             let imageEyePw2 = imageEyePw1.cloneNode(true);
-            document.getElementById("span_pw").insertAfter(imageEyePw1);
-            document.getElementById("span_conf_pw").insertAfter(imageEyePw2);
+            insertAfter("span_pw", imageEyePw1);
+            insertAfter("span_conf_pw", imageEyePw2);
 
             imageEyePw1.onclick = function () {
                 if (registerForm.pwShow) {
