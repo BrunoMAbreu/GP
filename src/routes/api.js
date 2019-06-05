@@ -244,14 +244,21 @@ module.exports = function (app, passport) {
                 default:
                     selected.user = true;
             }*/
+        let isVolunteerLogged = false;
+        if (req.session.passport && req.session.passport.user.profile
+            && (req.session.passport.user.profile === "voluntário"
+                || req.session.passport.user.profile === "administrador"
+                || req.session.passport.user.profile === "funcionário")) {
+            isVolunteerLogged = true;
+        }
 
         res.render('missingAnimalsHome', {
             description: "Animais desaparecidos",
             isUserLogged: isUserLogged(req, res),
             op_submenu: setOpSubmenu(req, res),
-            selectedMenu: setPropertyTrue(selectedMenu, "missing")
+            selectedMenu: setPropertyTrue(selectedMenu, "missing"),
+            isVolunteerLogged: isVolunteerLogged
         });
-
 
     });
 

@@ -1,9 +1,12 @@
 <div class="tooltips">
-        <img src="./images/help.jpg" with="25" height="25" alt="Ajuda" />
-        <span class="tooltiptext">Nesta poderá registar um desaparecimento ou pesquisar desaparecimentos registados.</span>
-    </div>
+    <img src="./images/help.jpg" with="25" height="25" alt="Ajuda" />
+    <span class="tooltiptext">Nesta página poderá registar um desaparecimento ou pesquisar desaparecimentos registados.</span>
+</div>
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
+    {{#isVolunteerLogged}}
+        <h3><a href="/missing/add" class="confirmationButton">Adicionar</a></h3>
+    {{/isVolunteerLogged}}
 </div>
 <table id="usersListTable">
     <thead>
@@ -16,29 +19,10 @@
         <tr>
             <td id="searchCell" rowspan={{searchColumnRowspan}}>{{> searchColumn}}</td>
             <td>
-                {{firstLine.user_id}}
+                {{> googleMaps}}
             </td>
-            <td>
-                {{firstLine.username}}
-            </td>
-            <td>
-                {{firstLine.phone}}
-            </td>
-            <td>
-                {{firstLine.email}}
-            </td>
-            <td>
-                {{firstLine.birthDate}}
-            </td>
-            {{#if firstLine.showActions}}
-            <td><a href="/{{firstLine.route}}/{{firstLine.user_id}}">Actualizar</a></td>
-            <td><a href="" onclick="confirmUserDelete({{firstLine.user_id}})">Eliminar</a></td>
-            {{else}}
-            <td></td>
-            <td></td>
-            {{/if}}
         </tr>
-        {{> listRowsWorkers}}
+
     </tbody>
 
 </table>
