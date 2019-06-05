@@ -4,6 +4,9 @@
 </div>
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
+    {{#isVolunteerLogged}}
+        <h3><a href="/missing/add" class="confirmationButton">Adicionar</a></h3>
+    {{/isVolunteerLogged}}
 </div>
 <table id="usersListTable">
     <thead>
