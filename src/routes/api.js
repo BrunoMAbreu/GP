@@ -21,6 +21,7 @@ module.exports = function (app, passport) {
         home: false,
         animals: false,
         volunteering: false,
+        missing: false,
         operations: false,
         about: false
     }
@@ -204,6 +205,65 @@ module.exports = function (app, passport) {
             }
         });
     });
+
+
+
+    // TODO:
+    // GET: View Missing animal's page
+    app.get('/missing', function (req, res) {
+
+        /*
+        const User = mongoDBConfig.collections[0].model;
+        User.getUser({ user_id: req.params.id }, function (err, result) {
+            if (err) console.log(err);
+            const user = result[0];
+            const userData = {
+                user_id: req.params.id,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                birthDate: user.birthDate.toISOString().slice(0, 10),
+                profile: user.profile
+            } 
+            let selected = {
+                administrator: false,
+                worker: false,
+                volunteer: false,
+                user: false
+            }
+            switch (userData.profile) {
+                case "administrador":
+                    selected.administrator = true;
+                    break;
+                case "funcionário":
+                    selected.worker = true;
+                    break;
+                case "voluntário":
+                    selected.volunteer = true;
+                    break;
+                default:
+                    selected.user = true;
+            }*/
+
+        res.render('missingAnimalsHome', {
+            description: "Animais desaparecidos",
+            isUserLogged: isUserLogged(req, res),
+            op_submenu: setOpSubmenu(req, res),
+            selectedMenu: setPropertyTrue(selectedMenu, "missing")
+        });
+
+
+    });
+
+
+
+
+
+
+
+
+
+
 
 
     // GET: Page to create adoption
