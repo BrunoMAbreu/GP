@@ -32,6 +32,7 @@
             <li class="menu_element" id="selected">Início</li>
             <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
+            <li class="menu_element"><a href="/missing">Desaparecidos</a></li>
             {{#if isUserLogged.username}}
             {{> operationsDropDownMenu}}
             {{/if}}
@@ -40,6 +41,7 @@
             <li class="menu_element"><a href="/">Início</a></li>
             <li class="menu_element"><a href="/animals/catalog" id="selected">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
+            <li class="menu_element"><a href="/missing">Desaparecidos</a></li>
             {{#if isUserLogged.username}}
             {{> operationsDropDownMenu}}
             {{/if}}
@@ -48,6 +50,16 @@
             <li class="menu_element"><a href="/">Início</a></li>
             <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element" id="selected">Voluntariado</li>
+            <li class="menu_element"><a href="/missing">Desaparecidos</a></li>
+            {{#if isUserLogged.username}}
+            {{> operationsDropDownMenu}}
+            {{/if}}
+            <li class="menu_element"><a href="/about">Sobre nós</a></li>
+            {{else if selectedMenu.missing}}
+            <li class="menu_element"><a href="/">Início</a></li>
+            <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
+            <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
+            <li class="menu_element"><a href="/missing" id="selected">Desaparecidos</a></li>
             {{#if isUserLogged.username}}
             {{> operationsDropDownMenu}}
             {{/if}}
@@ -56,6 +68,7 @@
             <li class="menu_element"><a href="/">Início</a></li>
             <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
+            <li class="menu_element"><a href="/missing">Desaparecidos</a></li>
             {{#if isUserLogged.username}}
             {{> operationsDropDownMenu}}
             {{/if}}
@@ -64,6 +77,7 @@
             <li class="menu_element"><a href="/">Início</a></li>
             <li class="menu_element"><a href="/animals/catalog">Animais</a></li>
             <li class="menu_element"><a href="/volunteering">Voluntariado</a></li>
+            <li class="menu_element"><a href="/missing">Desaparecidos</a></li>
             {{#if isUserLogged.username}}
             {{> operationsDropDownMenu}}
             {{/if}}
