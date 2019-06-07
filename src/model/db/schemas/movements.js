@@ -11,8 +11,7 @@ module.exports = {
         required: true
     },
     animal_id: {
-        type: "string",
-        required: true
+        type: "string"
     },
     date: {
         type: "date",

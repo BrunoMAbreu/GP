@@ -33,7 +33,7 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
   });
 
   Handlebars.registerHelper('ifNullCond', function(param, options) {
-    if(param === "") 
+    if(param === "")
       return options.fn(this);
 
     return options.inverse(this);
@@ -225,18 +225,27 @@ router.get('/entry/:id', isLoggedIn, function (req, res) {
         movementsArray[0].isComplete = true;
         Movement.findOneAndUpdate({ _id : movementsArray[0]._id }, movementsArray[0], {new: true}, (err, docMovement) => {
             if(!err){
+                let newMovementData = {
+                    user_id: docMovement.user_id,
+                    date: new Date((new Date()).toString().substring(0,15)),
+                    isIn: true,
+                    isComplete: true
+                };
                 Animal.find({ _id: docMovement.animal_id }, function (err, animalsArray) {
                     if (err) console.log(err);
-                    animalsArray[0].state = "Disponível";
-                    Animal.findOneAndUpdate({ _id : animalsArray[0]._id }, animalsArray[0], {new: true}, (err, doc) => {
+                    if(animalsArray.length === 0){
+                        Movement.insertMovement(newMovementData, function (data) {
+                            if (data !== null) {
+                                res.redirect('/movements');
+                            } else {
+                                res.status(400).send(false);
+                            }
+                        });
+                    }else{
+                        animalsArray[0].state = "Disponível";
+                        Animal.findOneAndUpdate({ _id : animalsArray[0]._id }, animalsArray[0], {new: true}, (err, doc) => {
                         if(!err){
-                            let newMovementData = {
-                                user_id: docMovement.user_id,
-                                animal_id: doc._id,
-                                date: new Date((new Date()).toString().substring(0,15)),
-                                isIn: true,
-                                isComplete: true
-                            };
+                            newMovementData.animal_id = doc._id;
                             Movement.insertMovement(newMovementData, function (data) {
                                 if (data !== null) {
                                     res.redirect('/movements');
@@ -246,7 +255,8 @@ router.get('/entry/:id', isLoggedIn, function (req, res) {
                             });
                         }
                     });
-                })
+                    }
+                });
             }
         });
     });
@@ -262,19 +272,14 @@ router.get('/details/:id', function (req, res) {
             movement_id: req.params.id,
             date: movementsArray[0].date.toISOString().slice(0, 10),
             user_id: movementsArray[0].user_id,
-            user: null,
+            user: "",
             animal_id: null,
-            animal: null,
+            animal: "",
         };
 
         User.getUser({ user_id: movementData.user_id }, function (err, usersArray) {
             if (err) console.log(err);
-            movementData.user = usersArray[0];
-            Animal.find({ _id: movementsArray[0].animal_id }, function (err, animalArray) {
-                if (err) console.log(err);
-                movementData.animal_id = animalArray[0].animal_id;
-                movementData.animal = animalArray[0];
-                console.log("Estado: " + movementData.animal.state);
+            if(usersArray.length === 0){
                 if (req.session.passport.user.profile === "administrador") {
                     res.render("movement/details", {
                         description: "Visualizar adopção",
@@ -288,7 +293,46 @@ router.get('/details/:id', function (req, res) {
                 } else {
                     res.redirect('/');
                 }
+            }
+            else{
+            movementData.user = usersArray[0];
+            Animal.find({ _id: movementsArray[0].animal_id }, function (err, animalArray) {
+                if (err) console.log(err);
+                if(animalArray.length === 0){
+                    if (req.session.passport.user.profile === "administrador") {
+                        res.render("movement/details", {
+                            description: "Visualizar adopção",
+                            isUserLogged: isUserLogged(req, res),
+                            op_submenu: setOpSubmenu(req, res),
+                            movement: movementData,
+                            isUserLogged: isUserLogged(req, res),
+                            op_submenu: setOpSubmenu(req, res),
+                            selectedMenu: setPropertyTrue(selectedMenu, "operations"),
+                        });
+                    } else {
+                        res.redirect('/');
+                    }
+                }
+                else{
+                movementData.animal_id = animalArray[0].animal_id;
+                movementData.animal = animalArray[0];
+                
+                if (req.session.passport.user.profile === "administrador") {
+                    res.render("movement/details", {
+                        description: "Visualizar adopção",
+                        isUserLogged: isUserLogged(req, res),
+                        op_submenu: setOpSubmenu(req, res),
+                        movement: movementData,
+                        isUserLogged: isUserLogged(req, res),
+                        op_submenu: setOpSubmenu(req, res),
+                        selectedMenu: setPropertyTrue(selectedMenu, "operations"),
+                    });
+                } else {
+                    res.redirect('/');
+                }
+            }
             });
+            }
         });
     });
 });

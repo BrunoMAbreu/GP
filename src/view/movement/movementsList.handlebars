@@ -6,7 +6,7 @@
 <div style="margin-left: 3em">
     <h2>{{description}}</h2>
     {{#ifBoolCond isVolunteerLogged}}
-    {{/else}}
+    {{else}}
         <h3><a class="confirmationButton" href="/movements/add">Dar Saída</a></h3>
     {{/ifBoolCond}}
 </div>
@@ -37,12 +37,25 @@
             {{/ifNullCond}}
                 {{firstLine.movement_id}}
             </td>
-            <td>
-                {{firstLine.user}}
-            </td>
-            <td>
-                {{firstLine.animal}}
-            </td>
+            {{#ifNullCond firstLine.isIn}}
+                <td></td>
+            {{else}}
+            {{#ifNullCond firstLine.user}}
+            <td>Ficha Arquivada</td>
+            {{else}}
+            <td>{{firstLine.user}}</td>
+            {{/ifNullCond}}
+            {{/ifNullCond}}
+
+            {{#ifNullCond firstLine.isIn}}
+            <td></td>
+            {{else}}
+            {{#ifNullCond firstLine.animal}}
+            <td>Ficha Arquivada</td>
+            {{else}}
+            <td>{{firstLine.animal}}</td>
+            {{/ifNullCond}}
+            {{/ifNullCond}}
             <td>
                 {{firstLine.date}}
             </td>

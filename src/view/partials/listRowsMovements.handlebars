@@ -12,12 +12,25 @@
     <td>
         {{movement_id}}
     </td>
-    <td>
-        {{user}}
-    </td>
-    <td>
-        {{animal}}
-    </td>
+    {{#ifNullCond isIn}}
+    <td></td>
+    {{else}}
+    {{#ifNullCond user}}
+    <td>Ficha Arquivada</td>
+    {{else}}
+    <td>{{user}}</td>
+    {{/ifNullCond}}
+    {{/ifNullCond}}
+
+    {{#ifNullCond isIn}}
+    <td></td>
+    {{else}}
+    {{#ifNullCond animal}}
+    <td>Ficha Arquivada</td>
+    {{else}}
+    <td>{{animal}}</td>
+    {{/ifNullCond}}
+    {{/ifNullCond}}
     <td>
         {{date}}
     </td>
