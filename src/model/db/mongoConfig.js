@@ -9,6 +9,7 @@ const usersCollectionName = "users";
 const animalsCollectionName = "animals";
 const adoptionsCollectionName = "adoptions";
 const movementsCollectionName = "movements";
+const missingCollectionName = "missing";
 
 // Object to be exported
 let mongoDBConfig = {
@@ -34,6 +35,11 @@ let mongoDBConfig = {
     },
     {
         name: movementsCollectionName,
+        schema: null,
+        model: null
+    },
+    {
+        name: missingCollectionName,
         schema: null,
         model: null
     }]
@@ -63,7 +69,7 @@ let connectMongoDB = function (cb) {
         createAnimalCollection();
         createAdoptionCollection();
         createMovementCollection();
-
+        createMissingCollection();
 
 
         // Isto APAGA a colecção "user"; Só para testes!!!!!
@@ -120,7 +126,19 @@ let connectMongoDB = function (cb) {
                             adoptionDate: (new Date()).toISOString()
                         }
                         insertAdoption(adoption, function (res) {
-                            if (err) console.log(err)
+                            if (err) console.log(err);
+
+                            let newMissingAnimal = mongoDBConfig.collections[4].model;
+                            newMissingAnimal.insertMissing(adoption.user_id, newAnimal1.name, "Malmequeres", "Cat", "Female", new Date(), {chipNumber: 12345679123456, size: "Large"}, function(err, data) {
+                                if(err) console.log(err);
+                                newMissingAnimal.updateMissing({missing_id: data.missing_id, place: "Pevides"}, function(err, data) {
+                                });
+                            });
+                            newMissingAnimal.insertMissing(2, "Fooo", "Bemequeres", "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium"}, function(err, data) {
+                                if(err) console.log(err);
+                                newMissingAnimal.deleteMissing(data.missing_id, function(err, data) {
+                                });
+                            })
                         });
                     })
                 });
@@ -266,6 +284,36 @@ let createMovementCollection = function () {
     })
 }
 
+let createMissingCollection = function () {
+    const missingSchema = new Schema(require("./schemas/missing.js"), { collection: missingCollectionName });
+    autoIncrement.initialize(mongoDBConfig.connection);
+    missingSchema.plugin(autoIncrement.plugin, { model: 'missingModel', field: 'missing_id', startAt: 1 });
+
+    mongoDBConfig.collections.forEach(element => {
+        if (element.name === missingCollectionName) {
+            element.schema = missingSchema;
+            
+            element.schema.statics.getMissingCollectionIndex = getMissingCollectionIndex;
+            element.schema.statics.insertMissing = insertMissing;
+            element.schema.statics.getMissing = getMissing;
+            element.schema.statics.updateMissing = updateMissing;
+            element.schema.statics.deleteMissing = deleteMissing;
+            element.model = Mongoose.model('missingModel', missingSchema);
+        }
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * CREATE: Inserts new user into mongoDB
  * @param {*} name User name
@@ -289,11 +337,10 @@ let insertUser = function (name, email, password, phone, birthDate, callback) {
         birthDate: birthDate
     }
     // Insert
-    mongoDBConfig.collections[0].model.create(newUser, function (err, res) {
+    mongoDBConfig.collections[index].model.create(newUser, function (err, res) {
         if (err) return console.error("error: " + err);
         callback(err, res);
     });
-    //});
 }
 
 
@@ -333,6 +380,47 @@ let insertMovement = function (movementData, callback) {
         callback(res);
     });
 }
+
+
+/**
+ * CREATE: Inserts new missing animal into mongoDB
+ * @param {*} user_id 
+ * @param {*} animalName 
+ * @param {*} place Last known location of the animal
+ * @param {*} species 
+ * @param {*} gender 
+ * @param {*} missingDate 
+ * @param {*} other Object with non-required properties (eg., chipNumber, size)
+ * @param {*} callback 
+ */
+let insertMissing = function (user_id, animalName, place, species, gender, missingDate, other, callback) {
+    let index = getCollectionIndex(missingCollectionName);
+    if (index === -1) {
+        console.error("Collection " + missingCollectionName + " not in mongoDBConfig");
+    }
+    //mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
+    const newMissingAnimal = {
+        user_id: user_id,
+        animalName: animalName,
+        place: place,
+        species: species,
+        gender: gender,
+        missingDate: missingDate
+    }
+    if(other) {
+        for(let prop in other){
+            if(other.hasOwnProperty(prop)) {
+                newMissingAnimal[prop] = other[prop];
+            }
+        }
+    }
+    // Insert
+    mongoDBConfig.collections[index].model.create(newMissingAnimal, function (err, res) {
+        if (err) return console.error("error: " + err);
+        callback(err, res);
+    });
+}
+
 
 
 /**
@@ -434,6 +522,19 @@ let getMovement = function (searchObject, callback) {
     });
 }
 
+let getMissing = function (searchObject, callback) {
+    const index = getCollectionIndex(missingCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.find(searchObject, function (err, result) {
+        if (err) console.log(err);
+        callback(err, result);
+    });
+}
+
+
+
 /**
  * UPDATE:updates user data
  * @param {*} newUserData Object with properties to be changed (_id required and immutable). eg, {_id:"...", username:"Ana"}
@@ -460,6 +561,22 @@ let updateAdoption = function (newAdoptionData, callback) {
         return -1;
     }
     mongoDBConfig.collections[index].model.findOneAndUpdate({ _id: newAdoptionData._id }, newAdoptionData, { new: true }, function (err, data) {
+        if (err) console.log(err);
+        callback(err, data);
+    });
+}
+
+
+/**
+ * UPDATE:updates adoption data
+ * @param {*} newAdoptionData Object with properties to be changed (missing_id required and immutable). eg, {missing_id:2, name:"Bobby"}
+ */
+let updateMissing = function (newMissingData, callback) {
+    const index = getCollectionIndex(missingCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.findOneAndUpdate({ missing_id: newMissingData.missing_id }, newMissingData, { new: true }, function (err, data) {
         if (err) console.log(err);
         callback(err, data);
     });
@@ -502,7 +619,20 @@ let deleteAdoption = function (id, callback) {
 
 
 
-
+/**
+ * DELETE: deletes missing animal with given id
+ * @param {*} id mongo document _id (ObjectID: hexadecimal as a string)
+ */
+let deleteMissing = function (id, callback) {
+    const index = getCollectionIndex(missingCollectionName);
+    if (index === -1) {
+        return -1;
+    }
+    mongoDBConfig.collections[index].model.findOneAndRemove({ missing_id: id }, function (err, data) {
+        if (err) console.log(err);
+        callback(data);
+    });
+}
 
 
 
@@ -552,6 +682,24 @@ let getAdoptionCollectionIndex = function () {
     }
     return index;
 }
+
+
+/**
+ * Returns index of the collection in mongoDBConfig.collections[] 
+ * @param {*} collectionName 
+ */
+let getMissingCollectionIndex = function () {
+    let index = -1;
+    for (let i = 0; i < mongoDBConfig.collections.length; i++) {
+        if (mongoDBConfig.collections[i].name === missingCollectionName) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+}
+
+
 
 /**
  * Compares and validates password
