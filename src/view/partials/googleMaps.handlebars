@@ -60,20 +60,19 @@
             map.setCenter(marker.getPosition());
         });*/
 
-        google.maps.event.addListener(map, 'mousedown', function (event) {
+        //google.maps.event.addListener(map, 'mousedown', function (event) {
             //console.log(event.latLng)
             //console.log(event)
             //map.setZoom(15);
             //map.setCenter(marker.getPosition());
 
-        
-
-            insertMarker(event.latLng.lat().toFixed(6), event.latLng.lng().toFixed(6));
+            //insertMarker(event.latLng.lat().toFixed(6), event.latLng.lng().toFixed(6));
 
             //console.log("EVENT: ", event.latLng.lat().toFixed(6))
             //console.log("EVENT: ", event.latLng.lon().toFixed(6))
             //getLatLong("setúbal")
-        });
+        //});
+        
     }
 
     var geocoder;
@@ -93,19 +92,30 @@
         });
     }
 
-    function insertMarker(lat, lon, label) {
+    function insertMarker(lat, lon, label, missingId) {
         let position = new google.maps.LatLng(lat, lon);
         let marker = new google.maps.Marker({
             position: position,
             label: {
                 text: label,
                 fontFamily: "Verdana, Geneva, sans-serif",
+                fontWeight: "bold",
                 color: "black",
                 fontSize: "22px"
-            }
+            },
+            missingId: missingId
         });
         marker.setClickable(true);
         marker.setMap(map);
+
+        google.maps.event.addListener(marker, "click", function(){
+            window.location.replace('/missing/' + this.missingId);
+            /*
+            console.log("this: ", this);
+            console.log(this.missingId + ": " + this.label.text);
+            */
+
+        });
     }
 
 
@@ -124,9 +134,8 @@
                 let response = JSON.parse(this.responseText);
                 if(response){
                     response.forEach(elem => {
-                        insertMarker(elem.latitude, elem.longitude, elem.label);
+                        insertMarker(elem.latitude, elem.longitude, elem.label, elem.missingId);
                     });
-                    
                 }
             }
         };

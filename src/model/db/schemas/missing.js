@@ -27,7 +27,7 @@ module.exports = {
         required: true,
         properties: {
             name: {
-                description: "eg., road, area or city",
+                description: "eg., road, area, city",
                 type: "string"
             },
             lat: {
