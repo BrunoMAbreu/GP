@@ -2,9 +2,12 @@
 <script type="text/javascript" async="true" defer="true"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJRGxosiyNAQ2bhOh3iooZXVu4qw8y27Y&callback=initMap"></script>
 <script>
-    function initMap() {
 
-        let mapProp = {
+    let mapProp = null;
+    let map = null;
+
+    function initMap() {
+        mapProp = {
             center: new google.maps.LatLng(38.533333, -8.9),
             zoom: 13,
             mapTypeId: google.maps.MapTypeId.HYBRID,
@@ -16,8 +19,17 @@
             overviewMapControl: true,
             rotateControl: true
         };
-        let map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
 
+
+// chamada ajax
+        populateMap();
+
+/*
+        {{#missing}}
+            insertMarker({{latitude}}, {{longitude}}, "{{label}}");
+        {{/missing}}
+*/
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -39,23 +51,28 @@
         }
 
         // TODO: alterar position para a de um animal
-        let marker = new google.maps.Marker({ position: mapProp.center });
-        marker.setMap(map);
+        /*let marker = new google.maps.Marker({ position: mapProp.center });
+        marker.setMap(map);*/
 
         // Zoom to 9 when clicking on marker
-        google.maps.event.addListener(marker, 'click', function () {
+        /*google.maps.event.addListener(marker, 'click', function () {
             map.setZoom(15);
             map.setCenter(marker.getPosition());
-        });
+        });*/
 
-        google.maps.event.addListener(map, 'click', function (event) {
+        //google.maps.event.addListener(map, 'mousedown', function (event) {
             //console.log(event.latLng)
             //console.log(event)
             //map.setZoom(15);
             //map.setCenter(marker.getPosition());
 
-            getLatLong("setúbal")
-        });
+            //insertMarker(event.latLng.lat().toFixed(6), event.latLng.lng().toFixed(6));
+
+            //console.log("EVENT: ", event.latLng.lat().toFixed(6))
+            //console.log("EVENT: ", event.latLng.lon().toFixed(6))
+            //getLatLong("setúbal")
+        //});
+        
     }
 
     var geocoder;
@@ -75,6 +92,33 @@
         });
     }
 
+    function insertMarker(lat, lon, label, missingId) {
+        let position = new google.maps.LatLng(lat, lon);
+        let marker = new google.maps.Marker({
+            position: position,
+            label: {
+                text: label,
+                fontFamily: "Verdana, Geneva, sans-serif",
+                fontWeight: "bold",
+                color: "black",
+                fontSize: "22px"
+            },
+            missingId: missingId
+        });
+        marker.setClickable(true);
+        marker.setMap(map);
+
+        google.maps.event.addListener(marker, "click", function(){
+            window.location.replace('/missing/' + this.missingId);
+            /*
+            console.log("this: ", this);
+            console.log(this.missingId + ": " + this.label.text);
+            */
+
+        });
+    }
+
+
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
         infoWindow.setPosition(pos);
         infoWindow.setContent(browserHasGeolocation ?
@@ -82,5 +126,22 @@
             'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
     }
+
+    function populateMap(){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let response = JSON.parse(this.responseText);
+                if(response){
+                    response.forEach(elem => {
+                        insertMarker(elem.latitude, elem.longitude, elem.label, elem.missingId);
+                    });
+                }
+            }
+        };
+        xhttp.open("GET", "/missingInMap", true);
+        xhttp.send();
+    }
+
 
 </script>

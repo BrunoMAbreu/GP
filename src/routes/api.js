@@ -208,42 +208,8 @@ module.exports = function (app, passport) {
 
 
 
-    // TODO:
     // GET: View Missing animal's page
     app.get('/missing', function (req, res) {
-
-        /*
-        const User = mongoDBConfig.collections[0].model;
-        User.getUser({ user_id: req.params.id }, function (err, result) {
-            if (err) console.log(err);
-            const user = result[0];
-            const userData = {
-                user_id: req.params.id,
-                username: user.username,
-                email: user.email,
-                phone: user.phone,
-                birthDate: user.birthDate.toISOString().slice(0, 10),
-                profile: user.profile
-            } 
-            let selected = {
-                administrator: false,
-                worker: false,
-                volunteer: false,
-                user: false
-            }
-            switch (userData.profile) {
-                case "administrador":
-                    selected.administrator = true;
-                    break;
-                case "funcionário":
-                    selected.worker = true;
-                    break;
-                case "voluntário":
-                    selected.volunteer = true;
-                    break;
-                default:
-                    selected.user = true;
-            }*/
         let isVolunteerLogged = false;
         if (req.session.passport && req.session.passport.user.profile
             && (req.session.passport.user.profile === "voluntário"
@@ -251,7 +217,6 @@ module.exports = function (app, passport) {
                 || req.session.passport.user.profile === "funcionário")) {
             isVolunteerLogged = true;
         }
-
         res.render('missingAnimalsHome', {
             description: "Animais desaparecidos",
             isUserLogged: isUserLogged(req, res),
@@ -259,10 +224,113 @@ module.exports = function (app, passport) {
             selectedMenu: setPropertyTrue(selectedMenu, "missing"),
             isVolunteerLogged: isVolunteerLogged
         });
-
     });
 
 
+    // GET: View a specific missing animal
+    app.get('/missing/:id', function (req, res) {
+        const missingAnimal = mongoDBConfig.collections[4].model;
+        missingAnimal.getMissing({ missing_id: req.params.id }, function (err, result) {
+            if (err) console.log(err);
+            const missing = result[0];
+            let species = "";
+            switch (missing.species) {
+                case "Dog":
+                    species = "Cão";
+                    break;
+                case "Cat":
+                    species = "Gato";
+                    break;
+                default:
+                    break;
+            }
+            let gender = "";
+            switch (missing.gender) {
+                case "Male":
+                    gender = "Macho";
+                    break;
+                case "Female":
+                    gender = "Fêmea";
+                    break;
+                default:
+                    break;
+            }
+            let size = "";
+            if (missing.size) {
+                switch (missing.size) {
+                    case "Small":
+                        size = "Pequeno";
+                        break;
+                    case "Medium":
+                        size = "Médio";
+                        break;
+                    case "Large":
+                        size = "Grande";
+                        break;
+                    default:
+                        break;
+                }
+            }
+            const missingAnimalData = {
+                //missing_id: req.params.id,
+                animalName: missing.animalName,
+                chipNumber: (missing.chipNumber) ? missing.chipNumber : "",
+                placeName: missing.place.name,
+                placeLatitude: missing.place.lat,
+                placeLongitude: missing.place.lon,
+                species: species,
+                gender: gender,
+                isMale: (gender === "Macho") ? true : false,
+                size: size,
+                missingDate: missing.missingDate.toISOString().slice(0, 10)
+            }
+
+            const User = mongoDBConfig.collections[0].model;
+            User.getUser({ user_id: missing.user_id }, function (err, result) {
+                if (err) console.log(err);
+                
+                missingAnimalData.ownerName = result[0].username;
+                missingAnimalData.ownerContact = result[0].phone;
+
+                let isVolunteerLogged = false;
+                if (req.session.passport && req.session.passport.user.profile
+                    && (req.session.passport.user.profile === "voluntário"
+                        || req.session.passport.user.profile === "administrador"
+                        || req.session.passport.user.profile === "funcionário")) {
+                    isVolunteerLogged = true;
+                }
+                res.render('detailsMissing', {
+                    description: "Detalhes de uma animal desaparecido",
+                    isUserLogged: isUserLogged(req, res),
+                    op_submenu: setOpSubmenu(req, res),
+                    selectedMenu: setPropertyTrue(selectedMenu, "missing"),
+                    isVolunteerLogged: isVolunteerLogged,
+                    missing: missingAnimalData
+                });
+            });
+        });
+    });
+
+
+    app.get('/missingInMap', function (req, res) {
+        const missingAnimal = mongoDBConfig.collections[4].model;
+        missingAnimal.getMissing(function (err, result) {
+            if (err) console.log(err);
+            let missing = [];
+            if (result.length > 0) {
+                result.forEach(function (elem) {
+                    let newMissing = {
+                        latitude: elem.place.lat,
+                        longitude: elem.place.lon,
+                        label: elem.animalName,
+                        missingId: elem.missing_id
+                    }
+                    missing.push(newMissing);
+                });
+            }
+            res.status(200).send(JSON.stringify(missing));
+        });
+    });
 
 
 
