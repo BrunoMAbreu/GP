@@ -129,12 +129,12 @@ let connectMongoDB = function (cb) {
                             if (err) console.log(err);
 
                             let newMissingAnimal = mongoDBConfig.collections[4].model;
-                            newMissingAnimal.insertMissing(adoption.user_id, newAnimal1.name, "Malmequeres", "Cat", "Female", new Date(), {chipNumber: 12345679123456, size: "Large"}, function(err, data) {
+                            newMissingAnimal.insertMissing(adoption.user_id, newAnimal1.name, {name:"Malmequeres", lat: 1.1, lon: -10}, "Cat", "Female", new Date(), {chipNumber: 12345679123456, size: "Large"}, function(err, data) {
                                 if(err) console.log(err);
-                                newMissingAnimal.updateMissing({missing_id: data.missing_id, place: "Pevides"}, function(err, data) {
+                                newMissingAnimal.updateMissing({missing_id: data.missing_id, species: "Dog"}, function(err, data) {
                                 });
                             });
-                            newMissingAnimal.insertMissing(2, "Foo", "Bemequeres", "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium"}, function(err, data) {
+                            newMissingAnimal.insertMissing(2, "Foo", {name:"Bemmequeres", lat: -1.1, lon: -2.255}, "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium"}, function(err, data) {
                                 if(err) console.log(err);
                                 newMissingAnimal.deleteMissing(data.missing_id, function(err, data) {
                                 });
@@ -386,7 +386,7 @@ let insertMovement = function (movementData, callback) {
  * CREATE: Inserts new missing animal into mongoDB
  * @param {*} user_id 
  * @param {*} animalName 
- * @param {*} place Last known location of the animal
+ * @param {*} place Object, last known location of the animal (name, lat, lon)
  * @param {*} species 
  * @param {*} gender 
  * @param {*} missingDate 
