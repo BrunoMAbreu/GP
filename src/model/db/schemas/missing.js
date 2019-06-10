@@ -22,21 +22,36 @@ module.exports = {
         unique: true
     },
     place: {
-        type: "string",
-        required: true
+        type: "object",
+        description: "last known place of the animal",
+        required: true,
+        properties: {
+            name: {
+                description: "eg., road, area or city",
+                type: "string"
+            },
+            lat: {
+                description: "latitude",
+                type: "Number"
+            },
+            lon: {
+                description: "longitude",
+                type: "Number"
+            }
+        }
     },
     species: {
-        type: String,
+        type: "String",
         required: true,
         enum: ["Dog", "Cat"]
     },
     gender: {
-        type: String,
+        type: "String",
         required: true,
         enum: ["Male", "Female"],
     },
     size: {
-        type: String,
+        type: "String",
         enum: ["Small", "Medium", "Large"]
     },
     missingDate: {
