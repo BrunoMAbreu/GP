@@ -21,10 +21,15 @@
         };
         map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
 
-        {{#missing}}
-            insertMarker({{latitude}}, {{longitude}});
-        {{/missing}}
 
+// chamada ajax
+        populateMap();
+
+/*
+        {{#missing}}
+            insertMarker({{latitude}}, {{longitude}}, "{{label}}");
+        {{/missing}}
+*/
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -50,10 +55,10 @@
         marker.setMap(map);*/
 
         // Zoom to 9 when clicking on marker
-        google.maps.event.addListener(marker, 'click', function () {
+        /*google.maps.event.addListener(marker, 'click', function () {
             map.setZoom(15);
             map.setCenter(marker.getPosition());
-        });
+        });*/
 
         google.maps.event.addListener(map, 'mousedown', function (event) {
             //console.log(event.latLng)
@@ -88,13 +93,18 @@
         });
     }
 
-    function insertMarker(lat, lon) {
-
-        console.log("LAT_ ", lat)
-        console.log("LON_ ", lon)
-
+    function insertMarker(lat, lon, label) {
         let position = new google.maps.LatLng(lat, lon);
-        let marker = new google.maps.Marker({ position: position });
+        let marker = new google.maps.Marker({
+            position: position,
+            label: {
+                text: label,
+                fontFamily: "Verdana, Geneva, sans-serif",
+                color: "black",
+                fontSize: "22px"
+            }
+        });
+        marker.setClickable(true);
         marker.setMap(map);
     }
 
@@ -106,5 +116,23 @@
             'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
     }
+
+    function populateMap(){
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let response = JSON.parse(this.responseText);
+                if(response){
+                    response.forEach(elem => {
+                        insertMarker(elem.latitude, elem.longitude, elem.label);
+                    });
+                    
+                }
+            }
+        };
+        xhttp.open("GET", "/missingInMap", true);
+        xhttp.send();
+    }
+
 
 </script>

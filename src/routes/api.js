@@ -212,42 +212,9 @@ module.exports = function (app, passport) {
     // GET: View Missing animal's page
     app.get('/missing', function (req, res) {
 
-        /*
-        const User = mongoDBConfig.collections[0].model;
-        User.getUser({ user_id: req.params.id }, function (err, result) {
-            if (err) console.log(err);
-            const user = result[0];
-            const userData = {
-                user_id: req.params.id,
-                username: user.username,
-                email: user.email,
-                phone: user.phone,
-                birthDate: user.birthDate.toISOString().slice(0, 10),
-                profile: user.profile
-            } 
-            let selected = {
-                administrator: false,
-                worker: false,
-                volunteer: false,
-                user: false
-            }
-            switch (userData.profile) {
-                case "administrador":
-                    selected.administrator = true;
-                    break;
-                case "funcionário":
-                    selected.worker = true;
-                    break;
-                case "voluntário":
-                    selected.volunteer = true;
-                    break;
-                default:
-                    selected.user = true;
-            }*/
+        //const missingAnimal = mongoDBConfig.collections[4].model;
 
-        const missingAnimal = mongoDBConfig.collections[4].model;
-
-        missingAnimal.getMissing(function (err, result) {
+        /*missingAnimal.getMissing(function (err, result) {
             if(err) console.log(err);
 
             console.log("2 result: ", result)
@@ -257,6 +224,7 @@ module.exports = function (app, passport) {
                     let newMissing = {
                         latitude: elem.place.lat,
                         longitude: elem.place.lon,
+                        label: elem.animalName
                     }
                     missing.push(newMissing);
                 });
@@ -279,12 +247,44 @@ module.exports = function (app, passport) {
                 op_submenu: setOpSubmenu(req, res),
                 selectedMenu: setPropertyTrue(selectedMenu, "missing"),
                 isVolunteerLogged: isVolunteerLogged,
-                missing: missing
+                //missing: missing
             });
+        }); */
+        let isVolunteerLogged = false;
+            if (req.session.passport && req.session.passport.user.profile
+                && (req.session.passport.user.profile === "voluntário"
+                    || req.session.passport.user.profile === "administrador"
+                    || req.session.passport.user.profile === "funcionário")) {
+                isVolunteerLogged = true;
+            }
+        res.render('missingAnimalsHome', {
+            description: "Animais desaparecidos",
+            isUserLogged: isUserLogged(req, res),
+            op_submenu: setOpSubmenu(req, res),
+            selectedMenu: setPropertyTrue(selectedMenu, "missing"),
+            isVolunteerLogged: isVolunteerLogged
         });
     });
 
 
+    app.get('/missingInMap', function (req, res) {
+        const missingAnimal = mongoDBConfig.collections[4].model;
+        missingAnimal.getMissing(function (err, result) {
+            if(err) console.log(err);
+            let missing = [];
+            if(result.length > 0) {
+                result.forEach(function (elem) {
+                    let newMissing = {
+                        latitude: elem.place.lat,
+                        longitude: elem.place.lon,
+                        label: elem.animalName
+                    }
+                    missing.push(newMissing);
+                });
+            }
+            res.status(200).send(JSON.stringify(missing));
+        });
+    });
 
 
 
