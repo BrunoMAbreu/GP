@@ -244,22 +244,44 @@ module.exports = function (app, passport) {
                 default:
                     selected.user = true;
             }*/
-        let isVolunteerLogged = false;
-        if (req.session.passport && req.session.passport.user.profile
-            && (req.session.passport.user.profile === "voluntário"
-                || req.session.passport.user.profile === "administrador"
-                || req.session.passport.user.profile === "funcionário")) {
-            isVolunteerLogged = true;
-        }
 
-        res.render('missingAnimalsHome', {
-            description: "Animais desaparecidos",
-            isUserLogged: isUserLogged(req, res),
-            op_submenu: setOpSubmenu(req, res),
-            selectedMenu: setPropertyTrue(selectedMenu, "missing"),
-            isVolunteerLogged: isVolunteerLogged
+        const missingAnimal = mongoDBConfig.collections[4].model;
+
+        missingAnimal.getMissing(function (err, result) {
+            if(err) console.log(err);
+
+            console.log("2 result: ", result)
+            let missing = [];
+            if(result.length > 0) {
+                result.forEach(function (elem) {
+                    let newMissing = {
+                        latitude: elem.place.lat,
+                        longitude: elem.place.lon,
+                    }
+                    missing.push(newMissing);
+                });
+            }
+
+
+
+
+            let isVolunteerLogged = false;
+            if (req.session.passport && req.session.passport.user.profile
+                && (req.session.passport.user.profile === "voluntário"
+                    || req.session.passport.user.profile === "administrador"
+                    || req.session.passport.user.profile === "funcionário")) {
+                isVolunteerLogged = true;
+            }
+
+            res.render('missingAnimalsHome', {
+                description: "Animais desaparecidos",
+                isUserLogged: isUserLogged(req, res),
+                op_submenu: setOpSubmenu(req, res),
+                selectedMenu: setPropertyTrue(selectedMenu, "missing"),
+                isVolunteerLogged: isVolunteerLogged,
+                missing: missing
+            });
         });
-
     });
 
 

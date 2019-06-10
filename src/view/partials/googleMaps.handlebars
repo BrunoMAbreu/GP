@@ -2,9 +2,12 @@
 <script type="text/javascript" async="true" defer="true"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJRGxosiyNAQ2bhOh3iooZXVu4qw8y27Y&callback=initMap"></script>
 <script>
-    function initMap() {
 
-        let mapProp = {
+    let mapProp = null;
+    let map = null;
+
+    function initMap() {
+        mapProp = {
             center: new google.maps.LatLng(38.533333, -8.9),
             zoom: 13,
             mapTypeId: google.maps.MapTypeId.HYBRID,
@@ -16,7 +19,11 @@
             overviewMapControl: true,
             rotateControl: true
         };
-        let map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+        {{#missing}}
+            insertMarker({{latitude}}, {{longitude}});
+        {{/missing}}
 
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
@@ -39,8 +46,8 @@
         }
 
         // TODO: alterar position para a de um animal
-        let marker = new google.maps.Marker({ position: mapProp.center });
-        marker.setMap(map);
+        /*let marker = new google.maps.Marker({ position: mapProp.center });
+        marker.setMap(map);*/
 
         // Zoom to 9 when clicking on marker
         google.maps.event.addListener(marker, 'click', function () {
@@ -48,13 +55,19 @@
             map.setCenter(marker.getPosition());
         });
 
-        google.maps.event.addListener(map, 'click', function (event) {
+        google.maps.event.addListener(map, 'mousedown', function (event) {
             //console.log(event.latLng)
             //console.log(event)
             //map.setZoom(15);
             //map.setCenter(marker.getPosition());
 
-            getLatLong("setúbal")
+        
+
+            insertMarker(event.latLng.lat().toFixed(6), event.latLng.lng().toFixed(6));
+
+            //console.log("EVENT: ", event.latLng.lat().toFixed(6))
+            //console.log("EVENT: ", event.latLng.lon().toFixed(6))
+            //getLatLong("setúbal")
         });
     }
 
@@ -74,6 +87,17 @@
             }
         });
     }
+
+    function insertMarker(lat, lon) {
+
+        console.log("LAT_ ", lat)
+        console.log("LON_ ", lon)
+
+        let position = new google.maps.LatLng(lat, lon);
+        let marker = new google.maps.Marker({ position: position });
+        marker.setMap(map);
+    }
+
 
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
         infoWindow.setPosition(pos);
