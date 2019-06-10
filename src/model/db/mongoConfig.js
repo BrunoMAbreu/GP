@@ -136,7 +136,7 @@ let connectMongoDB = function (cb) {
                             });
                             newMissingAnimal.insertMissing(2, "Foo", {name:"Bemmequeres", lat: -1.1, lon: -2.255}, "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium"}, function(err, data) {
                                 if(err) console.log(err);
-                                newMissingAnimal.deleteMissing(data.missing_id, function(err, data) {
+                                newMissingAnimal.deleteMissing(data.missing_id, function (err, data) {
                                 });
                             })
                         });
