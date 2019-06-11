@@ -210,19 +210,85 @@ module.exports = function (app, passport) {
 
     // GET: View Missing animal's page
     app.get('/missing', function (req, res) {
-        let isVolunteerLogged = false;
-        if (req.session.passport && req.session.passport.user.profile
-            && (req.session.passport.user.profile === "voluntário"
-                || req.session.passport.user.profile === "administrador"
-                || req.session.passport.user.profile === "funcionário")) {
-            isVolunteerLogged = true;
+        const route = "missing";
+        const reqQuery = req.query;
+        let missingQuery = {};      
+        if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
+            for (let [key, value] of Object.entries(reqQuery)) {
+                if (value !== "") {
+                    switch (key) {
+                        case "missingDate":
+                            let nextDayDate = new Date(value);
+                            nextDayDate.setDate(nextDayDate.getDate() + 1);
+                            missingQuery[key] = { '$gte': value, '$lt': nextDayDate };
+                            break;
+                        case "animalName":
+                        case "userLocation":
+                            missingQuery[key] = { '$regex': value, '$options': 'i' };
+                            break;
+                        case "place":
+                            missingQuery["place.name"] = { '$regex': value, '$options': 'i' };
+                            break;
+                        case "species":
+                        case "size":
+                        case "gender":
+                            missingQuery[key] = value;
+                            break;
+                        case "chipNumber":
+                            missingQuery.$where = "/" + value + "/.test(this." + key + ")";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
-        res.render('missingAnimalsHome', {
-            description: "Animais desaparecidos",
-            isUserLogged: isUserLogged(req, res),
-            op_submenu: setOpSubmenu(req, res),
-            selectedMenu: setPropertyTrue(selectedMenu, "missing"),
-            isVolunteerLogged: isVolunteerLogged
+
+  
+console.log("MISSING QUERY: ", missingQuery)
+
+        const missingAnimal = mongoDBConfig.collections[4].model;
+        if(Object.keys(missingQuery).length === 0 && missingQuery.constructor === Object){
+            missingQuery.__v = 0;
+        }
+        missingAnimal.getMissing(missingQuery, function (err, result) {
+            if (err) console.log(err);
+
+console.log("result: ", result)
+
+            let missingAnimals = [];
+            result.forEach(elem => {
+                missingAnimals.push({
+                    lat: elem.place.lat,
+                    lon: elem.place.lon,
+                    animalName: elem.animalName,
+                    missingId: elem.missing_id
+                });
+            })
+            /*if (isSearching &&
+                ((missingPattern && !adopter.match(missingPattern)))) {
+                missingAnimals.pop();
+            }*/
+
+            let isVolunteerLogged = false;
+            if (req.session.passport && req.session.passport.user.profile
+                && (req.session.passport.user.profile === "voluntário"
+                    || req.session.passport.user.profile === "administrador"
+                    || req.session.passport.user.profile === "funcionário")) {
+                isVolunteerLogged = true;
+            }
+
+console.log("missingAnimals: ", missingAnimals)
+
+            res.render('missingAnimalsHome', {
+                description: "Animais desaparecidos",
+                isUserLogged: isUserLogged(req, res),
+                op_submenu: setOpSubmenu(req, res),
+                selectedMenu: setPropertyTrue(selectedMenu, "missing"),
+                isVolunteerLogged: isVolunteerLogged,
+                route: route,
+                missingAnimals: missingAnimals
+            });
         });
     });
 
@@ -278,6 +344,7 @@ module.exports = function (app, passport) {
                 placeName: missing.place.name,
                 placeLatitude: missing.place.lat,
                 placeLongitude: missing.place.lon,
+                notes: (missing.notes) ? missing.notes : "",
                 species: species,
                 gender: gender,
                 isMale: (gender === "Macho") ? true : false,
@@ -288,7 +355,7 @@ module.exports = function (app, passport) {
             const User = mongoDBConfig.collections[0].model;
             User.getUser({ user_id: missing.user_id }, function (err, result) {
                 if (err) console.log(err);
-                
+
                 missingAnimalData.ownerName = result[0].username;
                 missingAnimalData.ownerContact = result[0].phone;
 

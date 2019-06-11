@@ -40,6 +40,10 @@ module.exports = {
             }
         }
     },
+    notes: {
+        description: "other comments, animal description, anything that may help identify it",
+        type: "string"
+    },
     species: {
         type: "String",
         required: true,
