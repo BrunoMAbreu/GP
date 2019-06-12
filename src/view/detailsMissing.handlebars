@@ -5,11 +5,13 @@
     </div>
 <h1>Animal desaparecido</h1>
     <div style="position:absolute; margin-left:10%">
+    {{#ifBoolCond missing.hasPhoto}}
         {{#missing.isMale}}
-            <!--img class="animal-image-male" src="{{adoption.animal_photo}}" alt="Fotografia do animal"/ -->
+            <img class="animal-image-male" src="{{missing.animalPhoto}}" alt="Fotografia do animal"/>
         {{else}}
-            <!--img class="animal-image-female" src="{{adoption.animal_photo}}" alt="Fotografia do animal"/ -->
+            <img class="animal-image-female" src="{{missing.animalPhoto}}" alt="Fotografia do animal"/>
         {{/missing.isMale}}
+    {{/ifBoolCond}}
     </div>
     <dl class="dl-horizontal" style="position:absolute; left:30%">
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Nome do Animal</dt>

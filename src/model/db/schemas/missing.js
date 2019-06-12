@@ -21,6 +21,9 @@ module.exports = {
         max: 999999999999999,
         unique: true
     },
+    photoLink: {
+        type: "string"
+    },
     place: {
         type: "object",
         description: "last known place of the animal",

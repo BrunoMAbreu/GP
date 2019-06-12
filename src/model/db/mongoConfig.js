@@ -62,8 +62,7 @@ let connectMongoDB = function (cb) {
         console.log("Connection to mongodb established");
 
         // para testes
-        //Mongoose.connection.db.dropDatabase();
-
+        Mongoose.connection.db.dropDatabase();
 
         createUserCollection();
         createAnimalCollection();
@@ -129,12 +128,12 @@ let connectMongoDB = function (cb) {
                             if (err) console.log(err);
 
                             let newMissingAnimal = mongoDBConfig.collections[4].model;
-                            newMissingAnimal.insertMissing(adoption.user_id, newAnimal1.name, {name:"Malmequeres", lat: 38.522784, lon: -8.843523}, null, "Cat", "Female", new Date(), {chipNumber: 12345679123456, size: "Large"}, function(err, data) {
+                            newMissingAnimal.insertMissing(adoption.user_id, newAnimal1.name, {name:"Malmequeres", lat: 38.522784, lon: -8.843523}, "Cat", "Female", new Date(), {chipNumber: 12345679123456, size: "Large"}, function(err, data) {
                                 if(err) console.log(err);
                                 newMissingAnimal.updateMissing({missing_id: data.missing_id, species: "Dog"}, function(err, data) {
                                 });
                             });
-                            newMissingAnimal.insertMissing(2, "Cãonibal", {name:"Bemmequeres", lat: 38.530708, lon: -8.867384}, "coleira azul", "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium"}, function(err, data) {
+                            newMissingAnimal.insertMissing(2, "Cãonibal", {name:"Bemmequeres", lat: 38.530708, lon: -8.867384}, "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium", notes: "coleira azul", photoLink: "http://www.cvltnation.com/wp-content/uploads/2014/12/6gargoyles.jpg"}, function(err, data) {
                                 if(err) console.log(err);
                                 //newMissingAnimal.deleteMissing(data.missing_id, function (err, data) {
                                 //});
@@ -393,17 +392,15 @@ let insertMovement = function (movementData, callback) {
  * @param {*} other Object with non-required properties (eg., chipNumber, size)
  * @param {*} callback 
  */
-let insertMissing = function (user_id, animalName, place, notes, species, gender, missingDate, other, callback) {
+let insertMissing = function (user_id, animalName, place, species, gender, missingDate, other, callback) {
     let index = getCollectionIndex(missingCollectionName);
     if (index === -1) {
         console.error("Collection " + missingCollectionName + " not in mongoDBConfig");
     }
-    //mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
     const newMissingAnimal = {
         user_id: user_id,
         animalName: animalName,
         place: place,
-        notes: notes,
         species: species,
         gender: gender,
         missingDate: missingDate
