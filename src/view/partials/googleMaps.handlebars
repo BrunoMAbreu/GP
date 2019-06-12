@@ -1,10 +1,15 @@
 <div id="googleMap" style="width:100%;height:650px;"></div>
 <script type="text/javascript" async="true" defer="true"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJRGxosiyNAQ2bhOh3iooZXVu4qw8y27Y&callback=initMap"></script>
+<script type="text/html" async="true" defer="true"
+    src="https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBJRGxosiyNAQ2bhOh3iooZXVu4qw8y27Y&callback=initMap"></script>
 <script>
 
     let mapProp = null;
     let map = null;
+    let infoWindow = null;
+    var geocoder;
+
 
     function initMap() {
         mapProp = {
@@ -20,26 +25,25 @@
             rotateControl: true
         };
         map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        infoWindow = new google.maps.InfoWindow;
 
-
-// chamada ajax
+        // chamada ajax
         populateMap();
 
-/*
-        {{#missing}}
-            insertMarker({{latitude}}, {{longitude}}, "{{label}}");
-        {{/missing}}
-*/
+        /*
+                {{#missing}}
+                    insertMarker({{latitude}}, {{longitude}}, "{{label}}");
+                {{/missing}}
+        */
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                var pos = {
+                let pos = {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 };
-
                 infoWindow.setPosition(pos);
-                infoWindow.setContent('Location found.');
+                infoWindow.setContent('Estimativa da sua localização.');
                 infoWindow.open(map);
                 map.setCenter(pos);
             }, function () {
@@ -49,48 +53,59 @@
             // Browser doesn't support Geolocation
             handleLocationError(false, infoWindow, map.getCenter());
         }
-
-        // TODO: alterar position para a de um animal
-        /*let marker = new google.maps.Marker({ position: mapProp.center });
-        marker.setMap(map);*/
-
-        // Zoom to 9 when clicking on marker
-        /*google.maps.event.addListener(marker, 'click', function () {
-            map.setZoom(15);
-            map.setCenter(marker.getPosition());
-        });*/
-
-        //google.maps.event.addListener(map, 'mousedown', function (event) {
-            //console.log(event.latLng)
-            //console.log(event)
-            //map.setZoom(15);
-            //map.setCenter(marker.getPosition());
-
-            //insertMarker(event.latLng.lat().toFixed(6), event.latLng.lng().toFixed(6));
-
-            //console.log("EVENT: ", event.latLng.lat().toFixed(6))
-            //console.log("EVENT: ", event.latLng.lon().toFixed(6))
-            //getLatLong("setúbal")
-        //});
-        
     }
 
-    var geocoder;
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+            'Error: The Geolocation service failed.' :
+            'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+    }
+
+    // TODO: alterar position para a de um animal
+    /*let marker = new google.maps.Marker({ position: mapProp.center });
+    marker.setMap(map);*/
+
+    // Zoom to 9 when clicking on marker
+    /*google.maps.event.addListener(marker, 'click', function () {
+        map.setZoom(15);
+        map.setCenter(marker.getPosition());
+    });*/
+
+    //google.maps.event.addListener(map, 'mousedown', function (event) {
+    //console.log(event.latLng)
+    //console.log(event)
+    //map.setZoom(15);
+    //map.setCenter(marker.getPosition());
+
+    //insertMarker(event.latLng.lat().toFixed(6), event.latLng.lng().toFixed(6));
+
+    //console.log("EVENT: ", event.latLng.lat().toFixed(6))
+    //console.log("EVENT: ", event.latLng.lon().toFixed(6))
+    //getLatLong("setúbal")
+    //});
+
+
+
+
     //var add = document.getElementById("LocationAddress");
 
-    function getLatLong(address) {
-        geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ 'address': address }, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                console.log(results[0].geometry.location.lat())
-                console.log(results[0].geometry.location.lng())
-                //document.getElementById("LocationLat").value = results[0].geometry.location.lat();
-                //document.getElementById("LocationLon").value = results[0].geometry.location.lng();
-            } else {
-                alert("Geocode was not successful for the following reason: " + status);
-            }
-        });
-    }
+    /*
+        function getLatLong(address) {
+            geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    console.log(results[0].geometry.location.lat())
+                    console.log(results[0].geometry.location.lng())
+                    //document.getElementById("LocationLat").value = results[0].geometry.location.lat();
+                    //document.getElementById("LocationLon").value = results[0].geometry.location.lng();
+                } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        }
+        */
 
     function insertMarker(lat, lon, label, missingId) {
         let position = new google.maps.LatLng(lat, lon);
@@ -108,7 +123,7 @@
         marker.setClickable(true);
         marker.setMap(map);
 
-        google.maps.event.addListener(marker, "click", function(){
+        google.maps.event.addListener(marker, "click", function () {
             window.location.replace('/missing/' + this.missingId);
             /*
             console.log("this: ", this);
@@ -119,28 +134,27 @@
     }
 
 
-    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        infoWindow.setPosition(pos);
-        infoWindow.setContent(browserHasGeolocation ?
-            'Error: The Geolocation service failed.' :
-            'Error: Your browser doesn\'t support geolocation.');
-        infoWindow.open(map);
-    }
+    function populateMap() {
+        {{#each missingAnimals }}
+        insertMarker({{ lat }}, {{ lon }}, "{{animalName}}", {{ missingId }});
+        {{/each}}
 
-    function populateMap(){
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                let response = JSON.parse(this.responseText);
-                if(response){
-                    response.forEach(elem => {
-                        insertMarker(elem.latitude, elem.longitude, elem.label, elem.missingId);
-                    });
+
+            /*
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let response = JSON.parse(this.responseText);
+                    if(response){
+                        response.forEach(elem => {
+                            insertMarker(elem.latitude, elem.longitude, elem.label, elem.missingId);
+                        });
+                    }
                 }
-            }
-        };
-        xhttp.open("GET", "/missingInMap", true);
-        xhttp.send();
+            };
+            xhttp.open("GET", "/missingInMap", true);
+            xhttp.send();
+            */
     }
 
 

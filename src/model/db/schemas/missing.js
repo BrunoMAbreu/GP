@@ -21,6 +21,9 @@ module.exports = {
         max: 999999999999999,
         unique: true
     },
+    photoLink: {
+        type: "string"
+    },
     place: {
         type: "object",
         description: "last known place of the animal",
@@ -39,6 +42,10 @@ module.exports = {
                 type: "Number"
             }
         }
+    },
+    notes: {
+        description: "other comments, animal description, anything that may help identify it",
+        type: "string"
     },
     species: {
         type: "String",

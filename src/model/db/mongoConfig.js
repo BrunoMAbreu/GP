@@ -64,7 +64,6 @@ let connectMongoDB = function (cb) {
         // para testes
         Mongoose.connection.db.dropDatabase();
 
-
         createUserCollection();
         createAnimalCollection();
         createAdoptionCollection();
@@ -134,7 +133,7 @@ let connectMongoDB = function (cb) {
                                 newMissingAnimal.updateMissing({missing_id: data.missing_id, species: "Dog"}, function(err, data) {
                                 });
                             });
-                            newMissingAnimal.insertMissing(2, "Cãonibal", {name:"Bemmequeres", lat: 38.530708, lon: -8.867384}, "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium"}, function(err, data) {
+                            newMissingAnimal.insertMissing(2, "Cãonibal", {name:"Bemmequeres", lat: 38.530708, lon: -8.867384}, "Dog", "Male", new Date(), {chipNumber: 234567891123456, size: "Medium", notes: "coleira azul", photoLink: "http://www.cvltnation.com/wp-content/uploads/2014/12/6gargoyles.jpg"}, function(err, data) {
                                 if(err) console.log(err);
                                 //newMissingAnimal.deleteMissing(data.missing_id, function (err, data) {
                                 //});
@@ -398,7 +397,6 @@ let insertMissing = function (user_id, animalName, place, species, gender, missi
     if (index === -1) {
         console.error("Collection " + missingCollectionName + " not in mongoDBConfig");
     }
-    //mongoDBConfig.collections[index].model.findOne({}).sort({ $natural: -1 }).exec((err, result) => {
     const newMissingAnimal = {
         user_id: user_id,
         animalName: animalName,
