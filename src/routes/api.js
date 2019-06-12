@@ -212,13 +212,14 @@ module.exports = function (app, passport) {
     app.get('/missing', function (req, res) {
         const route = "missing";
         const reqQuery = req.query;
-        let missingQuery = {};      
+        let missingQuery = {};
+        let nextDayDate = null;  
         if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
             for (let [key, value] of Object.entries(reqQuery)) {
                 if (value !== "") {
                     switch (key) {
                         case "missingDate":
-                            let nextDayDate = new Date(value);
+                            nextDayDate = new Date(value);
                             nextDayDate.setDate(nextDayDate.getDate() + 1);
                             missingQuery[key] = { '$gte': value, '$lt': nextDayDate };
                             break;
@@ -243,19 +244,12 @@ module.exports = function (app, passport) {
                 }
             }
         }
-
-  
-console.log("MISSING QUERY: ", missingQuery)
-
         const missingAnimal = mongoDBConfig.collections[4].model;
         if(Object.keys(missingQuery).length === 0 && missingQuery.constructor === Object){
             missingQuery.__v = 0;
         }
         missingAnimal.getMissing(missingQuery, function (err, result) {
             if (err) console.log(err);
-
-console.log("result: ", result)
-
             let missingAnimals = [];
             result.forEach(elem => {
                 missingAnimals.push({
@@ -265,11 +259,6 @@ console.log("result: ", result)
                     missingId: elem.missing_id
                 });
             })
-            /*if (isSearching &&
-                ((missingPattern && !adopter.match(missingPattern)))) {
-                missingAnimals.pop();
-            }*/
-
             let isVolunteerLogged = false;
             if (req.session.passport && req.session.passport.user.profile
                 && (req.session.passport.user.profile === "voluntário"
@@ -277,9 +266,6 @@ console.log("result: ", result)
                     || req.session.passport.user.profile === "funcionário")) {
                 isVolunteerLogged = true;
             }
-
-console.log("missingAnimals: ", missingAnimals)
-
             res.render('missingAnimalsHome', {
                 description: "Animais desaparecidos",
                 isUserLogged: isUserLogged(req, res),
@@ -291,6 +277,64 @@ console.log("missingAnimals: ", missingAnimals)
             });
         });
     });
+
+
+    app.get('/missing/add', isLoggedIn, function (req, res) {
+
+
+                // TODO
+                const User = mongoDBConfig.collections[0].model;
+                const Animal = mongoDBConfig.collections[1].model;
+                const Adoption = mongoDBConfig.collections[2].model;
+                let adopters = [];
+                let animals = [];
+        
+                User.getUser({}, function (err, usersArray) {
+                    Adoption.getAdoption({}, function (err, adoptionsArray) {
+                        Animal.find({}, function (err, animalsArray) {
+                            if (err) console.log(err);
+                            let animalsAdoptedIds = [];
+                            adoptionsArray.forEach(elem => {
+                                animalsAdoptedIds.push(elem.animal_id);
+                            })
+                            usersArray.forEach(elem => {
+                                let newUser = {
+                                    adopter: elem.username,
+                                    adopter_id: elem.user_id
+                                };
+                                adopters.push(newUser);
+                            })
+                            animalsArray.forEach(elem => {
+                                if (animalsAdoptedIds.indexOf((elem.id).toString()) === -1) {
+                                    let newAnimal = {
+                                        animal: elem.name,
+                                        animal_id: elem.animal_id
+                                    };
+                                    animals.push(newAnimal);
+                                }
+                            });
+                            if (req.session.passport.user.profile === "administrador") {
+                                res.render('addMissing', {
+                                    description: "Registar desaparecimento",
+                                    isUserLogged: isUserLogged(req, res),
+                                    op_submenu: setOpSubmenu(req, res),
+                                    userId: req.session.passport.user.userid,
+
+                                    adopters: adopters,
+                                    animals: animals,
+        
+                                    selectedMenu: setPropertyTrue(selectedMenu, "operations")
+                                });
+                            } else {
+                                res.redirect('/');
+                            }
+                        });
+                    });
+                });
+            });
+
+
+
 
 
     // GET: View a specific missing animal
@@ -398,14 +442,6 @@ console.log("missingAnimals: ", missingAnimals)
             res.status(200).send(JSON.stringify(missing));
         });
     });
-
-
-
-
-
-
-
-
 
 
     // GET: Page to create adoption
@@ -764,6 +800,7 @@ console.log("missingAnimals: ", missingAnimals)
                         if (err) console.log(err);
                         animal = (result.length !== 0) ? result[0].name : "Animal eliminado";
                         adoptions.push({
+                            postSearch: !(adoptions.length < searchColumnRowspan),
                             adoption_id: element.adoption_id,
                             adopter: adopter,
                             animal: animal,
@@ -781,6 +818,7 @@ console.log("missingAnimals: ", missingAnimals)
             setTimeout(function () {
                 while (adoptions.length < searchColumnRowspan) {
                     adoptions.push({
+                        postSearch: false,
                         adoption_id: "",
                         adopter: "",
                         animal: "",
@@ -815,7 +853,7 @@ console.log("missingAnimals: ", missingAnimals)
         let users = [];
         const route = "workers";
         const profile = "funcionário";
-
+        const searchColumnRowspan = 12;
         const reqQuery = req.query;
         let query = { profile: profile };
         if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
@@ -832,6 +870,7 @@ console.log("missingAnimals: ", missingAnimals)
         User.getUser(query, function (err, result) {
             result.forEach(element => {
                 users.push({
+                    postSearch: !(users.length < searchColumnRowspan),
                     user_id: element.user_id,
                     username: element.username,
                     email: element.email,
@@ -841,10 +880,9 @@ console.log("missingAnimals: ", missingAnimals)
                     showActions: true
                 });
             });
-
-            const searchColumnRowspan = 12;
             while (users.length < searchColumnRowspan) {
                 users.push({
+                    postSearch: false,
                     user_id: "",
                     username: "",
                     email: "",
@@ -893,9 +931,11 @@ console.log("missingAnimals: ", missingAnimals)
                 }
             }
         }
+        const searchColumnRowspan = 12;
         User.getUser(query, function (err, result) {
             result.forEach(element => {
                 users.push({
+                    postSearch: !(users.length < searchColumnRowspan),
                     user_id: element.user_id,
                     username: element.username,
                     email: element.email,
@@ -905,9 +945,9 @@ console.log("missingAnimals: ", missingAnimals)
                     showActions: true
                 });
             });
-            const searchColumnRowspan = 12;
             while (users.length < searchColumnRowspan) {
                 users.push({
+                    postSearch: false,
                     user_id: "",
                     username: "",
                     email: "",
@@ -956,10 +996,11 @@ console.log("missingAnimals: ", missingAnimals)
                 }
             }
         }
-
+        const searchColumnRowspan = 12;
         User.getUser(query, function (err, result) {
             result.forEach(element => {
                 users.push({
+                    postSearch: !(users.length < searchColumnRowspan),
                     user_id: element.user_id,
                     username: element.username,
                     email: element.email,
@@ -969,9 +1010,9 @@ console.log("missingAnimals: ", missingAnimals)
                     showActions: true
                 });
             });
-            const searchColumnRowspan = 12;
             while (users.length < searchColumnRowspan) {
                 users.push({
+                    postSearch: false,
                     user_id: "",
                     username: "",
                     email: "",

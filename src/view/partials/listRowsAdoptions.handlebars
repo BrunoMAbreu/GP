@@ -1,5 +1,8 @@
 {{#each adoptions}}
 <tr>
+    {{#ifBoolCond postSearch}}
+        <td> </td>
+    {{/ifBoolCond}}
     <td>
         {{adoption_id}}
     </td>

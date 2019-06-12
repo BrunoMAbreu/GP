@@ -1,4 +1,85 @@
-<div id="googleMap" style="width:100%;height:650px;"></div>
+
+<div class="tooltips">
+        <img src="./images/help.jpg" with="25" height="25" alt="Ajuda" />
+        <span class="tooltiptext">Nesta p&aacute;gina poder&aacute; registar o desaparecimento de SI.</span>
+</div>
+<div>
+<div id="register" style="float: left; margin-left: 2em; margin-right: 2em;">
+    <h1>Registar Desaparecimento</h1>
+    <form id="registerForm" onsubmit="createMissing({{userId}}); return false">
+        <div class="form-group">
+            <label>Nome do Animal</label>
+            <input class="input-form" type="text" name="animalName" required />
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Número do Chip</label>
+            <input class="input-form" type="number" min="0" max="999999999999999" name="chipNumber" />
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Local do Desaparecimento</label>
+            <input class="input-form" type="text" name="placeName" placeholder="cidade, área e\ou rua" required />
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Notas</label>
+            <input class="input-form" type="text" name="placeName" placeholder="algo que possa ser útil na identificação do animal" />
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Espécie</label>
+            <select name="species" class="input-form">
+                <option value="Dog" selected>Cão</option>
+                <option value="Cat">Gato</option>
+            </select>
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Tamanho</label>
+            <select name="size" class="input-form">
+                <option value="Small">Pequeno</option>
+                <option value="Medium" selected>Médio</option>
+                <option value="Large">Grande</option>
+            </select>
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Género</label>
+            <select name="gender" class="input-form">
+                <option value='Male' selected>Macho</option>
+                <option value='Female'>Fêmea</option>
+            </select>
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Data do desaparecimento</label>
+            <input class="input-form" type="date" name="missingDate" required />
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <span class="text-danger"></span>
+        </div>
+        <div id="submit" class="form-group">
+            <button type="submit" class="confirmationButton">Registar</button>
+        </div>
+    </form>
+</div>
+
+<div id="googleMap" style="float: left; width:50%; height:650px; margin: 2em auto"></div>
 <script type="text/javascript" async="true" defer="true"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJRGxosiyNAQ2bhOh3iooZXVu4qw8y27Y&callback=initMap"></script>
 <script type="text/html" async="true" defer="true"
@@ -159,3 +240,5 @@
 
 
 </script>
+
+</div>

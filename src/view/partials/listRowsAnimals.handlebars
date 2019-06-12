@@ -1,5 +1,8 @@
 {{#each list}}
 <tr>
+    {{#ifBoolCond postSearch}}
+        <td> </td>
+    {{/ifBoolCond}}
     <td>{{name}}</td>
     <td>{{birthday}}</td>
     {{#ifNullCond gender}}
