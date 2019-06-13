@@ -19,7 +19,8 @@ module.exports = {
         type: "number",
         min: 0,
         max: 999999999999999,
-        unique: true
+        unique: true,
+        sparse: true
     },
     photoLink: {
         type: "string"
