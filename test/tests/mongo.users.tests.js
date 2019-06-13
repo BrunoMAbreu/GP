@@ -63,7 +63,7 @@ module.exports = function (userCollection) {
                 if (err) {
                     done(err);
                 }
-                const newUserData = { _id: result._id, username: "Ana" };
+                const newUserData = { user_id: result.user_id, username: "Ana" };
                 userModel.updateUser(newUserData, function (err, res) {
                     if (err) done(err);
                     res.username.should.equal(newUserData.username);

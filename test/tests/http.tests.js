@@ -9,7 +9,7 @@ const should = chai.should();
 const url = "http://localhost:8080";
 
 describe("HTTP server", function () {
-    this.timeout(10000);
+    this.timeout(12000);
     it('Main page status 200: OK', function (done) {
         chai
             .request(url)
@@ -66,6 +66,19 @@ describe("HTTP server", function () {
         chai
             .request(url)
             .get("/movements")
+            .end(function (error, response, body) {
+                if (error) {
+                    done(error);
+                } else {
+                    chai.expect(response.statusCode).to.equal(200);
+                    done();
+                }
+            });
+    });
+    it('Missing animals map page status 200: OK', function (done) {
+        chai
+            .request(url)
+            .get("/missing")
             .end(function (error, response, body) {
                 if (error) {
                     done(error);
