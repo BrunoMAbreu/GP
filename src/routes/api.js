@@ -280,56 +280,12 @@ module.exports = function (app, passport) {
 
 
     app.get('/missing/add', isLoggedIn, function (req, res) {
-
-
-        // TODO
-        const User = mongoDBConfig.collections[0].model;
-        const Animal = mongoDBConfig.collections[1].model;
-        const Adoption = mongoDBConfig.collections[2].model;
-        let adopters = [];
-        let animals = [];
-
-        User.getUser({}, function (err, usersArray) {
-            Adoption.getAdoption({}, function (err, adoptionsArray) {
-                Animal.find({}, function (err, animalsArray) {
-                    if (err) console.log(err);
-                    let animalsAdoptedIds = [];
-                    adoptionsArray.forEach(elem => {
-                        animalsAdoptedIds.push(elem.animal_id);
-                    })
-                    usersArray.forEach(elem => {
-                        let newUser = {
-                            adopter: elem.username,
-                            adopter_id: elem.user_id
-                        };
-                        adopters.push(newUser);
-                    })
-                    animalsArray.forEach(elem => {
-                        if (animalsAdoptedIds.indexOf((elem.id).toString()) === -1) {
-                            let newAnimal = {
-                                animal: elem.name,
-                                animal_id: elem.animal_id
-                            };
-                            animals.push(newAnimal);
-                        }
-                    });
-                    if (req.session.passport.user.profile === "administrador") {
-                        res.render('addMissing', {
-                            description: "Registar desaparecimento",
-                            isUserLogged: isUserLogged(req, res),
-                            op_submenu: setOpSubmenu(req, res),
-                            userId: req.session.passport.user.userid,
-
-                            adopters: adopters,
-                            animals: animals,
-
-                            selectedMenu: setPropertyTrue(selectedMenu, "operations")
-                        });
-                    } else {
-                        res.redirect('/');
-                    }
-                });
-            });
+        res.render('addMissing', {
+            description: "Registar desaparecimento",
+            isUserLogged: isUserLogged(req, res),
+            op_submenu: setOpSubmenu(req, res),
+            userId: req.session.passport.user.userid,
+            selectedMenu: setPropertyTrue(selectedMenu, "operations")
         });
     });
 
@@ -405,7 +361,7 @@ module.exports = function (app, passport) {
                 }
             }
             const missingAnimalData = {
-                //missing_id: req.params.id,
+                missingId: req.params.id,
                 animalName: missing.animalName,
                 chipNumber: (missing.chipNumber) ? missing.chipNumber : "",
                 placeName: missing.place.name,
@@ -427,19 +383,17 @@ module.exports = function (app, passport) {
                 missingAnimalData.ownerName = result[0].username;
                 missingAnimalData.ownerContact = result[0].phone;
 
-                let isVolunteerLogged = false;
+                let isWorkerLogged = false;
                 if (req.session.passport && req.session.passport.user.profile
-                    && (req.session.passport.user.profile === "voluntário"
-                        || req.session.passport.user.profile === "administrador"
-                        || req.session.passport.user.profile === "funcionário")) {
-                    isVolunteerLogged = true;
+                    && (req.session.passport.user.profile === "administrador" || req.session.passport.user.profile === "funcionário")) {
+                    isWorkerLogged = true;
                 }
                 res.render('detailsMissing', {
                     description: "Detalhes de uma animal desaparecido",
                     isUserLogged: isUserLogged(req, res),
                     op_submenu: setOpSubmenu(req, res),
                     selectedMenu: setPropertyTrue(selectedMenu, "missing"),
-                    isVolunteerLogged: isVolunteerLogged,
+                    isWorkerLogged: isWorkerLogged,
                     missing: missingAnimalData
                 });
             });
@@ -1113,6 +1067,19 @@ module.exports = function (app, passport) {
         } else {
             res.redirect('/');
         }
+    });
+
+
+    // DELETE: delete missing animal
+    app.delete('/missing/:id', isLoggedIn, function (req, res) {
+        const missingAnimal = mongoDBConfig.collections[4].model;
+        missingAnimal.deleteMissing(req.params.id, function (result) {
+            if (result) {
+                res.status(400).send(true);
+            } else {
+                res.status(400).send(false);
+            }
+        });
     });
 
 
