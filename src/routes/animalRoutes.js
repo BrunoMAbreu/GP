@@ -155,10 +155,10 @@ router.get('/', isLoggedIn, (req, res) => {
         req.session.passport.user.profile === "funcionário" ||
         req.session.passport.user.profile === "voluntário") {
             if(!err){
-                var isVolunteerLogged = false;
+                let isVolunteerLogged = false;
+                const searchColumnRowspan = 12;
                 if(req.session.passport.user.profile === "voluntário") isVolunteerLogged = true;
                 docs.forEach(element => {
-                    
                     var dog;
                     if(reqQuery.dog === "true")  dog = true;
                     if(reqQuery.dog === "false") dog = false;
@@ -177,6 +177,7 @@ router.get('/', isLoggedIn, (req, res) => {
                     (vaccinated === element.vaccinated || reqQuery.vaccinated === undefined || reqQuery.vaccinated === "") &&
                     (sterilized === element.sterilized || reqQuery.sterilized === undefined || reqQuery.sterilized === "")){
                         animals.push({
+                            postSearch: !(animals.length < searchColumnRowspan),
                             _id: element._id,
                             name: element.name,
                             gender: element.gender,
@@ -187,12 +188,10 @@ router.get('/', isLoggedIn, (req, res) => {
                             showActions: true,
                             isVolunteerLogged: isVolunteerLogged
                         });
-                    }
-                });
-
-                const searchColumnRowspan = 12;
+                    });
                 while (animals.length < searchColumnRowspan) {
                     animals.push({
+                        postSearch: false,
                         _id: "",
                         name: "",
                         gender: "",

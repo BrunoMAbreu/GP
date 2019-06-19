@@ -6,7 +6,7 @@
         </div>
         <div class="form-group">
             <label>Número do chip de identificação:</label>
-            <input class="search-input-form" type="number" min="0" max="999999999999999" name="idChip" />
+            <input class="search-input-form" type="number" min="0" max="999999999999999" name="chipNumber" />
         </div>
         <div class="form-group">
             <label>Localidade:</label>
@@ -14,7 +14,7 @@
         </div>
         <div class="form-group">
             <label>Espécie:</label>
-            <select name="tipo" class="search-input-form">
+            <select name="species" class="search-input-form">
                 <option value="Dog">Cão</option>
                 <option value="Cat">Gato</option>
                 <option value="" selected></option>
@@ -22,7 +22,7 @@
         </div>
         <div class="form-group">
             <label>Tamanho:</label>
-            <select name="tipo" class="search-input-form">
+            <select name="size" class="search-input-form">
                 <option value="Small">Pequeno</option>
                 <option value="Medium">Médio</option>
                 <option value="Large">Grande</option>
@@ -39,11 +39,7 @@
         </div>
         <div class="form-group">
             <label>Data de desaparecimento:</label>
-            <input class="search-input-form" type="missingDate" name="date" />
-        </div>
-        <div class="form-group">
-            <label>Local actual do utilizador:</label>
-            <input class="search-input-form" type="checkbox" name="userLocation" />
+            <input class="search-input-form" type="date" name="missingDate" />
         </div>
         <div id="submit" class="form-group" >
             <button type="submit" class="confirmationButton" id="searchSubmitButton">Pesquisar</button>

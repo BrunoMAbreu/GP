@@ -1,0 +1,56 @@
+<div class="textDisplay">
+    <div class="tooltips">
+        <img src="./images/help.jpg" width="25" height="25" alt="Ajuda" />
+        <span class="tooltiptext">Nesta página poderá consultar os dados de um animal desaparecido</span>
+    </div>
+<h1>Animal desaparecido</h1>
+    <div style="position:absolute; margin-left:10%">
+    {{#ifBoolCond missing.hasPhoto}}
+        {{#missing.isMale}}
+            <img class="animal-image-male" src="{{missing.animalPhoto}}" alt="Fotografia do animal"/>
+        {{else}}
+            <img class="animal-image-female" src="{{missing.animalPhoto}}" alt="Fotografia do animal"/>
+        {{/missing.isMale}}
+    {{/ifBoolCond}}
+    </div>
+    <dl class="dl-horizontal" style="position:absolute; left:30%">
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Nome do Animal</dt>
+        <dd style="margin: 0; display: inline;">{{missing.animalName}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Número do Chip</dt>
+        <dd style="margin: 0; display: inline;">{{missing.chipNumber}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Local do Desaparecimento</dt>
+        <dd style="margin: 0; display: inline;">{{missing.placeName}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Coordenadas do Local</dt>
+        <dd style="margin: 0; display: inline;">Latitude: {{missing.placeLatitude}} | Longitude: {{missing.placeLongitude}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Espécie</dt>
+        <dd style="margin: 0; display: inline;">{{missing.species}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Género</dt>
+        <dd style="margin: 0; display: inline;">{{missing.gender}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Tamanho</dt>
+        <dd style="margin: 0; display: inline;">{{missing.size}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Data do Desaparecimento</dt>
+        <dd style="margin: 0; display: inline;">{{missing.missingDate}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Notas</dt>
+        <dd style="margin: 0; display: inline;">{{missing.notes}}</dd>
+        <p></p> 
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Nome do Dono</dt>
+        <dd style="margin: 0; display: inline;">{{missing.ownerName}}</dd>
+        <p></p>
+        <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Contacto</dt>
+        <dd style="margin: 0; display: inline;">{{missing.ownerContact}}</dd>
+        <p></p>
+        {{#isWorkerLogged}}
+        <div id="submit" class="form-group" >
+            <button type="submit" class="confirmationButton" onclick="removeMissing({{missing.missingId}})" >Remover este animal</button>
+        </div>
+        {{/isWorkerLogged}}
+    </dl>
+</div>

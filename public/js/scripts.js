@@ -167,6 +167,25 @@ function confirmAdoptionDelete(id) {
     }
 }
 
+function removeMissing(id) {
+    let response = confirm("Deseja apagar este animal de 'desaparecidos'?");
+    if (response) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/missing/" + id, true);
+        xhr.onreadystatechange = function () {
+            if ((this.readyState === 4) && (this.status === 400)) {
+                if(this.responseText === "true"){
+                    window.location.replace("/missing");
+                } else {
+                    alert("Não foi possível remover o animal.")
+                }
+            }
+        }
+        xhr.send();
+    }
+}
+
+
 function updateWorker(id) {
     const data = {
         username: document.getElementById("username").value,

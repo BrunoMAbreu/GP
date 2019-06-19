@@ -19,7 +19,11 @@ module.exports = {
         type: "number",
         min: 0,
         max: 999999999999999,
-        unique: true
+        unique: true,
+        sparse: true
+    },
+    photoLink: {
+        type: "string"
     },
     place: {
         type: "object",
@@ -27,7 +31,7 @@ module.exports = {
         required: true,
         properties: {
             name: {
-                description: "eg., road, area or city",
+                description: "eg., road, area, city",
                 type: "string"
             },
             lat: {
@@ -39,6 +43,10 @@ module.exports = {
                 type: "Number"
             }
         }
+    },
+    notes: {
+        description: "other comments, animal description, anything that may help identify it",
+        type: "string"
     },
     species: {
         type: "String",
