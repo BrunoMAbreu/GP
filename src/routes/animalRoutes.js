@@ -146,19 +146,10 @@ router.get('/', isLoggedIn, (req, res) => {
     let animals = [];
 
     const reqQuery = req.query;
+    console.log("ReqQuery: " + req.query);
+    console.log("ReqQueryGEnder: " + req.query.gender);
     let query = {};
-        let isSearching = false;
-        if (Object.getOwnPropertyNames(reqQuery).length !== 0) {
-            for (let [key, value] of Object.entries(reqQuery)) {
-                if (value !== "") {
-                    let nextDayDate = new Date(value);
-                    nextDayDate.setDate(nextDayDate.getDate() + 1);
-                    query[key] = (key === "birthday")
-                        ? { '$gte': value, '$lt': nextDayDate }
-                        : { '$regex': value, '$options': 'i' }
-                }
-            }
-        }
+    let isSearching = false;
     Animal.find(query, function (err, docs){
         if (req.session.passport.user.profile === "administrador" ||
         req.session.passport.user.profile === "funcionário" ||
@@ -167,17 +158,36 @@ router.get('/', isLoggedIn, (req, res) => {
                 var isVolunteerLogged = false;
                 if(req.session.passport.user.profile === "voluntário") isVolunteerLogged = true;
                 docs.forEach(element => {
-                    animals.push({
-                        _id: element._id,
-                        name: element.name,
-                        gender: element.gender,
-                        vaccinated: element.vaccinated,
-                        birthday: element.birthday.toISOString().slice(0, 10),
-                        dog: element.dog,
-                        sterilized: element.sterilized,
-                        showActions: true,
-                        isVolunteerLogged: isVolunteerLogged
-                    });
+                    
+                    var dog;
+                    if(reqQuery.dog === "true")  dog = true;
+                    if(reqQuery.dog === "false") dog = false;
+
+                    var vaccinated;
+                    if(reqQuery.vaccinated === "true")  vaccinated = true;
+                    if(reqQuery.vaccinated === "false") vaccinated = false;
+
+                    var sterilized;
+                    if(reqQuery.sterilized === "true")  sterilized = true;
+                    if(reqQuery.sterilized === "false") sterilized = false;
+
+                    if((reqQuery.name === element.name || reqQuery.name === undefined || reqQuery.name === "") &&
+                    (reqQuery.gender === element.gender || reqQuery.gender === undefined || reqQuery.gender === "") &&
+                    (dog === element.dog || reqQuery.dog === undefined || reqQuery.dog === "") &&
+                    (vaccinated === element.vaccinated || reqQuery.vaccinated === undefined || reqQuery.vaccinated === "") &&
+                    (sterilized === element.sterilized || reqQuery.sterilized === undefined || reqQuery.sterilized === "")){
+                        animals.push({
+                            _id: element._id,
+                            name: element.name,
+                            gender: element.gender,
+                            vaccinated: element.vaccinated,
+                            birthday: element.birthday.toISOString().slice(0, 10),
+                            dog: element.dog,
+                            sterilized: element.sterilized,
+                            showActions: true,
+                            isVolunteerLogged: isVolunteerLogged
+                        });
+                    }
                 });
 
                 const searchColumnRowspan = 12;
