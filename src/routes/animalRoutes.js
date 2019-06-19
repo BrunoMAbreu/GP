@@ -188,7 +188,8 @@ router.get('/', isLoggedIn, (req, res) => {
                             showActions: true,
                             isVolunteerLogged: isVolunteerLogged
                         });
-                    });
+                    }
+                });
                 while (animals.length < searchColumnRowspan) {
                     animals.push({
                         postSearch: false,
