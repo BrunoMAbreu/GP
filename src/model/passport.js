@@ -46,7 +46,7 @@ module.exports = function (passport) {
                         return done(null, false, req.flash('phoneNumberMessage', 'Número de telemóvel inválido.'));
                     }else {
                         // if the user doesn't already exist in the db
-                        User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.birthDate, function (result) {
+                        User.insertUser(req.body.userName, email, password, req.body.phoneNumber, req.body.birthDate, function (err, result) {
                             return done(null, result);
                         });
                     }
