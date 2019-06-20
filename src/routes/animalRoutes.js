@@ -60,6 +60,13 @@ Handlebars.registerHelper('ifBoolCond', function(param, options) {
     return options.inverse(this);
   });
 
+  Handlebars.registerHelper('ifAvailableForAdoptionCond', function(param, options) {
+    if(param !== "Adotado") 
+      return options.fn(this);
+
+    return options.inverse(this);
+  });
+
 router.get('/add', (req, res) => {
     if (req.session.passport.user.profile === "administrador" ||
         req.session.passport.user.profile === "funcionário") {

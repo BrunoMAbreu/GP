@@ -1,10 +1,12 @@
-<div class="textDisplay">
+
     <div class="tooltips">
-        <img src="./images/help.jpg" width="25" height="25" alt="Ajuda" />
+        <img src="./../images/help.jpg" width="25" height="25" alt="Ajuda" />
         <span class="tooltiptext">Nesta página poderá consultar os dados de um animal desaparecido</span>
     </div>
-<h1>Animal desaparecido</h1>
-    <div style="position:absolute; margin-left:10%">
+<div class="container">
+<div style="margin-left:10%">
+<h1 class="headerTitle">Animal desaparecido</h1>
+    <div style="position:absolute;">
     {{#ifBoolCond missing.hasPhoto}}
         {{#missing.isMale}}
             <img class="animal-image-male" src="{{missing.animalPhoto}}" alt="Fotografia do animal"/>
@@ -13,7 +15,7 @@
         {{/missing.isMale}}
     {{/ifBoolCond}}
     </div>
-    <dl class="dl-horizontal" style="position:absolute; left:30%">
+    <dl style="left:50%; margin: 5% 30%">
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Nome do Animal</dt>
         <dd style="margin: 0; display: inline;">{{missing.animalName}}</dd>
         <p></p>
@@ -53,4 +55,5 @@
         </div>
         {{/isWorkerLogged}}
     </dl>
+</div>
 </div>

@@ -1,17 +1,17 @@
-<div class="textDisplay">
+
     <div class="tooltips">
-        <img src="./images/help.jpg" width="25" height="25" alt="Ajuda" />
+        <img src="./../../images/help.jpg" width="25" height="25" alt="Ajuda" />
         <span class="tooltiptext">Nesta página poderá consultar os dados de uma ficha de um animal</span>
     </div>
-    <div style="position:absolute; margin-left:10%">
-        <h1>{{animal.name}}</h1>
+    <div class="container">
+    <div style="margin-left:10%">
+        <h1 class="headerTitle" style="margin: 0px 15px">{{animal.name}}</h1>
         {{#ifGenderCond animal.gender}}
-            <img class="animal-image-male" src="{{animal.photoLink}}" alt="Fotografia do animal"/>
+            <img class="animal-image-male" style="position: absolute;" src="{{animal.photoLink}}" alt="Fotografia do animal"/>
         {{else}}
-            <img class="animal-image-female" src="{{animal.photoLink}}" alt="Fotografia do animal"/>
+            <img class="animal-image-female" style="position: absolute;" src="{{animal.photoLink}}" alt="Fotografia do animal"/>
         {{/ifGenderCond}}
-    </div>
-    <dl class="dl-horizontal" style="position:absolute; left:30%; margin: 100px 30px">
+        <dl style="left:50%; margin: 5% 30%">
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Data de Nascimento</dt>
         <dd style="margin: 0; display: inline;">{{birthday}}</dd>
         <p></p>
@@ -59,4 +59,5 @@
         {{/ifBoolCond}}
         
     </dl>
-</div>
+    </div>
+    </div>

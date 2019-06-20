@@ -1,9 +1,9 @@
 <div class="tooltips">
-        <img src="./images/help.jpg" with="25" height="25" alt="Ajuda" />
+        <img src="./../images/help.jpg" with="25" height="25" alt="Ajuda" />
         <span class="tooltiptext">Nesta p&aacute;gina poder&aacute; registar uma nova adopção no SI.</span>
     </div>
 <div id="register">
-    <h1>Registar adopção</h1>
+    <h1 class="headerTitle">Registar adopção</h1>
     <form id="registerForm" onsubmit="createAdoption(); return false">
         <div class="form-group">
             <label>Adoptante</label>
@@ -18,7 +18,7 @@
         </div>
         <div class="form-group">
             <label>Animal</label>
-            <select id="animalSelect" class="input-form">
+            <select id="animalSelect" class="input-form" required>
                 {{#animals}}
                 <option value="{{animal_id}}_{{animal}}">{{animal_id}} - {{animal}}</option>
                 {{/animals}}

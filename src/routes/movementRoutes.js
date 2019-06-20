@@ -316,13 +316,26 @@ router.get('/details/:id', function (req, res) {
                 else{
                 movementData.animal_id = animalArray[0].animal_id;
                 movementData.animal = animalArray[0];
-                
+                var monthFormat = "";
+                var dayFormat = "";
+                if((animalArray[0].birthday.getMonth() + 1) >= 10)
+                    monthFormat = (animalArray[0].birthday.getMonth() + 1);
+                else
+                    monthFormat = "0" + (animalArray[0].birthday.getMonth() + 1);
+
+                if((animalArray[0].birthday.getDate() + 1) >= 10)
+                    dayFormat = (animalArray[0].birthday.getDate() + 1);
+                else
+                    dayFormat = "0" + (animalArray[0].birthday.getDate() + 1);
+
+                var birthday = dayFormat + "-" + monthFormat + "-" + animalArray[0].birthday.getFullYear();
                 if (req.session.passport.user.profile === "administrador") {
                     res.render("movement/details", {
                         description: "Visualizar adopção",
                         isUserLogged: isUserLogged(req, res),
                         op_submenu: setOpSubmenu(req, res),
                         movement: movementData,
+                        animalBirthday: birthday,
                         isUserLogged: isUserLogged(req, res),
                         op_submenu: setOpSubmenu(req, res),
                         selectedMenu: setPropertyTrue(selectedMenu, "operations"),
