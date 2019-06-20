@@ -95,7 +95,8 @@ router.get('/add', (req, res) => {
 
 router.get('/details/:id', (req, res) => {
     Animal.findById(req.params.id, (err, doc) => {
-        var monthFormat = "";
+        if(!err){
+            var monthFormat = "";
             var dayFormat = "";
             if((doc.birthday.getMonth() + 1) >= 10)
                 monthFormat = (doc.birthday.getMonth() + 1);
@@ -103,12 +104,11 @@ router.get('/details/:id', (req, res) => {
                 monthFormat = "0" + (doc.birthday.getMonth() + 1);
 
             if((doc.birthday.getDate() + 1) >= 10)
-                dayFormat = (doc.birthday.getDate() + 1);
+                dayFormat = doc.birthday.getDate();
             else
-                dayFormat = "0" + (doc.birthday.getDate() + 1);
+                dayFormat = "0" + doc.birthday.getDate();
 
             var birthday = dayFormat + "-" + monthFormat + "-" + doc.birthday.getFullYear();
-        if(!err){
             var normalUser = false;
             if(!isUserLogged(req, res).isLogged || 
             req.session.passport.user.profile === "utilizador") normalUser = true;
@@ -153,8 +153,6 @@ router.get('/', isLoggedIn, (req, res) => {
     let animals = [];
 
     const reqQuery = req.query;
-    console.log("ReqQuery: " + req.query);
-    console.log("ReqQueryGEnder: " + req.query.gender);
     let query = {};
     let isSearching = false;
     Animal.find(query, function (err, docs){
@@ -178,8 +176,26 @@ router.get('/', isLoggedIn, (req, res) => {
                     if(reqQuery.sterilized === "true")  sterilized = true;
                     if(reqQuery.sterilized === "false") sterilized = false;
 
-                    if((reqQuery.name === element.name || reqQuery.name === undefined || reqQuery.name === "") &&
+                    if(reqQuery.name !== undefined) var re = new RegExp(reqQuery.name.toUpperCase(), 'g');
+                    var animalBirthday;
+                    if(reqQuery.birthday !== undefined){
+                        var monthFormat = "";
+                        var dayFormat = "";
+                        if((element.birthday.getMonth() + 1) >= 10)
+                            monthFormat = (element.birthday.getMonth() + 1);
+                        else
+                            monthFormat = "0" + (element.birthday.getMonth() + 1);
+
+                        if((element.birthday.getDate() + 1) >= 10)
+                            dayFormat = element.birthday.getDate();
+                        else
+                            dayFormat = "0" + element.birthday.getDate();
+
+                            animalBirthday = element.birthday.getFullYear() + "-" + monthFormat + "-" + dayFormat;
+                    } 
+                    if((element.name.toUpperCase().match(re) || reqQuery.name === element.name || reqQuery.name === undefined || reqQuery.name === "") &&
                     (reqQuery.gender === element.gender || reqQuery.gender === undefined || reqQuery.gender === "") &&
+                    (reqQuery.birthday === animalBirthday || reqQuery.birthday === undefined || reqQuery.birthday === "") &&
                     (dog === element.dog || reqQuery.dog === undefined || reqQuery.dog === "") &&
                     (vaccinated === element.vaccinated || reqQuery.vaccinated === undefined || reqQuery.vaccinated === "") &&
                     (sterilized === element.sterilized || reqQuery.sterilized === undefined || reqQuery.sterilized === "")){
@@ -247,15 +263,16 @@ router.get('/update/:id', (req, res) => {
             if(!err){
                 var monthFormat = "";
                 var dayFormat = "";
+                console.log(doc.birthday);
                 if((doc.birthday.getMonth() + 1) >= 10)
                     monthFormat = (doc.birthday.getMonth() + 1);
                 else
                     monthFormat = "0" + (doc.birthday.getMonth() + 1);
 
                 if((doc.birthday.getDate() + 1) >= 10)
-                    dayFormat = (doc.birthday.getDate() + 1);
+                    dayFormat = doc.birthday.getDate();
                 else
-                    dayFormat = "0" + (doc.birthday.getDate() + 1);
+                    dayFormat = "0" + doc.birthday.getDate();
 
                 var birthday = doc.birthday.getFullYear() + "-"  + monthFormat + "-" + dayFormat;
                 res.render("animal/addOrEdit", {
