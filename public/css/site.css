@@ -16,6 +16,12 @@ body {
     background-color: #F9F9F9;
 }
 
+.headerTitle { 
+    color: rgb(0, 66, 61); 
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+}
+
 .animal-image-female {
     width: 210px;
     height: 230px;
@@ -77,10 +83,9 @@ a {
     top: -20px;
     width: 395px;
     height: 110px;
-    margin-bottom: 20px;
+    margin-bottom: 70px;
     padding: 5px 5px 5px 15px;
     float: left;
-    background-color: #02877E;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
 }
@@ -160,12 +165,13 @@ a {
 
 .menu_bar {
     list-style-type: none;
-    padding: 10px;
+    padding: 10px 5px;
     background-color: #02A79C;
     display: table;
     text-align: center;
     width: 100%;
-    margin: 0 auto;
+    border-radius: 8%;
+    top: 50px;
 }
 
 .vl {
@@ -380,10 +386,20 @@ footer {
 }
 
 .menu_login {
-    margin-top: 50px;
     float: right;
     list-style-type: none;
-    margin-right: 30px
+    margin-right: 30px;
+    background-color: #02877E;
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 50px 15px;
+    cursor: pointer; /*cursor transforma-se: mão */
+    border-radius: 12px;
 }
 
 .login_element {

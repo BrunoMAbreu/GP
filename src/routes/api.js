@@ -25,7 +25,7 @@ module.exports = function (app, passport) {
         operations: false,
         about: false
     }
-
+    
     //kubernetes index
     app.get('/healthz', function (req, res) {
         res.send('ok');
@@ -481,17 +481,20 @@ module.exports = function (app, passport) {
         Animal.find({ animal_id: animal_id }, function (err, animalsArray) {
             if (err) console.log(err);
             animalsArray[0].state = "Adotado";
-            let newAdoptionData = {
-                user_id: adopter_id,
-                animal_id: animalsArray[0]._id,
-                adoptionDate: req.body.adoptionDate
-            };
-            Adoption.insertAdoption(newAdoptionData, function (data) {
-                if (data !== null) {
-                    res.status(400).send(true);
-                } else {
-                    res.status(400).send(false);
-                }
+            Animal.findOneAndUpdate({ animal_id: animal_id }, animalsArray[0], { new: true }, function (err, data) {
+                if (err) console.log(err);
+                let newAdoptionData = {
+                    user_id: adopter_id,
+                    animal_id: animalsArray[0]._id,
+                    adoptionDate: req.body.adoptionDate
+                };
+                Adoption.insertAdoption(newAdoptionData, function (data) {
+                    if (data !== null) {
+                        res.status(400).send(true);
+                    } else {
+                        res.status(400).send(false);
+                    }
+                });
             });
         })
     });

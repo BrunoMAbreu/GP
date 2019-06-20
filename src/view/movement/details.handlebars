@@ -1,13 +1,14 @@
-<div class="textDisplay">
+
     <div class="tooltips">
-        <img src="./images/help.jpg" width="25" height="25" alt="Ajuda" />
+        <img src="./../../images/help.jpg" width="25" height="25" alt="Ajuda" />
         <span class="tooltiptext">Nesta página poderá consultar os dados de uma ficha de um movimento</span>
     </div>
-    <div style="position:absolute; margin-left:10%">
+    <div class="container">
+    <div style="margin-left:10%">
         {{#ifNullCond movement.animal}}
-        <h1>Movimento</h1>
+        <h1 class="headerTitle">Movimento</h1>
         {{else}}
-            <h1>Movimento - {{movement.animal.name}}</h1>
+            <h1 class="headerTitle">Movimento - {{movement.animal.name}}</h1>
         {{/ifNullCond}}
         <h3>{{movement.date}}</h3>
         {{#ifNullCond movement.animal}}
@@ -18,14 +19,14 @@
             <img class="animal-image-female" src="{{movement.animal.photoLink}}" alt="Fotografia do animal"/>
         {{/ifGenderCond}}
         {{/ifNullCond}}
-    </div>
-    <dl class="dl-horizontal" style="position:absolute; left:30%; margin: 100px 30px">
+    
+    <dl style="left:50%; margin: 5% 30%">
         <h2>Informações do Animal</h2>
         {{#ifNullCond movement.animal}}
         <h3>Ficha Arquivada</h3>
         {{else}}
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Data de Nascimento</dt>
-        <dd style="margin: 0; display: inline;">{{movement.animal.birthday}}</dd>
+        <dd style="margin: 0; display: inline;">{{animalBirthday}}</dd>
         <p></p>
         <dt style="margin-right: 0.5em; display: inline; font-weight: bold;">Género</dt>
         {{#ifGenderCond movement.animal.gender}}
@@ -67,4 +68,5 @@
         <p></p>
         {{/ifNullCond}}
     </dl>
+</div>
 </div>
